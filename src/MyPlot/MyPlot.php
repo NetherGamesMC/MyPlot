@@ -1047,7 +1047,14 @@ class MyPlot extends PluginBase
 	}
 
 	public function onEnable() : void {
-		if($this->isDisabled()) {
+	    /* todo uncomment this after tests
+        if(($ess = $this->getServer()->getPluginManager()->getPlugin('NGEssentials')) === null) {
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+            $this->getServer()->shutdown();
+            return;
+        }
+	    */
+	    if($this->isDisabled()) {
 			return;
 		}
 		$this->getLogger()->debug(TF::BOLD . "Loading economy settings");
