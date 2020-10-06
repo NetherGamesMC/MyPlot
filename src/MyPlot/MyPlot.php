@@ -966,7 +966,7 @@ class MyPlot extends PluginBase
 	}
 
 	/* -------------------------- Non-API part -------------------------- */
-	public function onLoad() : void {
+    protected function onLoad() : void {
 		$this->getLogger()->debug(TF::BOLD."Loading...");
 		self::$instance = $this;
 		$this->getLogger()->debug(TF::BOLD . "Loading Configs");
@@ -1043,7 +1043,7 @@ class MyPlot extends PluginBase
 		}
 	}
 
-	public function onEnable() : void {
+	protected function onEnable() : void {
 	    /* todo uncomment this after tests
         if(($ess = $this->getServer()->getPluginManager()->getPlugin('NGEssentials')) === null) {
             $this->getServer()->getPluginManager()->disablePlugin($this);
@@ -1117,7 +1117,7 @@ class MyPlot extends PluginBase
 		return false;
 	}
 
-	public function onDisable() : void {
+    protected function onDisable() : void {
 		if($this->dataProvider !== null){
             $this->dataProvider->close();
         }
