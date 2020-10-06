@@ -1058,6 +1058,11 @@ class MyPlot extends PluginBase
 	    if($this->isDisabled()) {
 			return;
 		}
+
+	    foreach (["Creative", "Mega", "Platinum"] as $world){
+            $this->getServer()->getWorldManager()->loadWorld($world);
+        }
+
 		$this->getLogger()->debug(TF::BOLD . "Loading economy settings");
 		// Initialize EconomyProvider
 		if($this->getConfig()->get("UseEconomy", false) === true) {
@@ -1113,6 +1118,11 @@ class MyPlot extends PluginBase
 		if($this->dataProvider !== null){
             $this->dataProvider->close();
         }
+
+        foreach (["Creative", "Mega", "Platinum"] as $world){
+            $this->getServer()->getWorldManager()->getWorldByName($world)->save(true);
+        }
+
 		self::$instance = null;
 	}
 }
