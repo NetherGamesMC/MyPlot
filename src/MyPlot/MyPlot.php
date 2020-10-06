@@ -40,6 +40,8 @@ use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
+use function strlen;
+use const PHP_INT_MAX;
 
 class MyPlot extends PluginBase
 {
@@ -908,12 +910,17 @@ class MyPlot extends PluginBase
 	 * @return int
 	 */
 	public function getMaxPlotsOfPlayer(Player $player) : int {
-		if($player->hasPermission("myplot.claimplots.unlimited"))
-			return PHP_INT_MAX;
+        $levelName = $player->getWorld()->getFolderName();
+        $length = strlen($levelName);
+
+		if($player->hasPermission("myplot.claimplots.$levelName.unlimited")){
+            return PHP_INT_MAX;
+        }
+
 		/** @var Permission[] $perms */
 		$perms = array_merge(PermissionManager::getInstance()->getDefaultPermissions($player->isOp()), $player->getEffectivePermissions());
-		$perms = array_filter($perms, function(string $name) {
-			return (substr($name, 0, 18) === "myplot.claimplots.");
+		$perms = array_filter($perms, function(string $name) use ($levelName, $length) {
+			return (substr($name, 0, 19 + $length) === "myplot.claimplots.$levelName.");
 		}, ARRAY_FILTER_USE_KEY);
 		if(count($perms) === 0)
 			return 0;
@@ -923,7 +930,7 @@ class MyPlot extends PluginBase
 		 * @var Permission $perm
 		 */
 		foreach($perms as $name => $perm) {
-			$maxPlots = substr($name, 18);
+			$maxPlots = substr($name, 19 + $length);
 			if(is_numeric($maxPlots)) {
 				return (int) $maxPlots;
 			}
