@@ -21,6 +21,7 @@ use MyPlot\provider\SQLiteDataProvider;
 use MyPlot\provider\YAMLDataProvider;
 use MyPlot\task\ClearBorderTask;
 use MyPlot\task\ClearPlotTask;
+use NetherGames\NGEssentials\NGEssentials;
 use onebone\economyapi\EconomyAPI;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\world\WorldLoadEvent;
@@ -44,6 +45,9 @@ class MyPlot extends PluginBase
 {
 	/** @var MyPlot|null $instance */
 	private static $instance = null;
+
+    /** @var NGEssentials */
+    private $ess;
 	/** @var PlotLevelSettings[] $worlds */
 	private $worlds = [];
 	/** @var DataProvider $dataProvider */
@@ -1057,6 +1061,8 @@ class MyPlot extends PluginBase
 			return;
 		}
 
+        //$this->ess = $ess; todo uncomment
+
 	    foreach (["Creative", "Mega", "Platinum"] as $world){
             $this->getServer()->getWorldManager()->loadWorld($world);
         }
@@ -1091,6 +1097,11 @@ class MyPlot extends PluginBase
 
 		$this->getLogger()->debug(TF::BOLD.TF::GREEN."Enabled!");
 	}
+
+    public function getEssentials(): NGEssentials
+    {
+        return $this->ess;
+    }
 
 	/**
 	 * @param string $worldName
