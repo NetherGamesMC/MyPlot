@@ -1041,9 +1041,6 @@ class MyPlot extends PluginBase
 			$this->getConfig()->set("FastClearing", false);
 			$this->getLogger()->info(TF::BOLD . "WorldStyler not found. Legacy clearing will be used.");
 		}
-		$this->getLogger()->debug(TF::BOLD . "Loading MyPlot Commands");
-		// Register command
-		$this->getServer()->getCommandMap()->register("myplot", new Commands($this));
 	}
 
 	public function onEnable() : void {
@@ -1055,6 +1052,7 @@ class MyPlot extends PluginBase
             return;
         }
 	    */
+
 	    if($this->isDisabled()) {
 			return;
 		}
@@ -1063,8 +1061,10 @@ class MyPlot extends PluginBase
             $this->getServer()->getWorldManager()->loadWorld($world);
         }
 
+        $this->getLogger()->debug(TF::BOLD . "Loading MyPlot Commands");
+        $this->getServer()->getCommandMap()->register("myplot", new Commands($this));
+
 		$this->getLogger()->debug(TF::BOLD . "Loading economy settings");
-		// Initialize EconomyProvider
 		if($this->getConfig()->get("UseEconomy", false) === true) {
 			if(($plugin = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI")) !== null) {
 				if($plugin instanceof EconomyAPI) {
@@ -1079,13 +1079,16 @@ class MyPlot extends PluginBase
 				//$this->getConfig()->save();
 			}
 		}
+
 		$this->getLogger()->debug(TF::BOLD . "Loading Events");
 		$eventListener = new EventListener($this);
 		$this->getServer()->getPluginManager()->registerEvents($eventListener, $this);
+
 		$this->getLogger()->debug(TF::BOLD . "Registering Loaded Worlds");
 		foreach($this->getServer()->getWorldManager()->getWorlds() as $world) {
 			$eventListener->onLevelLoad(new WorldLoadEvent($world));
 		}
+
 		$this->getLogger()->debug(TF::BOLD.TF::GREEN."Enabled!");
 	}
 
