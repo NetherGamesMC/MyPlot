@@ -42,8 +42,8 @@ use pocketmine\utils\TextFormat as TF;
 
 class MyPlot extends PluginBase
 {
-	/** @var MyPlot $instance */
-	private static $instance;
+	/** @var MyPlot|null $instance */
+	private static $instance = null;
 	/** @var PlotLevelSettings[] $worlds */
 	private $worlds = [];
 	/** @var DataProvider $dataProvider */
@@ -54,9 +54,9 @@ class MyPlot extends PluginBase
 	private $baseLang = null;
 
 	/**
-	 * @return MyPlot
+	 * @return MyPlot|null
 	 */
-	public static function getInstance() : self {
+	public static function getInstance() : ?self {
 		return self::$instance;
 	}
 
@@ -1051,6 +1051,7 @@ class MyPlot extends PluginBase
         if(($ess = $this->getServer()->getPluginManager()->getPlugin('NGEssentials')) === null) {
             $this->getServer()->getPluginManager()->disablePlugin($this);
             $this->getServer()->shutdown();
+            self::$instance = null;
             return;
         }
 	    */
@@ -1109,7 +1110,9 @@ class MyPlot extends PluginBase
 	}
 
 	public function onDisable() : void {
-		if($this->dataProvider !== null)
-			$this->dataProvider->close();
+		if($this->dataProvider !== null){
+            $this->dataProvider->close();
+        }
+		self::$instance = null;
 	}
 }
