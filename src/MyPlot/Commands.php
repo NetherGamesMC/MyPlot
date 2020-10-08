@@ -223,7 +223,8 @@ class Commands extends Command implements PluginOwned
 		if(!isset($args[0])) {
 			$args[0] = "help";
 			if($sender instanceof Player and $plugin->getConfig()->get("UI Forms", true)) {
-				$sender->sendForm(new MainForm($sender, $this->subCommands));
+			    $form = new MainForm($sender, $this->subCommands);
+			    $form->sendForm();
 				return true;
 			}
 		}

@@ -1141,7 +1141,7 @@ class MyPlot extends PluginBase
         }
 
         foreach (["Creative", "Mega", "Platinum"] as $world){
-            $this->getServer()->getWorldManager()->getWorldByName($world)->save(true);
+            //$this->getServer()->getWorldManager()->getWorldByName($world)->save(true);todo uncomment
         }
 
 		self::$instance = null;

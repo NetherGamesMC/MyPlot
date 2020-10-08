@@ -2,16 +2,15 @@
 declare(strict_types=1);
 namespace MyPlot\forms;
 
-use dktapps\pmforms\MenuOption;
+use libforms\elements\Button;
 use MyPlot\MyPlot;
 use MyPlot\subcommand\SubCommand;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use function ucfirst;
+use function var_dump;
 
 class MainForm extends SimpleMyPlotForm {
-
-	/** @var SubCommand[] $link */
-	private $link = [];
 
 	/**
 	 * MainForm constructor.
@@ -28,25 +27,32 @@ class MainForm extends SimpleMyPlotForm {
 
 		$elements = [];
 		foreach($subCommands as $name => $command) {
-			if(!$command->canUse($player) or $command->getForm($player) === null)
-				continue;
+			if(!$command->canUse($player) or $command->getForm($player) === null){
+                continue;
+            }
+
 			$name = (new \ReflectionClass($command))->getShortName();
 			$name = preg_replace('/([a-z])([A-Z])/s','$1 $2', $name);
 			$length = strlen($name) - strlen("Sub Command");
 			$name = substr($name, 0, $length);
-			$elements[] = new MenuOption(TextFormat::DARK_RED.ucfirst($name));
-			$this->link[] = $command;
+			var_dump($name);
+			$elements[] = new Button(TextFormat::DARK_RED . ucfirst($name), static function(Player $player) use ($command){
+			    $form = $command->getForm($player);
+
+			    if(!$form instanceof SimpleMyPlotForm /*|| !$form instanceof ComplexMyPlotForm*/){
+			        return;
+                }
+
+			    $form->setPlayer($player); //just added safety..
+                $form->setPlot($this->plot);
+                $form->sendForm();
+            });
 		}
 		parent::__construct(
+		    $player,
 			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", ["Main"]),
 			"",
-			$elements,
-			function(Player $player, int $selectedOption) : void {
-				$form = $this->link[$selectedOption]->getForm($player);
-				$form->setPlot($this->plot);
-				$player->sendForm($form);
-			},
-			function(Player $player) : void {}
+			$elements
 		);
 	}
 }
