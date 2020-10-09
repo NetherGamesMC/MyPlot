@@ -1,0 +1,13 @@
+parameters:
+    level: 6
+
+    checkMissingIterableValueType: false
+
+    paths:
+        - /source/src
+    bootstrapFiles:
+        - phar:///pocketmine/PocketMine-MP.phar/vendor/autoload.php
+    scanDirectories:
+        - /source/src
+        - /source/NGEssentials/src
+        - phar:///source/PharBuilder/libasynql.phar/src
