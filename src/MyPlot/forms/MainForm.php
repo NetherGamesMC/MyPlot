@@ -8,7 +8,6 @@ use MyPlot\subcommand\SubCommand;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use function ucfirst;
-use function var_dump;
 
 class MainForm extends SimpleMyPlotForm {
 
@@ -27,7 +26,7 @@ class MainForm extends SimpleMyPlotForm {
 
 		$elements = [];
 		foreach($subCommands as $name => $command) {
-			if(!$command->canUse($player) or $command->getForm($player) === null){
+            if(!$command->canUse($player) or ($form = $command->getForm($player)) === null){
                 continue;
             }
 
@@ -35,15 +34,14 @@ class MainForm extends SimpleMyPlotForm {
 			$name = preg_replace('/([a-z])([A-Z])/s','$1 $2', $name);
 			$length = strlen($name) - strlen("Sub Command");
 			$name = substr($name, 0, $length);
-			var_dump($name);
-			$elements[] = new Button(TextFormat::DARK_RED . ucfirst($name), static function(Player $player) use ($command){
-			    $form = $command->getForm($player);
 
-			    if(!$form instanceof SimpleMyPlotForm /*|| !$form instanceof ComplexMyPlotForm*/){
+			$elements[] = new Button(TextFormat::DARK_RED . ucfirst($name), function(Player $player) use ($form){
+                /** @var SimpleMyPlotForm|ComplexMyPlotForm|null $form */
+                if($form === null){
 			        return;
                 }
 
-			    $form->setPlayer($player); //just added safety..
+			    $form->setPlayer($player); //don't remove this..
                 $form->setPlot($this->plot);
                 $form->sendForm();
             });
