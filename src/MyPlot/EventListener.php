@@ -315,14 +315,22 @@ class EventListener implements Listener
 			if(strpos((string) $plot, "-0")) {
 				return;
 			}
-			$ev = new MyPlotPlayerEnterPlotEvent($plot, $event->getPlayer());
+			if($event instanceof EntityTeleportEvent){
+                $player = $event->getEntity();
+                if(!$player instanceof Player){
+                    return;
+                }
+            }else{
+			    $player = $event->getPlayer();
+            }
+			$ev = new MyPlotPlayerEnterPlotEvent($plot, $player);
 			if($event->isCancelled()) {
 				$ev->cancel();
 			}else{
 				$ev->uncancel();
 			}
-			$username = $event->getPlayer()->getName();
-			if($plot->owner !== $username and ($plot->isDenied($username) or $plot->isDenied("*")) and !$event->getPlayer()->hasPermission("myplot.admin.denyplayer.bypass")) {
+			$username = $player->getName();
+			if($plot->owner !== $username and ($plot->isDenied($username) or $plot->isDenied("*")) and !$player->hasPermission("myplot.admin.denyplayer.bypass")) {
 				$ev->cancel();
 			}
 			$ev->call();
