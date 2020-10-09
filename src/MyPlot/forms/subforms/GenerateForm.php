@@ -50,7 +50,7 @@ class GenerateForm extends ComplexMyPlotForm
             null,
             TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("generate.form")]),
             $elements,
-            function (Player $player, array $data) use ($plugin, $elements) {
+            function (Player $player, array $data) use ($plugin) {
                 $world = array_shift($data);
                 if ($player->getServer()->getWorldManager()->isWorldGenerated($world)) {
                     $player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("generate.exists", [$world]));

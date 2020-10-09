@@ -2,9 +2,8 @@
 declare(strict_types=1);
 namespace MyPlot\forms\subforms;
 
-use dktapps\pmforms\CustomFormResponse;
-use dktapps\pmforms\element\Input;
-use dktapps\pmforms\element\Label;
+use libforms\elements\Input;
+use libforms\elements\Label;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\MyPlot;
 use pocketmine\form\FormValidationException;
@@ -25,55 +24,22 @@ class CloneForm extends ComplexMyPlotForm {
 			$plot->Z = "";
 		}
 		parent::__construct(
+		    $player,
 			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("clone.form")]),
 			[
-				new Label(
-					"0",
-					$plugin->getLanguage()->get("clone.formlabel1")
-				),
-				new Input(
-					"1",
-					$plugin->getLanguage()->get("clone.formxcoord"),
-					"2",
-					(string)$plot->X
-				),
-				new Input(
-					"2",
-					$plugin->getLanguage()->get("clone.formzcoord"),
-					"-4",
-					(string)$plot->Z
-				),
-				new Input(
-					"3",
-					$plugin->getLanguage()->get("clone.formworld"),
-					"world",
-					$player->getWorld()->getFolderName()
-				),
-				new Label(
-					"4",
-					$plugin->getLanguage()->get("clone.formlabel2")
-				),
-				new Input(
-					"5",
-					$plugin->getLanguage()->get("clone.formxcoord"),
-					"2"
-				),
-				new Input(
-					"6",
-					$plugin->getLanguage()->get("clone.formzcoord"),
-					"-4"
-				),
-				new Input(
-					"7",
-					$plugin->getLanguage()->get("clone.formworld"),
-					"world",
-					$player->getWorld()->getFolderName()
-				)
+				new Label($plugin->getLanguage()->get("clone.formlabel1")),
+				new Input($plugin->getLanguage()->get("clone.formxcoord"), "2", (string)$plot->X),
+				new Input($plugin->getLanguage()->get("clone.formzcoord"), "-4", (string)$plot->Z),
+				new Input($plugin->getLanguage()->get("clone.formworld"), "world", $player->getWorld()->getFolderName()),
+				new Label($plugin->getLanguage()->get("clone.formlabel2")),
+				new Input($plugin->getLanguage()->get("clone.formxcoord"), "2"),
+				new Input($plugin->getLanguage()->get("clone.formzcoord"), "-4"),
+				new Input($plugin->getLanguage()->get("clone.formworld"), "world", $player->getWorld()->getFolderName())
 			],
-			function(Player $player, CustomFormResponse $response) use ($plugin) : void {
-				if(is_numeric($response->getString("1")) and is_numeric($response->getString("2")) and is_numeric($response->getString("5")) and is_numeric($response->getString("6"))) {
-					$originPlot = MyPlot::getInstance()->getProvider()->getPlot(empty($response->getString("3")) ? $this->player->getWorld()->getFolderName() : $response->getString("3"), (int)$response->getString("1"), (int)$response->getString("2"));
-					$clonedPlot = MyPlot::getInstance()->getProvider()->getPlot(empty($response->getString("7")) ? $this->player->getWorld()->getFolderName() : $response->getString("7"), (int)$response->getString("5"), (int)$response->getString("6"));
+			function(Player $player, array $data) use ($plugin) : void {
+				if(is_numeric($data[1]) and is_numeric($data[2]) and is_numeric($data[5]) and is_numeric($data[6])) {
+					$originPlot = MyPlot::getInstance()->getProvider()->getPlot(empty($data[3]) ? $this->player->getWorld()->getFolderName() : $data[3], (int)$data[1], (int)$data[2]);
+					$clonedPlot = MyPlot::getInstance()->getProvider()->getPlot(empty($data[7]) ? $this->player->getWorld()->getFolderName() : $data[7], (int)$data[5], (int)$data[6]);
 				}else
 					throw new FormValidationException("Unexpected form data returned");
 

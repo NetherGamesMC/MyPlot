@@ -36,7 +36,7 @@ class AddHelperForm extends ComplexMyPlotForm {
 						}, $players
 					),
                     -1,
-                    static function(Player $player, int $data) use ($plugin){
+                    function(Player $player, int $data) use ($plugin){
                         $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name")." ".$plugin->getLanguage()->get("addhelper.name").' "'.$this->players[$data].'"', true);
                     }
 				)

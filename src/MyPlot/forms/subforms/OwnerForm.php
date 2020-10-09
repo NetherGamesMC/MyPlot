@@ -2,8 +2,7 @@
 declare(strict_types=1);
 namespace MyPlot\forms\subforms;
 
-use dktapps\pmforms\CustomFormResponse;
-use dktapps\pmforms\element\Dropdown;
+use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\MyPlot;
 use pocketmine\player\Player;
@@ -22,17 +21,18 @@ class OwnerForm extends ComplexMyPlotForm {
 			$this->players[] = $player->getName();
 		}
 		parent::__construct(
+		    null,
 			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("setowner.form")]),
 			[
 				new Dropdown(
-					"0",
 					$plugin->getLanguage()->get("setowner.dropdown"),
-					$players
+					$players,
+                    -1,
+                    function(Player $player, int $data) use ($plugin) : void {
+                        $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name")." ".$plugin->getLanguage()->get("setowner.name").' "'.$this->players[$data].'"', true);
+                    }
 				)
-			],
-			function(Player $player, CustomFormResponse $response) use ($plugin) : void {
-				$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name")." ".$plugin->getLanguage()->get("setowner.name").' "'.$response->getString("0").'"', true);
-			}
+			]
 		);
 	}
 }

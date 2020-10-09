@@ -2,8 +2,7 @@
 declare(strict_types=1);
 namespace MyPlot\forms\subforms;
 
-use dktapps\pmforms\CustomFormResponse;
-use dktapps\pmforms\element\Input;
+use libforms\elements\Input;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\MyPlot;
 use pocketmine\form\FormValidationException;
@@ -25,35 +24,22 @@ class ClaimForm extends ComplexMyPlotForm {
 			$plot->Z = "";
 		}
 		parent::__construct(
+		    $player,
 			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("claim.form")]),
 			[
-				new Input(
-					"0",
-					$plugin->getLanguage()->get("claim.formxcoord"),
-					"2",
-					(string)$plot->X
-				),
-				new Input(
-					"1",
-					$plugin->getLanguage()->get("claim.formzcoord"),
-					"2",
-					(string)$plot->Z
-				),
-				new Input(
-					"2",
-					$plugin->getLanguage()->get("claim.formworld"),
-					"world",
-					$player->getWorld()->getFolderName()
-				)
+				new Input($plugin->getLanguage()->get("claim.formxcoord"), "2", (string)$plot->X),
+				new Input($plugin->getLanguage()->get("claim.formzcoord"), "2", (string)$plot->Z),
+				new Input($plugin->getLanguage()->get("claim.formworld"), "world", $player->getWorld()->getFolderName())
 			],
-			function(Player $player, CustomFormResponse $response) use ($plugin) : void {
-				if(is_numeric($response->getString("0")) and is_numeric($response->getString("1")))
-					$data = MyPlot::getInstance()->getProvider()->getPlot(
-						empty($response->getString("2")) ? $this->player->getWorld()->getFolderName() : $response->getString("2"),
-						(int)$response->getString("0"),
-						(int)$response->getString("1")
-					);
-				elseif(empty($response->getString("0")) or empty($response->getString("1"))) {
+			function(Player $player, array $data) use ($plugin) : void {
+
+				if(is_numeric($data[0]) and is_numeric($data[1])) {
+                    $data = MyPlot::getInstance()->getProvider()->getPlot(
+                        empty($data[2]) ? $this->player->getWorld()->getFolderName() : $data[2],
+                        (int)$data[0],
+                        (int)$data[1]
+                    );
+                } elseif(empty($data[0]) or empty($data[1])) {
 					$plot = MyPlot::getInstance()->getPlotByPosition($this->player->getPosition());
 					if($plot === null) {
 						$this->player->sendForm(new self($this->player));

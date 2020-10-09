@@ -2,8 +2,7 @@
 declare(strict_types=1);
 namespace MyPlot\forms\subforms;
 
-use dktapps\pmforms\CustomFormResponse;
-use dktapps\pmforms\element\Dropdown;
+use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\MyPlot;
 use pocketmine\player\Player;
@@ -17,23 +16,25 @@ class KickForm extends ComplexMyPlotForm {
 		$plugin = MyPlot::getInstance();
 		$players = [];
 		foreach($plugin->getServer()->getOnlinePlayers() as $player) {
-			if(isset($this->plot) and !$plugin->getPlotByPosition($player)->isSame($this->plot))
-				continue;
+			if(isset($this->plot) and !$plugin->getPlotByPosition($player->getPosition())->isSame($this->plot)) {
+                continue;
+            }
 			$players[] = $player->getDisplayName();
 			$this->players[] = $player->getName();
 		}
 		parent::__construct(
+		    null,
 			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("kick.form")]),
 			[
 				new Dropdown(
-					"0",
 					$plugin->getLanguage()->get("kick.dropdown"),
-					$players
+					$players,
+                    -1,
+                    function(Player $player, int $data) use ($plugin) : void {
+                        $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name")." ".$plugin->getLanguage()->get("kick.name").' "'.$this->players[$data].'"', true);
+                    }
 				)
 			],
-			function(Player $player, CustomFormResponse $response) use ($plugin) : void {
-				$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name")." ".$plugin->getLanguage()->get("kick.name").' "'.$this->players[$response->getInt("0")].'"', true);
-			}
 		);
 	}
 }

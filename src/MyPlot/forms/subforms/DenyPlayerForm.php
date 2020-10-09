@@ -2,8 +2,7 @@
 declare(strict_types=1);
 namespace MyPlot\forms\subforms;
 
-use dktapps\pmforms\CustomFormResponse;
-use dktapps\pmforms\element\Dropdown;
+use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\MyPlot;
 use MyPlot\Plot;
@@ -26,19 +25,20 @@ class DenyPlayerForm extends ComplexMyPlotForm {
 			$this->players[] = $player->getName();
 		}
 		parent::__construct(
+		    null,
 			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("denyplayer.form")]),
 			[
 				new Dropdown(
-					"0",
 					$plugin->getLanguage()->get("denyplayer.dropdown"),
 					array_map(function(string $text) {
 						return TextFormat::DARK_BLUE.$text;
-					}, $players)
+					}, $players),
+                    -1,
+                    function (Player $player, int $data) use ($plugin){
+                        $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name")." ".$plugin->getLanguage()->get("denyplayer.name").' "'.$this->players[$data].'"', true);
+                    }
 				)
-			],
-			function(Player $player, CustomFormResponse $response) use ($plugin) : void {
-				$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name")." ".$plugin->getLanguage()->get("denyplayer.name").' "'.$this->players[$response->getInt("0")].'"', true);
-			}
+			]
 		);
 	}
 }

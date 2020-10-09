@@ -2,9 +2,8 @@
 declare(strict_types=1);
 namespace MyPlot\forms\subforms;
 
-use dktapps\pmforms\CustomFormResponse;
-use dktapps\pmforms\element\Dropdown;
-use dktapps\pmforms\element\Label;
+use libforms\elements\Dropdown;
+use libforms\elements\Label;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\MyPlot;
 use MyPlot\subcommand\BiomeSubCommand;
@@ -19,48 +18,33 @@ class InfoForm extends ComplexMyPlotForm {
 			$this->plot = $plugin->getPlotByPosition($player->getPosition());
 
 		parent::__construct(
+		    $player,
 			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("info.form")]),
 			[
-				new Label(
-					"0",
-					$plugin->getLanguage()->translateString("info.formcoords", [(string)$this->plot])
-				),
-				new Label(
-					"1",
-					$plugin->getLanguage()->translateString("info.formowner", [TextFormat::BOLD.$this->plot->owner])
-				),
-				new Label(
-					"2",
-					$plugin->getLanguage()->translateString("info.formpname", [TextFormat::BOLD.$this->plot->name])
-				),
+				new Label($plugin->getLanguage()->translateString("info.formcoords", [(string)$this->plot])),
+				new Label($plugin->getLanguage()->translateString("info.formowner", [TextFormat::BOLD.$this->plot->owner])),
+				new Label($plugin->getLanguage()->translateString("info.formpname", [TextFormat::BOLD.$this->plot->name])),
 				new Dropdown(
-					"3",
 					$plugin->getLanguage()->get("info.formhelpers"),
 					empty($this->plot->helpers) ? [TextFormat::DARK_BLUE.$plugin->getLanguage()->get("info.formnohelpers")] : array_map(function(string $text) {
 						return TextFormat::DARK_BLUE.$text;
 					}, $this->plot->helpers)
 				),
 				new Dropdown(
-					"4",
 					$plugin->getLanguage()->get("info.formdenied"),
 					empty($this->plot->denied) ? [TextFormat::DARK_BLUE.$plugin->getLanguage()->get("info.formnodenied")] : array_map(function(string $text) {
 						return TextFormat::DARK_BLUE.$text;
 					}, $this->plot->denied)
 				),
 				new Dropdown(
-					"5",
 					$plugin->getLanguage()->get("info.formbiome"),
 					array_map(function(string $text) {
 						return TextFormat::DARK_BLUE.ucfirst(strtolower(str_replace("_", " ", $text)));
 					}, array_keys(BiomeSubCommand::BIOMES)),
 					(int)array_search($this->plot->biome, array_keys(BiomeSubCommand::BIOMES))
 				),
-				new Label(
-					"6",
-					$plugin->getLanguage()->translateString("info.formpvp", [$this->plot->pvp ? "Enabled" : "Disabled"])  // TODO: translations
-				)
-			],
-			function(Player $player, CustomFormResponse $response) : void{}
+				new Label($plugin->getLanguage()->translateString("info.formpvp", [$this->plot->pvp ? "Enabled" : "Disabled"]))  // TODO: translations)
+			]
 		);
 	}
 }

@@ -2,8 +2,7 @@
 declare(strict_types=1);
 namespace MyPlot\forms\subforms;
 
-use dktapps\pmforms\CustomFormResponse;
-use dktapps\pmforms\element\Input;
+use libforms\elements\Input;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\MyPlot;
 use pocketmine\player\Player;
@@ -17,18 +16,18 @@ class NameForm extends ComplexMyPlotForm {
 			$this->plot = $plugin->getPlotByPosition($player->getPosition());
 
 		parent::__construct(
+		    $player,
 			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("name.form")]),
 			[
 				new Input(
-					"0",
 					$plugin->getLanguage()->get("name.formtitle"),
 					$player->getDisplayName()."'s Plot",
-					$this->plot->name
+					$this->plot->name,
+                    function(Player $player, string $data) use ($plugin) : void {
+                        $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name")." ".$plugin->getLanguage()->get("name.name").' "'.$data.'"', true);
+                    }
 				)
-			],
-			function(Player $player, CustomFormResponse $response) use ($plugin) : void {
-				$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name")." ".$plugin->getLanguage()->get("name.name").' "'.$response->getString("0").'"', true);
-			}
+			]
 		);
 	}
 }
