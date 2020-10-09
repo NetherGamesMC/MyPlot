@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\forms\subforms;
 
 use libforms\elements\Input;
@@ -9,7 +10,7 @@ use pocketmine\form\FormValidationException;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class ClaimForm extends ComplexMyPlotForm {
+class ClaimForm extends ComplexMyPlotForm{
 
 	/** @var Player $player */
 	private $player;
@@ -24,8 +25,8 @@ class ClaimForm extends ComplexMyPlotForm {
 			$plot->Z = "";
 		}
 		parent::__construct(
-		    $player,
-			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("claim.form")]),
+			$player,
+			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("claim.form")]),
 			[
 				new Input($plugin->getLanguage()->get("claim.formxcoord"), "2", (string)$plot->X),
 				new Input($plugin->getLanguage()->get("claim.formzcoord"), "2", (string)$plot->Z),
@@ -34,19 +35,19 @@ class ClaimForm extends ComplexMyPlotForm {
 			function(Player $player, array $data) use ($plugin) : void {
 
 				if(is_numeric($data[0]) and is_numeric($data[1])) {
-                    $data = MyPlot::getInstance()->getProvider()->getPlot(
-                        empty($data[2]) ? $this->player->getWorld()->getFolderName() : $data[2],
-                        (int)$data[0],
-                        (int)$data[1]
-                    );
-                } elseif(empty($data[0]) or empty($data[1])) {
+					$data = MyPlot::getInstance()->getProvider()->getPlot(
+						empty($data[2]) ? $this->player->getWorld()->getFolderName() : $data[2],
+						(int)$data[0],
+						(int)$data[1]
+					);
+				}elseif(empty($data[0]) or empty($data[1])){
 					$plot = MyPlot::getInstance()->getPlotByPosition($this->player->getPosition());
 					if($plot === null) {
 						$this->player->sendForm(new self($this->player));
 						throw new FormValidationException("Unexpected form data returned");
 					}
 					$data = $plot;
-				}else {
+				}else{
 					throw new FormValidationException("Unexpected form data returned");
 				}
 
@@ -60,7 +61,7 @@ class ClaimForm extends ComplexMyPlotForm {
 				}
 				$maxPlots = $plugin->getMaxPlotsOfPlayer($player);
 				$plotsOfPlayer = 0;
-				foreach($plugin->getPlotLevels() as $level => $settings) {
+				foreach($plugin->getPlotLevels() as $level => $settings){
 					$level = $plugin->getServer()->getWorldManager()->getWorldByName((string)$level);
 					if(!$level->isClosed()) {
 						$plotsOfPlayer += count($plugin->getPlotsOfPlayer($player->getName(), $level->getFolderName()));

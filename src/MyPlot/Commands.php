@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot;
 
 //use jasonwynn10\EasyCommandAutofill\Main;
@@ -223,15 +224,15 @@ class Commands extends Command implements PluginOwned
 		if(!isset($args[0])) {
 			$args[0] = "help";
 			if($sender instanceof Player and $plugin->getConfig()->get("UI Forms", true)) {
-			    $form = new MainForm($sender, $this->subCommands);
-			    $form->sendForm();
+				$form = new MainForm($sender, $this->subCommands);
+				$form->sendForm();
 				return true;
 			}
 		}
 		$subCommand = strtolower(array_shift($args));
 		if(isset($this->subCommands[$subCommand])) {
 			$command = $this->subCommands[$subCommand];
-		}elseif(isset($this->aliasSubCommands[$subCommand])) {
+		}elseif(isset($this->aliasSubCommands[$subCommand])){
 			$command = $this->aliasSubCommands[$subCommand];
 		}else{
 			$sender->sendMessage(TextFormat::RED . $plugin->getLanguage()->get("command.unknown"));

@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\forms;
 
 use MyPlot\Plot;
 
-interface MyPlotForm {
+interface MyPlotForm{
 	/**
 	 * @param Plot|null $plot
 	 *

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\forms\subforms;
 
 use libforms\elements\Input;
@@ -10,7 +11,7 @@ use pocketmine\form\FormValidationException;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class CloneForm extends ComplexMyPlotForm {
+class CloneForm extends ComplexMyPlotForm{
 
 	/** @var Player $player */
 	private $player;
@@ -24,8 +25,8 @@ class CloneForm extends ComplexMyPlotForm {
 			$plot->Z = "";
 		}
 		parent::__construct(
-		    $player,
-			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("clone.form")]),
+			$player,
+			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("clone.form")]),
 			[
 				new Label($plugin->getLanguage()->get("clone.formlabel1")),
 				new Input($plugin->getLanguage()->get("clone.formxcoord"), "2", (string)$plot->X),

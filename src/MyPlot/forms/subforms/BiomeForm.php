@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\forms\subforms;
 
 use libforms\elements\Button;
@@ -8,7 +9,7 @@ use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class BiomeForm extends SimpleMyPlotForm {
+class BiomeForm extends SimpleMyPlotForm{
 
 	/**
 	 * BiomeForm constructor.
@@ -19,18 +20,18 @@ class BiomeForm extends SimpleMyPlotForm {
 		$plugin = MyPlot::getInstance();
 
 		$elements = [];
-		foreach($biomes as $biomeName) {
+		foreach($biomes as $biomeName){
 			$elements[] = new Button(
-			    TextFormat::DARK_RED.ucfirst(strtolower(str_replace("_", " ", $biomeName))),
-                static function(Player $player) use ($plugin, $biomeName){
-                    $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name")." ".$plugin->getLanguage()->get("biome.name").' "'.$biomeName.'"', true);
-                }
-            ); // TODO: add images
+				TextFormat::DARK_RED . ucfirst(strtolower(str_replace("_", " ", $biomeName))),
+				static function(Player $player) use ($plugin, $biomeName) {
+					$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("biome.name") . ' "' . $biomeName . '"', true);
+				}
+			); // TODO: add images
 		}
 
 		parent::__construct(
-		    null,
-			TextFormat::BLACK.$plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("biome.form")]),
+			null,
+			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("biome.form")]),
 			"",
 			$elements
 		);
