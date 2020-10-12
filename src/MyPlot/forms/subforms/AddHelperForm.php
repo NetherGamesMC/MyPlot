@@ -47,6 +47,6 @@ class AddHelperForm extends ComplexMyPlotForm{
 
 	public function getName(): string
     {
-        return "Add Helper";
+        return "Add a helper";
     }
 }

@@ -39,6 +39,6 @@ class BiomeForm extends SimpleMyPlotForm{
 
 	public function getName(): string
     {
-        return "Change Biome";
+        return "Change plot biome";
     }
 }
