@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace MyPlot\forms\subforms;
 
 use libforms\elements\Button;
+use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\forms\SimpleMyPlotForm;
 use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class BiomeForm extends SimpleMyPlotForm{
+class BiomeForm extends SimpleMyPlotForm implements PlotSettingsForm{
 
 	/**
 	 * BiomeForm constructor.

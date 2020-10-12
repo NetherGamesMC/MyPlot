@@ -5,11 +5,12 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
+use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class RemoveHelperForm extends ComplexMyPlotForm{
+class RemoveHelperForm extends ComplexMyPlotForm implements PlotSettingsForm{
 	public function __construct() {
 		$plugin = MyPlot::getInstance();
 		parent::__construct(

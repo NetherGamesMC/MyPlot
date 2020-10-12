@@ -5,11 +5,12 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Input;
 use MyPlot\forms\ComplexMyPlotForm;
+use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class NameForm extends ComplexMyPlotForm{
+class NameForm extends ComplexMyPlotForm implements PlotSettingsForm{
 	public function __construct(Player $player) {
 		$plugin = MyPlot::getInstance();
 

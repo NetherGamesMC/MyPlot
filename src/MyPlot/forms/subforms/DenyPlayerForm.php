@@ -5,12 +5,13 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
+use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class DenyPlayerForm extends ComplexMyPlotForm{
+class DenyPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 
 	/** @var string[] $players */
 	private $players = [];
