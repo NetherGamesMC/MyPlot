@@ -36,10 +36,11 @@ class MainForm extends SimpleMyPlotForm{
             $form->setPlot($this->plot);
 
 			$elements[] = new Button($form->getName(), static function(Player $player) use ($form) {
-			    if($form instanceof ButtonForm){
-			        $form->onButtonClick();
+                if($form instanceof ButtonForm){
+			        $form->onButtonClick($player);
 			        return;
                 }
+
 			    $form->sendForm();
 			});
 		}

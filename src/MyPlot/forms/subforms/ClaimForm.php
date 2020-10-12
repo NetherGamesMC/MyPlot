@@ -60,11 +60,10 @@ class ClaimForm extends ComplexMyPlotForm implements ButtonForm {
         return $name;
     }
     
-    public function onButtonClick(): void
+    public function onButtonClick(Player $player): void
     {
         $plugin = MyPlot::getInstance();
         $plot = $this->plot;
-        $player = $this->player;
 
         if ($plot === null) {
             $player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString('notinplot'));
