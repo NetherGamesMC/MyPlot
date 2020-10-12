@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MyPlot\forms;
 
 use libforms\elements\Button;
+use MyPlot\forms\interfaces\ButtonForm;
 use MyPlot\MyPlot;
 use MyPlot\subcommand\SubCommand;
 use pocketmine\player\Player;
@@ -35,7 +36,10 @@ class MainForm extends SimpleMyPlotForm{
             $form->setPlot($this->plot);
 
 			$elements[] = new Button($form->getName(), static function(Player $player) use ($form) {
-				$form->sendForm();
+			    if($form instanceof ButtonForm){
+			        $form->onButtonClick();
+			        return;
+                }
 			});
 		}
 		parent::__construct(
