@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace MyPlot\forms;
+namespace MyPlot\forms\interfaces;
 
 use MyPlot\Plot;
 

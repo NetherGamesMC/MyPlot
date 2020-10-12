@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace MyPlot\forms;
 
 use libforms\SimpleForm;
+use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
-abstract class SimpleMyPlotForm extends SimpleForm implements MyPlotForm{
+abstract class SimpleMyPlotForm extends SimpleForm implements MyPlotForm {
 
 	/** @var Plot|null $plot */
 	protected $plot;

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace MyPlot\subcommand;
 
-use MyPlot\forms\MyPlotForm;
+use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\OwnerForm;
 use MyPlot\Plot;
 use pocketmine\command\CommandSender;

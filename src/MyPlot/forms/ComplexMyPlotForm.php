@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MyPlot\forms;
 
 use libforms\CustomForm;
+use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\player\Player;

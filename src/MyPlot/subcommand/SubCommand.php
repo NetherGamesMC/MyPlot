@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace MyPlot\subcommand;
 
-use MyPlot\forms\MyPlotForm;
+use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\MyPlot;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
