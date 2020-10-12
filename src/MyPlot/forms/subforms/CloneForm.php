@@ -17,7 +17,7 @@ class CloneForm extends ComplexMyPlotForm{
 	private $player;
 
 	public function __construct(Player $player) {
-		$plugin = $this->plugin;
+		$plugin = MyPlot::getInstance();
 		$plot = $plugin->getPlotByPosition($player->getPosition());
 		if($plot === null) {
 			$plot = new \stdClass();
