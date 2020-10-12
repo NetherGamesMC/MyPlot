@@ -20,19 +20,18 @@ class WarpForm extends ComplexMyPlotForm{
 			$player,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("warp.form")]),
 			[
-				new Input($plugin->getLanguage()->get("warp.formxcoord"), "2"),
-				new Input($plugin->getLanguage()->get("warp.formzcoord"), "-4"),
-				new Input($plugin->getLanguage()->get("warp.formworld"), "world", $player->getWorld()->getFolderName())
+				new Input($plugin->getLanguage()->get("warp.formxcoord"), "0"),
+				new Input($plugin->getLanguage()->get("warp.formzcoord"), "0")
 			],
-			function(Player $player, array $data) use ($plugin) : void {
+			function(Player $player, ?array $data = []) use ($plugin) : void {
 				if(is_numeric($data[0]) and is_numeric($data[1])) {
 					$datum = [
 						(int)$data[0],
 						(int)$data[1],
-						empty($data[2]) ? $this->player->getWorld()->getFolderName() : $data[2]
+						$this->player->getWorld()->getFolderName()
 					];
 				}elseif(empty($data[0]) and empty($data[1])){
-					$this->player->sendForm(new self($this->player));
+				    $this->sendForm();
 					throw new FormValidationException("Invalid form data returned");
 				}else{
 					throw new FormValidationException("Unexpected form data returned");

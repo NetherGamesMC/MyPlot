@@ -60,7 +60,8 @@ class Commands extends Command implements PluginOwned
 			[$plugin->getLanguage()->get("command.alias")]
 		);
 		$this->setPermission("myplot.command");
-		$this->loadSubCommand(new HelpSubCommand($plugin, "help", $this));
+        $this->loadSubCommand(new WarpSubCommand($plugin, "warp"));
+        $this->loadSubCommand(new HelpSubCommand($plugin, "help", $this));
 		$this->loadSubCommand(new ClaimSubCommand($plugin, "claim"));
 		$this->loadSubCommand(new GenerateSubCommand($plugin, "generate"));
 		$this->loadSubCommand(new InfoSubCommand($plugin, "info"));
@@ -75,7 +76,6 @@ class Commands extends Command implements PluginOwned
 		$this->loadSubCommand(new HomesSubCommand($plugin, "homes"));
 		$this->loadSubCommand(new NameSubCommand($plugin, "name"));
 		$this->loadSubCommand(new GiveSubCommand($plugin, "give"));
-		$this->loadSubCommand(new WarpSubCommand($plugin, "warp"));
 		$this->loadSubCommand(new MiddleSubCommand($plugin, "middle"));
 		$this->loadSubCommand(new DenyPlayerSubCommand($plugin, "denyplayer"));
 		$this->loadSubCommand(new UnDenySubCommand($plugin, "undenyplayer"));
