@@ -90,7 +90,7 @@ class ClaimForm extends ComplexMyPlotForm{
 
 	public function getName(): string
     {
-        $plugin = $this->plugin;
+        $plugin = MyPlot::getInstance();
         $player = $this->player;
         $plot = $this->plot;
 

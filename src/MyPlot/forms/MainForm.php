@@ -40,7 +40,7 @@ class MainForm extends SimpleMyPlotForm{
 		}
 		parent::__construct(
 			$player,
-			TextFormat::BLACK . $this->plugin->getLanguage()->translateString("form.header", [$this->getName()]),
+			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$this->getName()]),
 			"",
 			$elements
 		);
