@@ -7,7 +7,6 @@ use libforms\elements\Button;
 use MyPlot\subcommand\SubCommand;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
-use function ucfirst;
 
 class MainForm extends SimpleMyPlotForm{
 
@@ -19,31 +18,28 @@ class MainForm extends SimpleMyPlotForm{
 
 		$elements = [];
 		foreach($subCommands as $name => $command){
+            /** @var SimpleMyPlotForm|ComplexMyPlotForm $form */
 			if(!$command->canUse($player) or ($form = $command->getForm($player)) === null) {
 				continue;
 			}
 
-			$name = (new \ReflectionClass($command))->getShortName();
-			$name = preg_replace('/([a-z])([A-Z])/s', '$1 $2', $name);
-			$length = strlen($name) - strlen("Sub Command");
-			$name = substr($name, 0, $length);
+            $form->setPlayer($player);
+            $form->setPlot($this->plot);
 
-			$elements[] = new Button(TextFormat::DARK_RED . ucfirst($name), function(Player $player) use ($form) {
-				/** @var SimpleMyPlotForm|ComplexMyPlotForm|null $form */
-				if($form === null) {
-					return;
-				}
-
-				$form->setPlayer($player); //don't remove this..
-				$form->setPlot($this->plot);
+			$elements[] = new Button($form->getName(), static function(Player $player) use ($form) {
 				$form->sendForm();
 			});
 		}
 		parent::__construct(
 			$player,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", ["Main"]),
+			TextFormat::BLACK . $this->plugin->getLanguage()->translateString("form.header", [$this->getName()]),
 			"",
 			$elements
 		);
 	}
+
+	public function getName(): string
+    {
+        return "Plots";
+    }
 }
