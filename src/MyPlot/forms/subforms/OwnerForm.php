@@ -5,6 +5,7 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
+use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
@@ -13,14 +14,13 @@ class OwnerForm extends ComplexMyPlotForm{
 	private $players = [];
 
 	public function __construct() {
-		$plugin = $this->plugin;
-		$players = [];
+		$plugin = MyPlot::getInstance();
 
+		$players = [];
 		foreach($plugin->getServer()->getOnlinePlayers() as $player){
 			$players[] = $player->getDisplayName();
 			$this->players[] = $player->getName();
 		}
-
 		parent::__construct(
 			null,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("setowner.form")]),

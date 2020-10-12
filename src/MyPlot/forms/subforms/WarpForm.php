@@ -5,6 +5,7 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Input;
 use MyPlot\forms\ComplexMyPlotForm;
+use MyPlot\MyPlot;
 use pocketmine\form\FormValidationException;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
@@ -14,8 +15,7 @@ class WarpForm extends ComplexMyPlotForm{
 	private $player;
 
 	public function __construct(Player $player) {
-		$plugin = $this->plugin;
-
+		$plugin = MyPlot::getInstance();
 		parent::__construct(
 			$player,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("warp.form")]),
