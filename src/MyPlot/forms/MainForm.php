@@ -40,6 +40,7 @@ class MainForm extends SimpleMyPlotForm{
 			        $form->onButtonClick();
 			        return;
                 }
+			    $form->sendForm();
 			});
 		}
 		parent::__construct(
