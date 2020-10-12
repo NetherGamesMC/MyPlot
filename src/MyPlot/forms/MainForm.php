@@ -18,11 +18,11 @@ class MainForm extends SimpleMyPlotForm{
 
 		$elements = [];
 		foreach($subCommands as $name => $command){
-            /** @var SimpleMyPlotForm|ComplexMyPlotForm $form */
 			if(!$command->canUse($player) or ($form = $command->getForm($player)) === null) {
 				continue;
 			}
 
+			/** @var SimpleMyPlotForm|ComplexMyPlotForm $form */
             $form->setPlayer($player);
             $form->setPlot($this->plot);
 
