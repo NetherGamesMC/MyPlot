@@ -63,11 +63,11 @@ class Commands extends Command implements PluginOwned
         $this->loadSubCommand(new WarpSubCommand($plugin, "warp"));
         $this->loadSubCommand(new HelpSubCommand($plugin, "help", $this));
 		$this->loadSubCommand(new ClaimSubCommand($plugin, "claim"));
-		$this->loadSubCommand(new GenerateSubCommand($plugin, "generate"));
+        $this->loadSubCommand(new AutoSubCommand($plugin, "auto"));
+        $this->loadSubCommand(new GenerateSubCommand($plugin, "generate"));
 		$this->loadSubCommand(new InfoSubCommand($plugin, "info"));
 		$this->loadSubCommand(new AddHelperSubCommand($plugin, "addhelper"));
 		$this->loadSubCommand(new RemoveHelperSubCommand($plugin, "removehelper"));
-		$this->loadSubCommand(new AutoSubCommand($plugin, "auto"));
 		$this->loadSubCommand(new ClearSubCommand($plugin, "clear"));
 		$this->loadSubCommand(new DisposeSubCommand($plugin, "dispose"));
 		$this->loadSubCommand(new ResetSubCommand($plugin, "reset"));
