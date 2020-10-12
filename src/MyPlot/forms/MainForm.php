@@ -4,11 +4,14 @@ declare(strict_types=1);
 namespace MyPlot\forms;
 
 use libforms\elements\Button;
+use libforms\FormManager;
 use MyPlot\forms\interfaces\ButtonForm;
+use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
 use MyPlot\subcommand\SubCommand;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use function strtolower;
 
 class MainForm extends SimpleMyPlotForm{
 
@@ -26,10 +29,19 @@ class MainForm extends SimpleMyPlotForm{
 		$this->plot = $plugin->getPlotByPosition($player->getPosition());
 
 		$elements = [];
+		$settingForms = [];
+
 		foreach($subCommands as $name => $command){
-			if(!$command->canUse($player) or ($form = $command->getForm($player)) === null) {
+            $form = $command->getForm($player);
+
+			if(!$command->canUse($player) || $form === null) {
 				continue;
 			}
+
+			if($form instanceof PlotSettingsForm){
+			    $settingForms[$name] = $form;
+			    continue;
+            }
 
 			/** @var SimpleMyPlotForm|ComplexMyPlotForm $form */
             $form->setPlayer($player);
@@ -44,6 +56,27 @@ class MainForm extends SimpleMyPlotForm{
 			    $form->sendForm();
 			});
 		}
+
+		// only add settings form if the player is inside a plot and is the plot owner or has admin perms
+		if($this->plot !== null && ((strtolower($this->plot->owner) === strtolower($player->getName())) || $player->hasPermission('nethergames.admin'))){
+		    $elements[] = new Button("Plot Settings", function (Player $player) use ($settingForms){
+                $settings = FormManager::createSimpleForm($player);
+
+                foreach ($settingForms as $name => $form){
+                    $form->setPlayer($player);
+                    $form->setPlot($this->plot);
+
+                    $button = new Button($form->getName(), function (Player $player) use ($form){
+                        $form->sendForm();
+                    });
+
+                    $settings->addButton($button);
+                }
+
+                $settings->sendForm();
+            });
+        }
+
 		parent::__construct(
 			$player,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$this->getName()]),
