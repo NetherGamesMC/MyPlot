@@ -5,7 +5,6 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
-use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
@@ -14,7 +13,7 @@ class GiveForm extends ComplexMyPlotForm{
 	private $players = [];
 
 	public function __construct() {
-		$plugin = MyPlot::getInstance();
+		$plugin = $this->plugin;
 		$players = [];
 		foreach($plugin->getServer()->getOnlinePlayers() as $player){
 			$players[] = $player->getDisplayName();
@@ -35,4 +34,9 @@ class GiveForm extends ComplexMyPlotForm{
 			]
 		);
 	}
+
+    public function getName(): string
+    {
+        return "Give";
+    }
 }

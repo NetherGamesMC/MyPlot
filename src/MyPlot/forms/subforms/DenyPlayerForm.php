@@ -42,4 +42,9 @@ class DenyPlayerForm extends ComplexMyPlotForm{
 			]
 		);
 	}
+
+    public function getName(): string
+    {
+        return "Ban a Player";
+    }
 }

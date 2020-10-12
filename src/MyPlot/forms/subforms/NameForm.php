@@ -31,4 +31,9 @@ class NameForm extends ComplexMyPlotForm{
 			]
 		);
 	}
+
+    public function getName(): string
+    {
+        return "Change plot name";
+    }
 }

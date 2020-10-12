@@ -28,4 +28,9 @@ class HomeForm extends SimpleMyPlotForm{
 			$elements
 		);
 	}
+
+    public function getName(): string
+    {
+        return "Home";
+    }
 }

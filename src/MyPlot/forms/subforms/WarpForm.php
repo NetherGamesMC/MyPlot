@@ -42,4 +42,9 @@ class WarpForm extends ComplexMyPlotForm{
 			}
 		);
 	}
+
+    public function getName(): string
+    {
+        return "Warp";
+    }
 }

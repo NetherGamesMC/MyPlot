@@ -66,4 +66,9 @@ class CloneForm extends ComplexMyPlotForm{
 			}
 		);
 	}
+
+	public function getName(): string
+    {
+        return "Clone";
+    }
 }

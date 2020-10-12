@@ -33,4 +33,9 @@ class UndenyPlayerForm extends ComplexMyPlotForm{
 			]
 		);
 	}
+
+    public function getName(): string
+    {
+        return "Unban a player";
+    }
 }

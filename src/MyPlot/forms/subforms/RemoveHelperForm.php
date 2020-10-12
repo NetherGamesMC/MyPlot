@@ -33,4 +33,9 @@ class RemoveHelperForm extends ComplexMyPlotForm{
 			]
 		);
 	}
+
+    public function getName(): string
+    {
+        return "Remove a helper";
+    }
 }

@@ -9,6 +9,8 @@ use MyPlot\MyPlot;
 use pocketmine\form\FormValidationException;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use function count;
+use function strtolower;
 
 class ClaimForm extends ComplexMyPlotForm{
 
@@ -85,4 +87,37 @@ class ClaimForm extends ComplexMyPlotForm{
 			}
 		);
 	}
+
+	public function getName(): string
+    {
+        $plugin = $this->plugin;
+        $player = $this->player;
+        $plot = $this->plot;
+
+        if ($plot === null) {
+            $name = "§6Claim: §cNot standing inside a plot";
+        } else if ($plot->owner !== "") {
+            if (strtolower($plot->owner) === strtolower($player->getName())) {
+                $name = "§6Claim: §bYou own this plot";
+            } else {
+                $name = "§6Claim: §cPlot already claimed";
+            }
+        } else {
+            $maxPlots = $plugin->getMaxPlotsOfPlayer($player);
+            $plotsOfPlayer = count($plugin->getProvider()->getPlotsByOwner($player->getName(), $player->getWorld()->getFolderName()));
+            if ($plotsOfPlayer >= $maxPlots) {
+                $name = "§6Claim: §cReached your max plots";
+            } else {
+                $plotLevel = $plugin->getLevelSettings($plot->levelName);
+                $economy = $plugin->getEconomyProvider();
+                if ($economy !== null && !$economy->reduceMoney($player, $plotLevel->claimPrice)) {
+                    $name = "§6Claim: §cNot enough money";
+                } else {
+                    $name = "§6Claim: §aAvailable";
+                }
+            }
+        }
+
+        return $name;
+    }
 }

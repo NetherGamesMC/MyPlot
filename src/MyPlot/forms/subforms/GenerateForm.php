@@ -91,4 +91,9 @@ class GenerateForm extends ComplexMyPlotForm{
 			}
 		);
 	}
+
+    public function getName(): string
+    {
+        return "Generate";
+    }
 }

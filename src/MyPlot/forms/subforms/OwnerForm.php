@@ -36,4 +36,9 @@ class OwnerForm extends ComplexMyPlotForm{
 			]
 		);
 	}
+
+    public function getName(): string
+    {
+        return "Set owner";
+    }
 }

@@ -39,4 +39,9 @@ class KickForm extends ComplexMyPlotForm{
 			],
 		);
 	}
+
+    public function getName(): string
+    {
+        return "Kick a player";
+    }
 }

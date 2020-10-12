@@ -35,4 +35,9 @@ class BiomeForm extends SimpleMyPlotForm{
 			$elements
 		);
 	}
+
+	public function getName(): string
+    {
+        return "Change Biome";
+    }
 }
