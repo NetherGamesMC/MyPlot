@@ -20,7 +20,7 @@ class AutoForm extends ComplexMyPlotForm implements ButtonForm {
 
 		parent::__construct(
 			$player,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("claim.form")]),
+			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header"),
 			[]
 		);
 	}
