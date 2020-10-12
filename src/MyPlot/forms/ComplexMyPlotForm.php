@@ -10,7 +10,6 @@ use pocketmine\player\Player;
 
 abstract class ComplexMyPlotForm extends CustomForm implements MyPlotForm
 {
-
 	/** @var Plot|null $plot */
 	protected $plot;
     /** @var MyPlot */
