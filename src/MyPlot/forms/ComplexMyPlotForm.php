@@ -13,10 +13,14 @@ abstract class ComplexMyPlotForm extends CustomForm implements MyPlotForm
 
 	/** @var Plot|null $plot */
 	protected $plot;
+    /** @var MyPlot */
+    protected $plugin;
 
 	public function __construct(?Player $player, string $title, array $elements, ?\Closure $onSubmit = null) {
-		parent::__construct($player, $onSubmit ?? static function(Player $player) : void {
-				$player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
+	    $this->plugin = MyPlot::getInstance();
+
+		parent::__construct($player, $onSubmit ?? function(Player $player) : void {
+				$player->getServer()->dispatchCommand($player, $this->plugin->getLanguage()->get("command.name"), true);
 			}
 		);
 

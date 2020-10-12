@@ -6,14 +6,13 @@ namespace MyPlot\forms\subforms;
 use libforms\elements\Dropdown;
 use libforms\elements\Label;
 use MyPlot\forms\ComplexMyPlotForm;
-use MyPlot\MyPlot;
 use MyPlot\subcommand\BiomeSubCommand;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class InfoForm extends ComplexMyPlotForm{
 	public function __construct(Player $player) {
-		$plugin = MyPlot::getInstance();
+		$plugin = $this->plugin;
 
 		if(!isset($this->plot)) {
 			$this->plot = $plugin->getPlotByPosition($player->getPosition());

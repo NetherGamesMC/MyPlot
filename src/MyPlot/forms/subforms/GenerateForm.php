@@ -7,7 +7,6 @@ use libforms\elements\Input;
 use libforms\elements\Slider;
 use libforms\elements\Toggle;
 use MyPlot\forms\ComplexMyPlotForm;
-use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\player\Player;
@@ -16,7 +15,7 @@ use pocketmine\utils\TextFormat;
 class GenerateForm extends ComplexMyPlotForm{
 
 	public function __construct() {
-		$plugin = MyPlot::getInstance();
+		$plugin = $this->plugin;
 
 		$elements = [
 			"world" => new Input($plugin->getLanguage()->get("generate.formworld"), "plots"),

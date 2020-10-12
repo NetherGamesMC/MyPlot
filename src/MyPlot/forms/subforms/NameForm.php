@@ -5,16 +5,16 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Input;
 use MyPlot\forms\ComplexMyPlotForm;
-use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class NameForm extends ComplexMyPlotForm{
 	public function __construct(Player $player) {
-		$plugin = MyPlot::getInstance();
+		$plugin = $this->plugin;
 
-		if(!isset($this->plot))
-			$this->plot = $plugin->getPlotByPosition($player->getPosition());
+		if(!isset($this->plot)) {
+            $this->plot = $plugin->getPlotByPosition($player->getPosition());
+        }
 
 		parent::__construct(
 			$player,

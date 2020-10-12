@@ -5,7 +5,6 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
-use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
@@ -16,7 +15,7 @@ class DenyPlayerForm extends ComplexMyPlotForm{
 	private $players = [];
 
 	public function __construct(Plot $plot) {
-		$plugin = MyPlot::getInstance();
+		$plugin = $this->plugin;
 		$players = [];
 		if(!in_array("*", $plot->denied)) {
 			$players = ["*"];

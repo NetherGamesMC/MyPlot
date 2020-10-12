@@ -5,13 +5,13 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
-use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class UndenyPlayerForm extends ComplexMyPlotForm{
 	public function __construct() {
-		$plugin = MyPlot::getInstance();
+		$plugin = $this->plugin;
+
 		parent::__construct(
 			null,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("undenyplayer.form")]),
