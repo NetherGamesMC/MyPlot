@@ -9,7 +9,6 @@ use NetherGames\NGEssentials\lang\BaseLang;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
-use pocketmine\plugin\Plugin;
 use pocketmine\utils\TextFormat;
 
 abstract class BaseCommand extends Command
