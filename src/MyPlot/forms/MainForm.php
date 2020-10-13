@@ -37,14 +37,14 @@ class MainForm extends SimpleMyPlotForm{
 				continue;
 			}
 
+            /** @var SimpleMyPlotForm|ComplexMyPlotForm $form */
+            $form->setPlayer($player);
+            $form->setPlot($this->plot);
+
 			if($form instanceof PlotSettingsForm){
 			    $settingForms[$name] = $form;
 			    continue;
             }
-
-			/** @var SimpleMyPlotForm|ComplexMyPlotForm $form */
-            $form->setPlayer($player);
-            $form->setPlot($this->plot);
 
 			$elements[] = new Button($form->getName(), static function(Player $player) use ($form) {
                 if($form instanceof ButtonForm){
@@ -60,11 +60,9 @@ class MainForm extends SimpleMyPlotForm{
 		if($this->plot !== null && ((strtolower($this->plot->owner) === strtolower($player->getName())) || $player->hasPermission('nethergames.admin'))){
 		    $elements[] = new Button("Plot Settings", function (Player $player) use ($settingForms){
                 $settings = FormManager::createSimpleForm($player);
+                $settings->setTitle("Plot Settings");
 
                 foreach ($settingForms as $name => $form){
-                    $form->setPlayer($player);
-                    $form->setPlot($this->plot);
-
                     $button = new Button($form->getName(), function (Player $player) use ($form){
                         $form->sendForm();
                     });
