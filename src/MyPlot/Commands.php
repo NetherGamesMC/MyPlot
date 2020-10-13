@@ -66,15 +66,15 @@ class Commands extends Command implements PluginOwned
         $this->loadSubCommand(new AutoSubCommand($plugin, "auto"));
         $this->loadSubCommand(new GenerateSubCommand($plugin, "generate"));
 		$this->loadSubCommand(new InfoSubCommand($plugin, "info"));
+        $this->loadSubCommand(new NameSubCommand($plugin, "name"));
+        $this->loadSubCommand(new BiomeSubCommand($plugin, "biome"));
 		$this->loadSubCommand(new AddHelperSubCommand($plugin, "addhelper"));
 		$this->loadSubCommand(new RemoveHelperSubCommand($plugin, "removehelper"));
 		$this->loadSubCommand(new ClearSubCommand($plugin, "clear"));
 		$this->loadSubCommand(new DisposeSubCommand($plugin, "dispose"));
 		$this->loadSubCommand(new ResetSubCommand($plugin, "reset"));
-		$this->loadSubCommand(new BiomeSubCommand($plugin, "biome"));
 		$this->loadSubCommand(new HomeSubCommand($plugin, "home"));
 		$this->loadSubCommand(new HomesSubCommand($plugin, "homes"));
-		$this->loadSubCommand(new NameSubCommand($plugin, "name"));
 		$this->loadSubCommand(new GiveSubCommand($plugin, "give"));
 		$this->loadSubCommand(new MiddleSubCommand($plugin, "middle"));
 		$this->loadSubCommand(new DenyPlayerSubCommand($plugin, "denyplayer"));
