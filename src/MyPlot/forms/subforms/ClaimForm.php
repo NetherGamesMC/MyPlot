@@ -4,14 +4,14 @@ declare(strict_types=1);
 namespace MyPlot\forms\subforms;
 
 use MyPlot\forms\ComplexMyPlotForm;
-use MyPlot\forms\interfaces\ButtonForm;
+use MyPlot\forms\interfaces\PlotButtonForm;
 use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use function count;
 use function strtolower;
 
-class ClaimForm extends ComplexMyPlotForm implements ButtonForm {
+class ClaimForm extends ComplexMyPlotForm implements PlotButtonForm {
 
 	/** @var Player $player */
 	private $player;

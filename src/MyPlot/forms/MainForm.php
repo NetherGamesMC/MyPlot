@@ -5,7 +5,7 @@ namespace MyPlot\forms;
 
 use libforms\elements\Button;
 use libforms\FormManager;
-use MyPlot\forms\interfaces\ButtonForm;
+use MyPlot\forms\interfaces\PlotButtonForm;
 use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
 use MyPlot\subcommand\SubCommand;
@@ -47,7 +47,7 @@ class MainForm extends SimpleMyPlotForm{
             }
 
 			$elements[] = new Button($form->getName(), static function(Player $player) use ($form) {
-                if($form instanceof ButtonForm){
+                if($form instanceof PlotButtonForm){
 			        $form->onButtonClick($player);
 			        return;
                 }

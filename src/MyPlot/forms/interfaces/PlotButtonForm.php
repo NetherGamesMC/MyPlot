@@ -5,7 +5,7 @@ namespace MyPlot\forms\interfaces;
 
 use pocketmine\player\Player;
 
-interface ButtonForm{
+interface PlotButtonForm{
 
     public function onButtonClick(Player $player): void;
 }
