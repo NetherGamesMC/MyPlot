@@ -41,7 +41,7 @@ class MainForm extends SimpleMyPlotForm{
 				continue;
 			}
 
-            /** @var SimpleMyPlotForm|ComplexMyPlotForm $form */
+            /** @var SimpleMyPlotForm|ComplexMyPlotForm|ModalMyPlotForm $form */
             $form->setPlayer($player);
             $form->setPlot($this->plot);
 
