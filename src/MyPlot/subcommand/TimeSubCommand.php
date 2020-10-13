@@ -66,11 +66,6 @@ class TimeSubCommand extends SubCommand
 
     public function getForm(?Player $player = null): ?MyPlotForm
     {
-        if (!$player->hasPermission('nethergames.tier.platinum') || !$player->hasPermission('nethergames.vip.legend')) {
-            $player->sendMessage("§cYou don't have permission to change the time for your plot. Buy the §l§bLEGEND §r§crank at §bngmc.co/store §cto change it!");
-            return null;
-        }
-
         return new TimeForm($player);
     }
 }
