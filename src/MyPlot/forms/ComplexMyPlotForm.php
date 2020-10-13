@@ -5,12 +5,15 @@ namespace MyPlot\forms;
 
 use libforms\CustomForm;
 use MyPlot\forms\interfaces\MyPlotForm;
+use MyPlot\forms\traits\PlotTrait;
 use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
-abstract class ComplexMyPlotForm extends CustomForm implements MyPlotForm
-{
+abstract class ComplexMyPlotForm extends CustomForm implements MyPlotForm{
+
+    use PlotTrait;
+
 	/** @var Plot|null $plot */
 	protected $plot;
 
@@ -25,13 +28,5 @@ abstract class ComplexMyPlotForm extends CustomForm implements MyPlotForm
 		foreach($elements as $element){
 			$this->addElement($element);
 		}
-	}
-
-	public function setPlot(?Plot $plot) : void {
-		$this->plot = $plot;
-	}
-
-	public function getPlot() : ?Plot {
-		return $this->plot;
 	}
 }

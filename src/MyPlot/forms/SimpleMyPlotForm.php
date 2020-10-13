@@ -5,10 +5,13 @@ namespace MyPlot\forms;
 
 use libforms\SimpleForm;
 use MyPlot\forms\interfaces\MyPlotForm;
+use MyPlot\forms\traits\PlotTrait;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
 abstract class SimpleMyPlotForm extends SimpleForm implements MyPlotForm {
+
+    use PlotTrait;
 
 	/** @var Plot|null $plot */
 	protected $plot;
@@ -22,13 +25,5 @@ abstract class SimpleMyPlotForm extends SimpleForm implements MyPlotForm {
 		foreach($options as $option){
 			$this->addButton($option);
 		}
-	}
-
-	public function setPlot(?Plot $plot) : void {
-		$this->plot = $plot;
-	}
-
-	public function getPlot() : ?Plot {
-		return $this->plot;
 	}
 }
