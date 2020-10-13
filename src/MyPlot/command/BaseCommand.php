@@ -54,10 +54,7 @@ abstract class BaseCommand extends Command
         return false;
     }
 
-    /**
-     * @return Plugin|MyPlot
-     */
-    public function getPlugin() : Plugin {
+    public function getPlugin() : MyPlot {
         return MyPlot::getInstance();
     }
 }
