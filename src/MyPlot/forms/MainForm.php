@@ -5,6 +5,7 @@ namespace MyPlot\forms;
 
 use libforms\elements\Button;
 use libforms\FormManager;
+use MyPlot\forms\interfaces\PlotAdminForm;
 use MyPlot\forms\interfaces\PlotButtonForm;
 use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
@@ -29,6 +30,7 @@ class MainForm extends SimpleMyPlotForm{
 
 		$elements = [];
 		$settingForms = [];
+		$adminForms = [];
 
 		foreach($subCommands as $name => $command){
             $form = $command->getForm($player);
@@ -46,6 +48,11 @@ class MainForm extends SimpleMyPlotForm{
 			    continue;
             }
 
+            if($form instanceof PlotAdminForm){
+                $adminForms[$name] = $form;
+                continue;
+            }
+
 			$elements[] = new Button($form->getName(), static function(Player $player) use ($form) {
                 if($form instanceof PlotButtonForm){
 			        $form->onButtonClick($player);
@@ -57,12 +64,30 @@ class MainForm extends SimpleMyPlotForm{
 		}
 
 		// only add settings form if the player is inside a plot and is the plot owner or has admin perms
-		if($this->plot !== null && ((strtolower($this->plot->owner) === strtolower($player->getName())) || $player->hasPermission('nethergames.admin'))){
+		if($this->plot !== null && ((strtolower($this->plot->owner) === strtolower($player->getName())) || $player->hasPermission('myplot.admin') || $player->hasPermission('nethergames.admin'))){
 		    $elements[] = new Button("Plot Settings", function (Player $player) use ($settingForms){
                 $settings = FormManager::createSimpleForm($player);
                 $settings->setTitle("Plot Settings");
 
                 foreach ($settingForms as $name => $form){
+                    $button = new Button($form->getName(), function (Player $player) use ($form){
+                        $form->sendForm();
+                    });
+
+                    $settings->addButton($button);
+                }
+
+                $settings->sendForm();
+            });
+        }
+
+        // only add admin form if the player has admin perms
+        if($player->hasPermission('myplot.admin') || $player->hasPermission('nethergames.admin')){
+            $elements[] = new Button("Admin Settings", function (Player $player) use ($adminForms){
+                $settings = FormManager::createSimpleForm($player);
+                $settings->setTitle("Admin Settings");
+
+                foreach ($adminForms as $name => $form){
                     $button = new Button($form->getName(), function (Player $player) use ($form){
                         $form->sendForm();
                     });
