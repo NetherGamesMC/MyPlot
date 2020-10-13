@@ -6,6 +6,7 @@ namespace MyPlot;
 use muqsit\worldstyler\shapes\CommonShape;
 use muqsit\worldstyler\shapes\Cuboid;
 use muqsit\worldstyler\WorldStyler;
+use MyPlot\command\BaseCommand;
 use MyPlot\events\MyPlotClearEvent;
 use MyPlot\events\MyPlotCloneEvent;
 use MyPlot\events\MyPlotDisposeEvent;
@@ -59,6 +60,8 @@ class MyPlot extends PluginBase
 	private $economyProvider = null;
 	/** @var Language $baseLang */
 	private $baseLang = null;
+	/** @var Commands */
+	private $commands;
 
 	/**
 	 * @return MyPlot|null
@@ -978,7 +981,7 @@ class MyPlot extends PluginBase
 	}
 
 	/* -------------------------- Non-API part -------------------------- */
-	protected function onLoad() : void {
+    protected function onLoad() : void {
 		$this->getLogger()->debug(TF::BOLD . "Loading...");
 		self::$instance = $this;
 		$this->getLogger()->debug(TF::BOLD . "Loading Configs");
@@ -1076,7 +1079,9 @@ class MyPlot extends PluginBase
 		}
 
 		$this->getLogger()->debug(TF::BOLD . "Loading MyPlot Commands");
-		$this->getServer()->getCommandMap()->register("myplot", new Commands($this));
+		$this->commands = new Commands($this);
+		$this->getServer()->getCommandMap()->register("myplot", $this->commands);
+		BaseCommand::registerCommands($this);
 
 		$this->getLogger()->debug(TF::BOLD . "Loading economy settings");
 		if($this->getConfig()->get("UseEconomy", false) === true) {
@@ -1109,6 +1114,10 @@ class MyPlot extends PluginBase
 	public function getEssentials() : NGEssentials {
 		return $this->ess;
 	}
+
+    public function getCommands(): Commands {
+        return $this->commands;
+    }
 
 	/**
 	 * @param string $worldName
