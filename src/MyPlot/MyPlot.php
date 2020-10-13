@@ -27,6 +27,7 @@ use NetherGames\NGEssentials\NGEssentials;
 use onebone\economyapi\EconomyAPI;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\world\WorldLoadEvent;
+use pocketmine\item\ItemIds;
 use pocketmine\lang\Language;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
@@ -62,6 +63,15 @@ class MyPlot extends PluginBase
 	private $baseLang = null;
 	/** @var Commands */
 	private $commands;
+
+    public $stopTime = [];
+    public $bannedItems = [
+        ItemIds::TNT,
+        ItemIds::SPAWN_EGG,
+        ItemIds::POTION,
+        ItemIds::LINGERING_POTION,
+        ItemIds::SPLASH_POTION,
+    ];
 
 	/**
 	 * @return MyPlot|null
