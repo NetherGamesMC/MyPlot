@@ -7,13 +7,14 @@ use libforms\elements\Input;
 use libforms\elements\Slider;
 use libforms\elements\Toggle;
 use MyPlot\forms\ComplexMyPlotForm;
+use MyPlot\forms\interfaces\PlotAdminForm;
 use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class GenerateForm extends ComplexMyPlotForm{
+class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm{
 
 	public function __construct() {
 		$plugin = MyPlot::getInstance();

@@ -5,12 +5,12 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
-use MyPlot\forms\interfaces\PlotSettingsForm;
+use MyPlot\forms\interfaces\PlotAdminForm;
 use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class OwnerForm extends ComplexMyPlotForm implements PlotSettingsForm{
+class OwnerForm extends ComplexMyPlotForm implements PlotAdminForm{
 	/** @var string[] $players */
 	private $players = [];
 
@@ -40,6 +40,6 @@ class OwnerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 
     public function getName(): string
     {
-        return "Set owner";
+        return "Set plot owner";
     }
 }

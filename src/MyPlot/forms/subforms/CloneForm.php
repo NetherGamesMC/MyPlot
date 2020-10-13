@@ -6,12 +6,13 @@ namespace MyPlot\forms\subforms;
 use libforms\elements\Input;
 use libforms\elements\Label;
 use MyPlot\forms\ComplexMyPlotForm;
+use MyPlot\forms\interfaces\PlotAdminForm;
 use MyPlot\MyPlot;
 use pocketmine\form\FormValidationException;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class CloneForm extends ComplexMyPlotForm{
+class CloneForm extends ComplexMyPlotForm implements PlotAdminForm{
 
 	/** @var Player $player */
 	private $player;
@@ -69,6 +70,6 @@ class CloneForm extends ComplexMyPlotForm{
 
 	public function getName(): string
     {
-        return "Clone";
+        return "Clone the plot";
     }
 }
