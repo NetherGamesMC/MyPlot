@@ -21,15 +21,23 @@ use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
+use pocketmine\event\player\PlayerCommandPreprocessEvent;
+use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\world\WorldLoadEvent;
 use pocketmine\event\world\WorldUnloadEvent;
 use pocketmine\item\Food;
+use pocketmine\network\mcpe\protocol\SetTimePacket;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use pocketmine\world\World;
+use function explode;
+use function in_array;
+use function strtolower;
 
 class EventListener implements Listener
 {
@@ -298,9 +306,15 @@ class EventListener implements Listener
 	 * @param EntityTeleportEvent $event
 	 */
 	public function onPlayerTeleport(EntityTeleportEvent $event) : void {
-		$entity = $event->getEntity();
-		if($entity instanceof Player) {
-			$this->onEventOnMove($entity, $event);
+        $player = $event->getEntity();
+		if($player instanceof Player) {
+			$this->onEventOnMove($player, $event);
+
+            if (!$player->hasPermission('nethergames.voter') && $event->getTo()->getWorld()->getFolderName() === 'MEGA' && $event->getFrom()->getWorld() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()) {
+                $player->sendMessage('§cYou must vote to access Mega Creative.');
+                $event->cancel();
+                return;
+            }
 		}
 	}
 
@@ -450,6 +464,59 @@ class EventListener implements Listener
                 }
             }
             $event->setRecipients($recipients);
+        }
+    }
+
+    /**
+     * @param PlayerDropItemEvent $event
+     *
+     * @priority LOW
+     *
+     * @ignoreCancelled
+     */
+    public function onPlayerDropItem(PlayerDropItemEvent $event): void
+    {
+        $event->cancel();
+    }
+
+    /**
+     * @param PlayerCommandPreprocessEvent $event
+     *
+     * @priority LOW
+     *
+     * @ignoreCancelled
+     */
+    public function onPlayerCommandPreprocess(PlayerCommandPreprocessEvent $event): void
+    {
+        $player = $event->getPlayer();
+        $command = explode(' ', strtolower($event->getMessage()));
+
+        if (($command[0] === '/p' || $command[0] === '/plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
+            $player->sendMessage('§cThat command is blocked in this world.');
+            $event->cancel();
+        }
+    }
+
+    public function onDataPacketSendEvent(DataPacketSendEvent $event): void
+    {
+        foreach ($event->getPackets() as $packet){
+            if(!$packet instanceof SetTimePacket){
+                continue;
+            }
+
+            foreach ($event->getTargets() as $target){
+                if (in_array($target->getPlayer()->getName(), $this->plugin->stopTime, true)) {
+                    $event->cancel();
+                }
+            }
+        }
+    }
+
+    public function onEat(PlayerItemConsumeEvent $event): void
+    {
+        $item = $event->getItem()->getId();
+        if (in_array($item, $this->plugin->bannedItems, true)) {
+            $event->cancel();
         }
     }
 }
