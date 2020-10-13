@@ -3,6 +3,8 @@ declare(strict_types=1);
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
+use MyPlot\forms\subforms\DisposeForm;
+use MyPlot\Plot;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
@@ -54,6 +56,10 @@ class DisposeSubCommand extends SubCommand
 	}
 
 	public function getForm(?Player $player = null) : ?MyPlotForm {
-		return null;
+        if(($plot = $this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot){
+            return new DisposeForm();
+        }
+
+        return null;
 	}
 }
