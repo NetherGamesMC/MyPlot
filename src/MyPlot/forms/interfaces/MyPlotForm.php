@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MyPlot\forms\interfaces;
 
 use MyPlot\Plot;
+use pocketmine\player\Player;
 
 interface MyPlotForm{
 
@@ -12,4 +13,6 @@ interface MyPlotForm{
     public function setPlot(?Plot $plot) : void;
 
     public function getPlot() : ?Plot;
+
+    public function preHandle(Player $player) : bool;
 }
