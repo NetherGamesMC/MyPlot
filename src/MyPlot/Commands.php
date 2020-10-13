@@ -28,6 +28,7 @@ use MyPlot\subcommand\RemoveHelperSubCommand;
 use MyPlot\subcommand\ResetSubCommand;
 use MyPlot\subcommand\SetOwnerSubCommand;
 use MyPlot\subcommand\SubCommand;
+use MyPlot\subcommand\TimeSubCommand;
 use MyPlot\subcommand\UnDenySubCommand;
 use MyPlot\subcommand\WarpSubCommand;
 use pocketmine\command\Command;
@@ -64,6 +65,7 @@ class Commands extends Command implements PluginOwned
         $this->loadSubCommand(new HelpSubCommand($plugin, "help", $this));
 		$this->loadSubCommand(new ClaimSubCommand($plugin, "claim"));
         $this->loadSubCommand(new AutoSubCommand($plugin, "auto"));
+        $this->loadSubCommand(new TimeSubCommand($plugin, "time"));
         $this->loadSubCommand(new GenerateSubCommand($plugin, "generate"));
 		$this->loadSubCommand(new InfoSubCommand($plugin, "info"));
         $this->loadSubCommand(new NameSubCommand($plugin, "name"));
