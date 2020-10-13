@@ -20,6 +20,7 @@ use pocketmine\event\entity\EntityExplodeEvent;
 use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\world\WorldLoadEvent;
@@ -421,4 +422,34 @@ class EventListener implements Listener
 			}
 		}
 	}
+
+    public function onPlayerChat(PlayerChatEvent $event): void
+    {
+        if (!$this->plugin->getConfig()->get('PlotChat', true)) {
+            return;
+        }
+        $levelName = $event->getPlayer()->getWorld()->getFolderName();
+        if (!$this->plugin->isLevelLoaded($levelName)) {
+            return;
+        }
+        $recipients = $event->getRecipients();
+        $plot = $this->plugin->getPlotByPosition($event->getPlayer()->getPosition());
+        if ($plot !== null) {
+            foreach ($recipients as $key => $recipient) {
+                if ($recipient instanceof Player) {
+                    if (($this->plugin->getPlotByPosition($recipient->getPosition()) === null) || ($this->plugin->getPlotByPosition($recipient->getPosition()) !== $plot)) {
+                        unset($recipients[$key]);
+                    }
+                }
+            }
+            $event->setRecipients($recipients);
+        } else {
+            foreach ($recipients as $key => $recipient) {
+                if (($recipient instanceof Player) && $this->plugin->getPlotByPosition($recipient->getPosition()) !== null) {
+                    unset($recipients[$key]);
+                }
+            }
+            $event->setRecipients($recipients);
+        }
+    }
 }
