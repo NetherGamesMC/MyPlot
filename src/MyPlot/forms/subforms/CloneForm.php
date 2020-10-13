@@ -38,13 +38,13 @@ class CloneForm extends ComplexMyPlotForm implements PlotAdminForm{
 				new Input($plugin->getLanguage()->get("clone.formzcoord"), "-4"),
 				new Input($plugin->getLanguage()->get("clone.formworld"), "world", $player->getWorld()->getFolderName())
 			],
-			function(Player $player, array $data) use ($plugin) : void {
+			function(Player $player, ?array $data = []) use ($plugin) : void {
 				if(is_numeric($data[1]) and is_numeric($data[2]) and is_numeric($data[5]) and is_numeric($data[6])) {
 					$originPlot = MyPlot::getInstance()->getProvider()->getPlot(empty($data[3]) ? $this->player->getWorld()->getFolderName() : $data[3], (int)$data[1], (int)$data[2]);
 					$clonedPlot = MyPlot::getInstance()->getProvider()->getPlot(empty($data[7]) ? $this->player->getWorld()->getFolderName() : $data[7], (int)$data[5], (int)$data[6]);
-				}else
-					throw new FormValidationException("Unexpected form data returned");
-
+				}else {
+                    throw new FormValidationException("Unexpected form data returned");
+                }
 				if($originPlot->owner !== $player->getName() and !$player->hasPermission("myplot.admin.clone")) {
 					$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("notowner"));
 					return;
