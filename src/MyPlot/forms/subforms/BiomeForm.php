@@ -38,8 +38,7 @@ class BiomeForm extends SimpleMyPlotForm implements PlotSettingsForm{
 		);
 	}
 
-	public function getName(): string
-    {
-        return "Change plot biome";
-    }
+	public function getName() : string {
+		return "Change plot biome";
+	}
 }

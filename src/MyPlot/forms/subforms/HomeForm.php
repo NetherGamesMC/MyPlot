@@ -30,8 +30,7 @@ class HomeForm extends SimpleMyPlotForm{
 		);
 	}
 
-    public function getName(): string
-    {
-        return "Home";
-    }
+	public function getName() : string {
+		return "Home";
+	}
 }

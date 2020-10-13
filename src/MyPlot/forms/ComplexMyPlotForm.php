@@ -12,7 +12,7 @@ use pocketmine\player\Player;
 
 abstract class ComplexMyPlotForm extends CustomForm implements MyPlotForm{
 
-    use PlotTrait;
+	use PlotTrait;
 
 	/** @var Plot|null $plot */
 	protected $plot;

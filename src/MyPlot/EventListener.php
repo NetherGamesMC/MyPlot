@@ -306,15 +306,15 @@ class EventListener implements Listener
 	 * @param EntityTeleportEvent $event
 	 */
 	public function onPlayerTeleport(EntityTeleportEvent $event) : void {
-        $player = $event->getEntity();
+		$player = $event->getEntity();
 		if($player instanceof Player) {
 			$this->onEventOnMove($player, $event);
 
-            if (!$player->hasPermission('nethergames.voter') && $event->getTo()->getWorld()->getFolderName() === 'MEGA' && $event->getFrom()->getWorld() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()) {
-                $player->sendMessage('§cYou must vote to access Mega Creative.');
-                $event->cancel();
-                return;
-            }
+			if(!$player->hasPermission('nethergames.voter') && $event->getTo()->getWorld()->getFolderName() === 'MEGA' && $event->getFrom()->getWorld() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()) {
+				$player->sendMessage('§cYou must vote to access Mega Creative.');
+				$event->cancel();
+				return;
+			}
 		}
 	}
 
@@ -437,86 +437,81 @@ class EventListener implements Listener
 		}
 	}
 
-    public function onPlayerChat(PlayerChatEvent $event): void
-    {
-        if (!$this->plugin->getConfig()->get('PlotChat', true)) {
-            return;
-        }
-        $levelName = $event->getPlayer()->getWorld()->getFolderName();
-        if (!$this->plugin->isLevelLoaded($levelName)) {
-            return;
-        }
-        $recipients = $event->getRecipients();
-        $plot = $this->plugin->getPlotByPosition($event->getPlayer()->getPosition());
-        if ($plot !== null) {
-            foreach ($recipients as $key => $recipient) {
-                if ($recipient instanceof Player) {
-                    if (($this->plugin->getPlotByPosition($recipient->getPosition()) === null) || ($this->plugin->getPlotByPosition($recipient->getPosition()) !== $plot)) {
-                        unset($recipients[$key]);
-                    }
-                }
-            }
-            $event->setRecipients($recipients);
-        } else {
-            foreach ($recipients as $key => $recipient) {
-                if (($recipient instanceof Player) && $this->plugin->getPlotByPosition($recipient->getPosition()) !== null) {
-                    unset($recipients[$key]);
-                }
-            }
-            $event->setRecipients($recipients);
-        }
-    }
+	public function onPlayerChat(PlayerChatEvent $event) : void {
+		if(!$this->plugin->getConfig()->get('PlotChat', true)) {
+			return;
+		}
+		$levelName = $event->getPlayer()->getWorld()->getFolderName();
+		if(!$this->plugin->isLevelLoaded($levelName)) {
+			return;
+		}
+		$recipients = $event->getRecipients();
+		$plot = $this->plugin->getPlotByPosition($event->getPlayer()->getPosition());
+		if($plot !== null) {
+			foreach($recipients as $key => $recipient){
+				if($recipient instanceof Player) {
+					if(($this->plugin->getPlotByPosition($recipient->getPosition()) === null) || ($this->plugin->getPlotByPosition($recipient->getPosition()) !== $plot)) {
+						unset($recipients[$key]);
+					}
+				}
+			}
+			$event->setRecipients($recipients);
+		}else{
+			foreach($recipients as $key => $recipient){
+				if(($recipient instanceof Player) && $this->plugin->getPlotByPosition($recipient->getPosition()) !== null) {
+					unset($recipients[$key]);
+				}
+			}
+			$event->setRecipients($recipients);
+		}
+	}
 
-    /**
-     * @param PlayerDropItemEvent $event
-     *
-     * @priority LOW
-     *
-     * @ignoreCancelled
-     */
-    public function onPlayerDropItem(PlayerDropItemEvent $event): void
-    {
-        $event->cancel();
-    }
+	/**
+	 * @param PlayerDropItemEvent $event
+	 *
+	 * @priority LOW
+	 *
+	 * @ignoreCancelled
+	 */
+	public function onPlayerDropItem(PlayerDropItemEvent $event) : void {
+		$event->cancel();
+	}
 
-    /**
-     * @param PlayerCommandPreprocessEvent $event
-     *
-     * @priority LOW
-     *
-     * @ignoreCancelled
-     */
-    public function onPlayerCommandPreprocess(PlayerCommandPreprocessEvent $event): void
-    {
-        $player = $event->getPlayer();
-        $command = explode(' ', strtolower($event->getMessage()));
+	/**
+	 * @param PlayerCommandPreprocessEvent $event
+	 *
+	 * @priority LOW
+	 *
+	 * @ignoreCancelled
+	 */
+	public function onPlayerCommandPreprocess(PlayerCommandPreprocessEvent $event) : void {
+		$player = $event->getPlayer();
+		$command = explode(' ', strtolower($event->getMessage()));
 
-        if (($command[0] === '/p' || $command[0] === '/plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
-            $player->sendMessage('§cThat command is blocked in this world.');
-            $event->cancel();
-        }
-    }
+		if(($command[0] === '/p' || $command[0] === '/plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
+			$player->sendMessage('§cThat command is blocked in this world.');
+			$event->cancel();
+		}
+	}
 
-    public function onDataPacketSendEvent(DataPacketSendEvent $event): void
-    {
-        foreach ($event->getPackets() as $packet){
-            if(!$packet instanceof SetTimePacket){
-                continue;
-            }
+	public function onDataPacketSendEvent(DataPacketSendEvent $event) : void {
+		foreach($event->getPackets() as $packet){
+			if(!$packet instanceof SetTimePacket) {
+				continue;
+			}
 
-            foreach ($event->getTargets() as $target){
-                if (in_array($target->getPlayer()->getName(), $this->plugin->stopTime, true)) {
-                    $event->cancel();
-                }
-            }
-        }
-    }
+			foreach($event->getTargets() as $target){
+				if(in_array($target->getPlayer()->getName(), $this->plugin->stopTime, true)) {
+					$event->cancel();
+				}
+			}
+		}
+	}
 
-    public function onEat(PlayerItemConsumeEvent $event): void
-    {
-        $item = $event->getItem()->getId();
-        if (in_array($item, $this->plugin->bannedItems, true)) {
-            $event->cancel();
-        }
-    }
+	public function onEat(PlayerItemConsumeEvent $event) : void {
+		$item = $event->getItem()->getId();
+		if(in_array($item, $this->plugin->bannedItems, true)) {
+			$event->cancel();
+		}
+	}
 }

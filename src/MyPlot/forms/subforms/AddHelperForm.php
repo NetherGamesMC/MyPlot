@@ -46,8 +46,7 @@ class AddHelperForm extends ComplexMyPlotForm implements PlotSettingsForm{
 		);
 	}
 
-	public function getName(): string
-    {
-        return "Add a helper";
-    }
+	public function getName() : string {
+		return "Add a helper";
+	}
 }

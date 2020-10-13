@@ -27,7 +27,7 @@ class GiveForm extends ComplexMyPlotForm implements PlotSettingsForm, DangerZone
 			null,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("give.form")]),
 			[
-			    new Label("Are you sure you want to give your plot to someone else?\n\n"),
+				new Label("Are you sure you want to give your plot to someone else?\n\n"),
 				new Dropdown(
 					$plugin->getLanguage()->get("give.dropdown"),
 					$players,
@@ -40,8 +40,7 @@ class GiveForm extends ComplexMyPlotForm implements PlotSettingsForm, DangerZone
 		);
 	}
 
-    public function getName(): string
-    {
-        return "Give";
-    }
+	public function getName() : string {
+		return "Give";
+	}
 }

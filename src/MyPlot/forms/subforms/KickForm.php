@@ -40,8 +40,7 @@ class KickForm extends ComplexMyPlotForm implements PlotSettingsForm{
 		);
 	}
 
-    public function getName(): string
-    {
-        return "Kick a player";
-    }
+	public function getName() : string {
+		return "Kick a player";
+	}
 }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
@@ -8,8 +9,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class AutoSubCommand extends SubCommand
-{
+class AutoSubCommand extends SubCommand{
 	/**
 	 * @param CommandSender $sender
 	 *
@@ -38,7 +38,7 @@ class AutoSubCommand extends SubCommand
 				if(isset($args[0]) and strtolower($args[0]) == "true" and $cmd->canUse($sender)) {
 					$cmd->execute($sender, [$args[1] ?? null]);
 				}
-			}else {
+			}else{
 				$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
 			}
 		}else{

@@ -11,9 +11,9 @@ use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
-abstract class ModalMyPlotForm extends ModalForm implements MyPlotForm {
+abstract class ModalMyPlotForm extends ModalForm implements MyPlotForm{
 
-    use PlotTrait;
+	use PlotTrait;
 
 	/** @var Plot|null $plot */
 	protected $plot;
@@ -26,12 +26,12 @@ abstract class ModalMyPlotForm extends ModalForm implements MyPlotForm {
 
 		$this->setButton1($yesButton);
 
-		if($noButton instanceof Button){
-		    $this->setButton2($noButton);
-        }else{
-		    $this->setButton2(new Button("No", function (Player $player){
-                $player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
-            }));
-        }
+		if($noButton instanceof Button) {
+			$this->setButton2($noButton);
+		}else{
+			$this->setButton2(new Button("No", function(Player $player) {
+				$player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
+			}));
+		}
 	}
 }

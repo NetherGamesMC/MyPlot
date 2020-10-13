@@ -94,8 +94,7 @@ class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm{
 		);
 	}
 
-    public function getName(): string
-    {
-        return "Generate new plot world";
-    }
+	public function getName() : string {
+		return "Generate new plot world";
+	}
 }

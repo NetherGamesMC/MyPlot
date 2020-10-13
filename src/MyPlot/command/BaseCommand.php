@@ -11,49 +11,46 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-abstract class BaseCommand extends Command
-{
-    /** @var string */
-    private $permissionMessage;
+abstract class BaseCommand extends Command{
+	/** @var string */
+	private $permissionMessage;
 
-    public static function registerCommands(MyPlot $plugin): void
-    {
-        $plugin->getServer()->getCommandMap()->registerAll("myplot", [
-            new ClearEntitiesCommand(),
-            new CreativeDimensionCommand(),
-            new MegaCreativeCommand(),
-            new PlatinumPlotsCommand(),
-            new TphereCommand(),
-            new TptoCommand(),
-            new VanishCommand()
-        ]);
-    }
+	public static function registerCommands(MyPlot $plugin) : void {
+		$plugin->getServer()->getCommandMap()->registerAll("myplot", [
+			new ClearEntitiesCommand(),
+			new CreativeDimensionCommand(),
+			new MegaCreativeCommand(),
+			new PlatinumPlotsCommand(),
+			new TphereCommand(),
+			new TptoCommand(),
+			new VanishCommand()
+		]);
+	}
 
-    /**
-     * @param CommandSender $target
-     *
-     * @return bool
-     */
-    public function testPermission(CommandSender $target): bool
-    {
-        if ($this->testPermissionSilent($target)) {
-            return true;
-        }
+	/**
+	 * @param CommandSender $target
+	 *
+	 * @return bool
+	 */
+	public function testPermission(CommandSender $target) : bool {
+		if($this->testPermissionSilent($target)) {
+			return true;
+		}
 
-        if ($this->permissionMessage === null) {
-            $target->sendMessage($target->getServer()->getLanguage()->translateString(TextFormat::RED . '%commands.generic.permission'));
-        } elseif ($this->permissionMessage !== '') {
-            if ($target instanceof Player) {
-                $target->sendMessage(BaseLang::translateStringPlayer($target, $this->permissionMessage));
-            } else {
-                $target->sendMessage($target->getServer()->getLanguage()->translateString(TextFormat::RED . '%commands.generic.permission'));
-            }
-        }
+		if($this->permissionMessage === null) {
+			$target->sendMessage($target->getServer()->getLanguage()->translateString(TextFormat::RED . '%commands.generic.permission'));
+		}elseif($this->permissionMessage !== ''){
+			if($target instanceof Player) {
+				$target->sendMessage(BaseLang::translateStringPlayer($target, $this->permissionMessage));
+			}else{
+				$target->sendMessage($target->getServer()->getLanguage()->translateString(TextFormat::RED . '%commands.generic.permission'));
+			}
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    public function getPlugin() : MyPlot {
-        return MyPlot::getInstance();
-    }
+	public function getPlugin() : MyPlot {
+		return MyPlot::getInstance();
+	}
 }

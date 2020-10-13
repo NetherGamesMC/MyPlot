@@ -50,8 +50,7 @@ class InfoForm extends ComplexMyPlotForm{
 		);
 	}
 
-    public function getName(): string
-    {
-        return "Plot Info";
-    }
+	public function getName() : string {
+		return "Plot Info";
+	}
 }

@@ -8,32 +8,29 @@ use NetherGames\NGEssentials\lang\BaseLang;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 
-class MegaCreativeCommand extends BaseCommand
-{
-    public function __construct()
-    {
-        parent::__construct('megacreative');
+class MegaCreativeCommand extends BaseCommand{
+	public function __construct() {
+		parent::__construct('megacreative');
 
-        $this->setAliases(['mc']);
-        $this->setDescription('Command used for teleporting to Mega Creative');
-    }
+		$this->setAliases(['mc']);
+		$this->setDescription('Command used for teleporting to Mega Creative');
+	}
 
-    public function execute(CommandSender $sender, string $commandLabel, array $args): bool
-    {
-        if ($sender instanceof Player) {
-            if ($sender->hasPermission('nethergames.voter')) {
-                $sender->teleport($this->getPlugin()->getServer()->getWorldManager()->getWorldByName('MEGA')->getSafeSpawn());
-                $form = new MainForm($sender, $this->getPlugin()->getCommands()->getCommands());
-                $form->sendForm();
-            } else {
-                $sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.megac.noperm'));
+	public function execute(CommandSender $sender, string $commandLabel, array $args) : bool {
+		if($sender instanceof Player) {
+			if($sender->hasPermission('nethergames.voter')) {
+				$sender->teleport($this->getPlugin()->getServer()->getWorldManager()->getWorldByName('MEGA')->getSafeSpawn());
+				$form = new MainForm($sender, $this->getPlugin()->getCommands()->getCommands());
+				$form->sendForm();
+			}else{
+				$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.megac.noperm'));
 
-            }
-        } else {
-            $sender->sendMessage($this->getPlugin()->getEssentials()->getPrefix() . '§cThat command can only be run in-game.');
-        }
+			}
+		}else{
+			$sender->sendMessage($this->getPlugin()->getEssentials()->getPrefix() . '§cThat command can only be run in-game.');
+		}
 
-        return true;
-    }
+		return true;
+	}
 
 }

@@ -35,8 +35,7 @@ class RemoveHelperForm extends ComplexMyPlotForm implements PlotSettingsForm{
 		);
 	}
 
-    public function getName(): string
-    {
-        return "Remove a helper";
-    }
+	public function getName() : string {
+		return "Remove a helper";
+	}
 }

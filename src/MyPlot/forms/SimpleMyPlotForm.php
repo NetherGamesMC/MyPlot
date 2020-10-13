@@ -9,9 +9,9 @@ use MyPlot\forms\traits\PlotTrait;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
-abstract class SimpleMyPlotForm extends SimpleForm implements MyPlotForm {
+abstract class SimpleMyPlotForm extends SimpleForm implements MyPlotForm{
 
-    use PlotTrait;
+	use PlotTrait;
 
 	/** @var Plot|null $plot */
 	protected $plot;

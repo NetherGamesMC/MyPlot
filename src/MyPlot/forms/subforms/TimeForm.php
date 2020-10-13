@@ -19,20 +19,20 @@ class TimeForm extends SimpleMyPlotForm{
 	public function __construct(Player $player) {
 		$plugin = MyPlot::getInstance();
 
-        $elements = [
-            new Button("Sunrise", function (Player $player){
-                $this->setTime($player, World::TIME_SUNRISE);
-            }),
-            new ImageButton("Day", ImageButton::IMAGE_TYPE_URL, "https://minecraft.gamepedia.com/media/minecraft.gamepedia.com/6/61/Sun.png", function (Player $player){
-                $this->setTime($player, World::TIME_DAY);
-            }),
-            new Button("Sunset", function (Player $player){
-                $this->setTime($player, World::TIME_SUNSET);
-            }),
-            new ImageButton("Night", ImageButton::IMAGE_TYPE_URL, "https://minecraft.gamepedia.com/media/minecraft.gamepedia.com/4/47/Moon.png?version=ff9a299fcaa80c1f3eaf244ea00360b9", function (Player $player){
-                $this->setTime($player, World::TIME_NIGHT);
-            })
-        ];
+		$elements = [
+			new Button("Sunrise", function(Player $player) {
+				$this->setTime($player, World::TIME_SUNRISE);
+			}),
+			new ImageButton("Day", ImageButton::IMAGE_TYPE_URL, "https://minecraft.gamepedia.com/media/minecraft.gamepedia.com/6/61/Sun.png", function(Player $player) {
+				$this->setTime($player, World::TIME_DAY);
+			}),
+			new Button("Sunset", function(Player $player) {
+				$this->setTime($player, World::TIME_SUNSET);
+			}),
+			new ImageButton("Night", ImageButton::IMAGE_TYPE_URL, "https://minecraft.gamepedia.com/media/minecraft.gamepedia.com/4/47/Moon.png?version=ff9a299fcaa80c1f3eaf244ea00360b9", function(Player $player) {
+				$this->setTime($player, World::TIME_NIGHT);
+			})
+		];
 
 		parent::__construct(
 			$player,
@@ -42,33 +42,31 @@ class TimeForm extends SimpleMyPlotForm{
 		);
 	}
 
-	public function preHandle(Player $player): bool{
-        if (!$player->hasPermission('nethergames.tier.platinum') || !$player->hasPermission('nethergames.vip.legend')) {
-            $player->sendMessage("§cYou don't have permission to change the time for your plot. Buy the §l§bLEGEND §r§crank at §bngmc.co/store §cto change it!");
-            return false;
-        }
+	public function preHandle(Player $player) : bool {
+		if(!$player->hasPermission('nethergames.tier.platinum') || !$player->hasPermission('nethergames.vip.legend')) {
+			$player->sendMessage("§cYou don't have permission to change the time for your plot. Buy the §l§bLEGEND §r§crank at §bngmc.co/store §cto change it!");
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    private function setTime(Player $player, int $time): void
-    {
-        $plugin = MyPlot::getInstance();
+	private function setTime(Player $player, int $time) : void {
+		$plugin = MyPlot::getInstance();
 
-        if (in_array($player->getName(), $plugin->stopTime, true)) {
-            $index = array_search($player->getName(), $plugin->stopTime, true);
-            unset($plugin->stopTime[$index]);
-        }
+		if(in_array($player->getName(), $plugin->stopTime, true)) {
+			$index = array_search($player->getName(), $plugin->stopTime, true);
+			unset($plugin->stopTime[$index]);
+		}
 
-        $pk = new SetTimePacket();
-        $pk->time = $time;
-        $player->getNetworkSession()->sendDataPacket($pk);
+		$pk = new SetTimePacket();
+		$pk->time = $time;
+		$player->getNetworkSession()->sendDataPacket($pk);
 
-        $plugin->stopTime[] = $player->getName();
-    }
+		$plugin->stopTime[] = $player->getName();
+	}
 
-    public function getName(): string
-    {
-        return "Edit time";
-    }
+	public function getName() : string {
+		return "Edit time";
+	}
 }

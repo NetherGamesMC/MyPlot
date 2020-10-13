@@ -9,7 +9,7 @@ use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class AutoForm extends ComplexMyPlotForm implements PlotButtonForm {
+class AutoForm extends ComplexMyPlotForm implements PlotButtonForm{
 
 	/** @var Player $player */
 	private $player;
@@ -25,20 +25,18 @@ class AutoForm extends ComplexMyPlotForm implements PlotButtonForm {
 		);
 	}
 
-	public function getName(): string
-    {
-        return "Find a new plot";
-    }
-    
-    public function onButtonClick(Player $player): void
-    {
-        $plugin = MyPlot::getInstance();
+	public function getName() : string {
+		return "Find a new plot";
+	}
 
-        if ($player->getWorld()->getFolderName() === 'Platinum' && (!$player->hasPermission('nethergames.vip.ultra'))) {
-            $player->sendMessage('§cThat action is blocked for you in this world.');
-            return;
-        }
+	public function onButtonClick(Player $player) : void {
+		$plugin = MyPlot::getInstance();
 
-        $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("auto.name"), true);
-    }
+		if($player->getWorld()->getFolderName() === 'Platinum' && (!$player->hasPermission('nethergames.vip.ultra'))) {
+			$player->sendMessage('§cThat action is blocked for you in this world.');
+			return;
+		}
+
+		$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("auto.name"), true);
+	}
 }

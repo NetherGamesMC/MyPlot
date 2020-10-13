@@ -19,15 +19,14 @@ class ResetForm extends ModalMyPlotForm implements PlotSettingsForm, DangerZone{
 		parent::__construct(
 			null,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", ["Dispose"]),
-            "Are you sure you want to reset your plot? This action cannot be undone.",
-            new Button("Yes", function (Player $player) use ($plugin){
-                $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("dispose.name") . " confirm", true);
-            })
+			"Are you sure you want to reset your plot? This action cannot be undone.",
+			new Button("Yes", function(Player $player) use ($plugin) {
+				$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("dispose.name") . " confirm", true);
+			})
 		);
 	}
 
-    public function getName(): string
-    {
-        return "Reset";
-    }
+	public function getName() : string {
+		return "Reset";
+	}
 }

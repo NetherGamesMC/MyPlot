@@ -33,8 +33,7 @@ class NameForm extends ComplexMyPlotForm implements PlotSettingsForm{
 		);
 	}
 
-    public function getName(): string
-    {
-        return "Change plot name";
-    }
+	public function getName() : string {
+		return "Change plot name";
+	}
 }

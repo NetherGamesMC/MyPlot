@@ -64,14 +64,14 @@ class MyPlot extends PluginBase
 	/** @var Commands */
 	private $commands;
 
-    public $stopTime = [];
-    public $bannedItems = [
-        ItemIds::TNT,
-        ItemIds::SPAWN_EGG,
-        ItemIds::POTION,
-        ItemIds::LINGERING_POTION,
-        ItemIds::SPLASH_POTION,
-    ];
+	public $stopTime = [];
+	public $bannedItems = [
+		ItemIds::TNT,
+		ItemIds::SPAWN_EGG,
+		ItemIds::POTION,
+		ItemIds::LINGERING_POTION,
+		ItemIds::SPLASH_POTION,
+	];
 
 	/**
 	 * @return MyPlot|null
@@ -991,7 +991,7 @@ class MyPlot extends PluginBase
 	}
 
 	/* -------------------------- Non-API part -------------------------- */
-    protected function onLoad() : void {
+	protected function onLoad() : void {
 		$this->getLogger()->debug(TF::BOLD . "Loading...");
 		self::$instance = $this;
 		$this->getLogger()->debug(TF::BOLD . "Loading Configs");
@@ -1125,9 +1125,9 @@ class MyPlot extends PluginBase
 		return $this->ess;
 	}
 
-    public function getCommands(): Commands {
-        return $this->commands;
-    }
+	public function getCommands() : Commands {
+		return $this->commands;
+	}
 
 	/**
 	 * @param string $worldName

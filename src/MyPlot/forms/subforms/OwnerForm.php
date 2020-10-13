@@ -38,8 +38,7 @@ class OwnerForm extends ComplexMyPlotForm implements PlotAdminForm{
 		);
 	}
 
-    public function getName(): string
-    {
-        return "Set plot owner";
-    }
+	public function getName() : string {
+		return "Set plot owner";
+	}
 }

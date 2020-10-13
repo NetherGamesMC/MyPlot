@@ -35,8 +35,7 @@ class UndenyPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 		);
 	}
 
-    public function getName(): string
-    {
-        return "Unban a player";
-    }
+	public function getName() : string {
+		return "Unban a player";
+	}
 }
