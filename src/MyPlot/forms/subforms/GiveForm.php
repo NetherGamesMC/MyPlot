@@ -5,12 +5,13 @@ namespace MyPlot\forms\subforms;
 
 use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
+use MyPlot\forms\interfaces\DangerZone;
 use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class GiveForm extends ComplexMyPlotForm implements PlotSettingsForm{
+class GiveForm extends ComplexMyPlotForm implements PlotSettingsForm, DangerZone{
 	/** @var string[] $players */
 	private $players = [];
 
