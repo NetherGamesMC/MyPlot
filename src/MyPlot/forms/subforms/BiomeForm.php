@@ -27,7 +27,7 @@ class BiomeForm extends SimpleMyPlotForm implements PlotSettingsForm{
 				static function(Player $player) use ($plugin, $biomeName) {
 					$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("biome.name") . ' "' . $biomeName . '"', true);
 				}
-			); // TODO: add images
+			);
 		}
 
 		parent::__construct(

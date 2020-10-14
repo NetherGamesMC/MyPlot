@@ -45,7 +45,7 @@ abstract class SubCommand implements PluginOwned
 	public abstract function canUse(CommandSender $sender) : bool;
 
 	public function getUsage() : string {
-        $usage = $this->getPlugin()->getFallBackLang()->get($this->name . ".usage"); // TODO: use normal language when command autofill gains support
+        $usage = $this->getPlugin()->getFallBackLang()->get($this->name . ".usage");
         return ($usage == $this->name . ".usage") ? "" : $usage;
     }
 

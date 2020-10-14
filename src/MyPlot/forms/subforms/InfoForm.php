@@ -45,7 +45,7 @@ class InfoForm extends ComplexMyPlotForm{
 					}, array_keys(BiomeSubCommand::BIOMES)),
 					(int)array_search($this->plot->biome, array_keys(BiomeSubCommand::BIOMES))
 				),
-				new Label($plugin->getLanguage()->translateString("info.formpvp", [$this->plot->pvp ? "Enabled" : "Disabled"]))  // TODO: translations)
+				new Label($plugin->getLanguage()->translateString("info.formpvp", [$this->plot->pvp ? "Enabled" : "Disabled"]))
 			]
 		);
 	}
