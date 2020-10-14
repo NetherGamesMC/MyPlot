@@ -39,8 +39,7 @@ use function explode;
 use function in_array;
 use function strtolower;
 
-class EventListener implements Listener
-{
+class EventListener implements Listener{
 	/** @var MyPlot $plugin */
 	private $plugin;
 
@@ -152,6 +151,10 @@ class EventListener implements Listener
 		}
 		$plot = $this->plugin->getPlotByPosition($event->getBlock()->getPos());
 		if($plot !== null) {
+			if(!$event instanceof SignChangeEvent && in_array($event->getItem()->getId(), $this->plugin->bannedItems, true)) {
+				$event->cancel();
+				return;
+			}
 			$ev = new MyPlotBlockEvent($plot, $event->getBlock(), $event->getPlayer(), $event);
 			if($event->isCancelled()) {
 				$ev->cancel();
