@@ -30,7 +30,7 @@ jobs:
         with:
           repository: Ifera/WorldStyler
           path: WorldStyler
-          ref: 4.0
+          ref: PM4.0
       - name: Run PHPStan
         uses: nxtlvlsoftware/pmmp-phpstan-action@3
         with:
