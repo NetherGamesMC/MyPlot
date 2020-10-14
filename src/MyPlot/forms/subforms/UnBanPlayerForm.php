@@ -15,11 +15,11 @@ class UnBanPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 		$plugin = MyPlot::getInstance();
 		parent::__construct(
 			null,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("undenyplayer.form")]),
+			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("unbanplayer.form")]),
 			[
 				new Dropdown(
-					$plugin->getLanguage()->get("undenyplayer.dropdown"),
-					empty($this->plot->denied) ? [TextFormat::DARK_BLUE . $plugin->getLanguage()->get("undenyplayer.formnodenied")] : array_map(function(string $text) {
+					$plugin->getLanguage()->get("unbanplayer.dropdown"),
+					empty($this->plot->denied) ? [TextFormat::DARK_BLUE . $plugin->getLanguage()->get("unbanplayer.formnodenied")] : array_map(function(string $text) {
 						return TextFormat::DARK_BLUE . $text;
 					}, $this->plot->denied),
 					-1,
@@ -28,7 +28,7 @@ class UnBanPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 							return;
 						}
 
-						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("undenyplayer.name") . ' "' . $this->plot->denied[$data] . '"', true);
+						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("unbanplayer.name") . ' "' . $this->plot->denied[$data] . '"', true);
 					}
 				)
 			]
