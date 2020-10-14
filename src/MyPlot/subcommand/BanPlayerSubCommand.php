@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
-use MyPlot\forms\subforms\DenyPlayerForm;
+use MyPlot\forms\subforms\BanPlayerForm;
 use MyPlot\Plot;
 use pocketmine\command\CommandSender;
 use pocketmine\player\OfflinePlayer;
@@ -11,7 +11,7 @@ use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
-class DenyPlayerSubCommand extends SubCommand
+class BanPlayerSubCommand extends SubCommand
 {
 	/**
 	 * @param CommandSender $sender
@@ -19,7 +19,7 @@ class DenyPlayerSubCommand extends SubCommand
 	 * @return bool
 	 */
 	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.denyplayer");
+		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.banplayer");
 	}
 
 	/**
@@ -38,7 +38,7 @@ class DenyPlayerSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
 			return true;
 		}
-		if($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.denyplayer")) {
+		if($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.banplayer")) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
@@ -48,20 +48,20 @@ class DenyPlayerSubCommand extends SubCommand
 		}
 		$dplayer = $this->getPlugin()->getServer()->getPlayer($dplayer);
 		if(!$dplayer instanceof Player) {
-			$sender->sendMessage($this->translateString("denyplayer.notaplayer"));
+			$sender->sendMessage($this->translateString("banplayer.notaplayer"));
 			return true;
 		}
-		if($dplayer->hasPermission("myplot.admin.denyplayer.bypass") or $dplayer->getName() === $plot->owner) {
-			$sender->sendMessage($this->translateString("denyplayer.cannotdeny", [$dplayer->getName()]));
+		if($dplayer->hasPermission("myplot.admin.banplayer.bypass") or $dplayer->getName() === $plot->owner) {
+			$sender->sendMessage($this->translateString("banplayer.cannotban", [$dplayer->getName()]));
 			if($dplayer instanceof Player)
-				$dplayer->sendMessage($this->translateString("denyplayer.attempteddeny", [$sender->getName()]));
+				$dplayer->sendMessage($this->translateString("banplayer.attemptedban", [$sender->getName()]));
 			return true;
 		}
 		STAR:
 		if($this->getPlugin()->addPlotDenied($plot, $dplayer->getName())) {
-			$sender->sendMessage($this->translateString("denyplayer.success1", [$dplayer->getName()]));
+			$sender->sendMessage($this->translateString("banplayer.success1", [$dplayer->getName()]));
 			if($dplayer instanceof Player) {
-				$dplayer->sendMessage($this->translateString("denyplayer.success2", [$plot->X, $plot->Z, $sender->getName()]));
+				$dplayer->sendMessage($this->translateString("banplayer.success2", [$plot->X, $plot->Z, $sender->getName()]));
 			}
 			if($dplayer->getName() === "*") {
 				foreach($this->getPlugin()->getServer()->getOnlinePlayers() as $player) {
@@ -78,7 +78,7 @@ class DenyPlayerSubCommand extends SubCommand
 
 	public function getForm(?Player $player = null) : ?MyPlotForm {
 		if(($plot = $this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot)
-			return new DenyPlayerForm($plot);
+			return new BanPlayerForm($plot);
 		return null;
 	}
 }

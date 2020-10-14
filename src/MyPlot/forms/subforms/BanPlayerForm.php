@@ -11,7 +11,7 @@ use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class DenyPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
+class BanPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 
 	/** @var string[] $players */
 	private $players = [];
@@ -29,16 +29,16 @@ class DenyPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 		}
 		parent::__construct(
 			null,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("denyplayer.form")]),
+			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("banplayer.form")]),
 			[
 				new Dropdown(
-					$plugin->getLanguage()->get("denyplayer.dropdown"),
+					$plugin->getLanguage()->get("banplayer.dropdown"),
 					array_map(function(string $text) {
 						return TextFormat::DARK_BLUE . $text;
 					}, $players),
 					-1,
 					function(Player $player, int $data) use ($plugin) {
-						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("denyplayer.name") . ' "' . $this->players[$data] . '"', true);
+						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("banplayer.name") . ' "' . $this->players[$data] . '"', true);
 					}
 				)
 			]

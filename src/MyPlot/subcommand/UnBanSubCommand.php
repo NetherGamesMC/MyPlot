@@ -3,14 +3,14 @@ declare(strict_types=1);
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
-use MyPlot\forms\subforms\UndenyPlayerForm;
+use MyPlot\forms\subforms\UnBanPlayerForm;
 use MyPlot\Plot;
 use pocketmine\command\CommandSender;
 use pocketmine\player\OfflinePlayer;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class UnDenySubCommand extends SubCommand
+class UnBanSubCommand extends SubCommand
 {
 	/**
 	 * @param CommandSender $sender
@@ -18,7 +18,7 @@ class UnDenySubCommand extends SubCommand
 	 * @return bool
 	 */
 	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.undenyplayer");
+		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.unbanplayer");
 	}
 
 	/**
@@ -37,7 +37,7 @@ class UnDenySubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
 			return true;
 		}
-		if($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.undenyplayer")) {
+		if($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.unbanplayer")) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
@@ -45,9 +45,9 @@ class UnDenySubCommand extends SubCommand
 		if($dplayer === null)
 			$dplayer = new OfflinePlayer($this->getPlugin()->getServer(), $dplayerName);
 		if($this->getPlugin()->removePlotDenied($plot, $dplayer->getName())) {
-			$sender->sendMessage($this->translateString("undenyplayer.success1", [$dplayer->getName()]));
+			$sender->sendMessage($this->translateString("unbanplayer.success1", [$dplayer->getName()]));
 			if($dplayer instanceof Player) {
-				$dplayer->sendMessage($this->translateString("undenyplayer.success2", [$plot->X, $plot->Z, $sender->getName()]));
+				$dplayer->sendMessage($this->translateString("unbanplayer.success2", [$plot->X, $plot->Z, $sender->getName()]));
 			}
 		}else{
 			$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
@@ -57,7 +57,7 @@ class UnDenySubCommand extends SubCommand
 
 	public function getForm(?Player $player = null) : ?MyPlotForm {
 		if($this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
-			return new UndenyPlayerForm();
+			return new UnBanPlayerForm();
 		return null;
 	}
 }

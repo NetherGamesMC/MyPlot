@@ -10,7 +10,7 @@ use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class UndenyPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
+class UnBanPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 	public function __construct() {
 		$plugin = MyPlot::getInstance();
 		parent::__construct(

@@ -30,9 +30,9 @@ permissions:
         default: true
       myplot.command.removehelper:
         default: true
-      myplot.command.denyplayer:
+      myplot.command.banplayer:
         default: true
-      myplot.command.undenyplayer:
+      myplot.command.unbanplayer:
         default: true
       myplot.command.auto:
         default: true
@@ -83,12 +83,12 @@ permissions:
         default: op
       myplot.admin.removehelper:
         default: op
-      myplot.admin.denyplayer:
+      myplot.admin.banplayer:
         default: op
         children:
-          myplot.admin.denyplayer.bypass:
+          myplot.admin.banplayer.bypass:
             default: op
-      myplot.admin.undenyplayer:
+      myplot.admin.unbanplayer:
         default: op
       myplot.admin.build:
         default: op
