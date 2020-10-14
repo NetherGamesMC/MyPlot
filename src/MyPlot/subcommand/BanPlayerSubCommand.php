@@ -34,6 +34,7 @@ class BanPlayerSubCommand extends SubCommand{
 		}
 		if(!$sender->hasPermission('nethergames.tier.platinum') || !$sender->hasPermission('nethergames.vip.legend')) {
 			$sender->sendMessage("§cYou don't have permission to ban other players from accessing your plot. Buy the §l§bLEGEND §r§crank at §bngmc.co/store §cto ban them!");
+			return true;
 		}
 		$dplayer = $args[0];
 		$plot = $this->getPlugin()->getPlotByPosition($sender->getPosition());
