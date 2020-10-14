@@ -847,7 +847,7 @@ class MyPlot extends PluginBase
 	public function addPlotDenied(Plot $plot, string $player) : bool {
 		$newPlot = clone $plot;
 		$ev = new MyPlotSettingEvent($plot, $newPlot);
-		if(!$newPlot->denyPlayer($player))
+		if(!$newPlot->banPlayer($player))
 			$ev->cancel();
 		$ev->call();
 		if($ev->isCancelled()) {
@@ -865,7 +865,7 @@ class MyPlot extends PluginBase
 	public function removePlotDenied(Plot $plot, string $player) : bool {
 		$newPlot = clone $plot;
 		$ev = new MyPlotSettingEvent($plot, $newPlot);
-		if(!$newPlot->unDenyPlayer($player)) {
+		if(!$newPlot->unBanPlayer($player)) {
 			$ev->cancel();
 		}
 		$ev->call();

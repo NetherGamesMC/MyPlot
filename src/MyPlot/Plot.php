@@ -18,8 +18,8 @@ class Plot
 	public $owner = "";
 	/** @var array $helpers */
 	public $helpers = [];
-	/** @var array $denied */
-	public $denied = [];
+	/** @var array $banned */
+	public $banned = [];
 	/** @var string $biome */
 	public $biome = "PLAINS";
 	/** @var bool $pvp */
@@ -36,19 +36,19 @@ class Plot
 	 * @param string $name
 	 * @param string $owner
 	 * @param array $helpers
-	 * @param array $denied
+	 * @param array $banned
 	 * @param string $biome
 	 * @param bool|null $pvp
 	 * @param int $id
 	 */
-	public function __construct(string $levelName, int $X, int $Z, string $name = "", string $owner = "", array $helpers = [], array $denied = [], string $biome = "PLAINS", ?bool $pvp = null, int $id = -1) {
+	public function __construct(string $levelName, int $X, int $Z, string $name = "", string $owner = "", array $helpers = [], array $banned = [], string $biome = "PLAINS", ?bool $pvp = null, int $id = -1) {
 		$this->levelName = $levelName;
 		$this->X = $X;
 		$this->Z = $Z;
 		$this->name = $name;
 		$this->owner = $owner;
 		$this->helpers = $helpers;
-		$this->denied = $denied;
+		$this->banned = $banned;
 		$this->biome = strtoupper($biome);
 		$settings = MyPlot::getInstance()->getLevelSettings($levelName);
 		if(!isset($pvp) and $settings !== null) {
@@ -79,7 +79,7 @@ class Plot
 	 */
 	public function addHelper(string $username) : bool {
 		if(!$this->isHelper($username)) {
-			$this->unDenyPlayer($username);
+			$this->unBanPlayer($username);
 			$this->helpers[] = $username;
 			return true;
 		}
@@ -112,8 +112,8 @@ class Plot
 	 *
 	 * @return bool
 	 */
-	public function isDenied(string $username) : bool {
-		return in_array($username, $this->denied);
+	public function isBanned(string $username) : bool {
+		return in_array($username, $this->banned);
 	}
 
 	/**
@@ -123,10 +123,10 @@ class Plot
 	 *
 	 * @return bool
 	 */
-	public function denyPlayer(string $username) : bool {
-		if(!$this->isDenied($username)) {
+	public function banPlayer(string $username) : bool {
+		if(!$this->isBanned($username)) {
 			$this->removeHelper($username);
-			$this->denied[] = $username;
+			$this->banned[] = $username;
 			return true;
 		}
 		return false;
@@ -139,15 +139,15 @@ class Plot
 	 *
 	 * @return bool
 	 */
-	public function unDenyPlayer(string $username) : bool {
-		if(!$this->isDenied($username)) {
+	public function unBanPlayer(string $username) : bool {
+		if(!$this->isBanned($username)) {
 			return false;
 		}
-		$key = array_search($username, $this->denied);
+		$key = array_search($username, $this->banned);
 		if($key === false) {
 			return false;
 		}
-		unset($this->denied[$key]);
+		unset($this->banned[$key]);
 		return true;
 	}
 

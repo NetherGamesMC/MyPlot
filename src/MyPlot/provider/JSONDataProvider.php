@@ -32,11 +32,11 @@ class JSONDataProvider extends DataProvider {
 	public function savePlot(Plot $plot) : bool {
 		$plots = $this->json->get("plots", []);
 		if($plot->id > -1) {
-			$plots[$plot->id] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->denied, "biome" => $plot->biome, "pvp" => $plot->pvp];
+			$plots[$plot->id] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->banned, "biome" => $plot->biome, "pvp" => $plot->pvp];
 		}else{
 			$id = $this->json->get("count", 0) + 1;
 			$plot->id = $id;
-			$plots[$id] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->denied, "biome" => $plot->biome, "pvp" => $plot->pvp];
+			$plots[$id] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->banned, "biome" => $plot->biome, "pvp" => $plot->pvp];
 			$this->json->set("count", $id);
 		}
 		$this->cachePlot($plot);

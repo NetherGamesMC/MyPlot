@@ -19,7 +19,7 @@ class BanPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 	public function __construct(Plot $plot) {
 		$plugin = MyPlot::getInstance();
 		$players = [];
-		if(!in_array("*", $plot->denied)) {
+		if(!in_array("*", $plot->banned)) {
 			$players = ["*"];
 			$this->players = ["*"];
 		}

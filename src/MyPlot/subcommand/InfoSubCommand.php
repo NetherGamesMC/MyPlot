@@ -42,7 +42,7 @@ class InfoSubCommand extends SubCommand
 					$sender->sendMessage($this->translateString("info.plotname", [TextFormat::GREEN . $plot->name]));
 					$helpers = implode(", ", $plot->helpers);
 					$sender->sendMessage($this->translateString("info.helpers", [TextFormat::GREEN . $helpers]));
-					$denied = implode(", ", $plot->denied);
+					$denied = implode(", ", $plot->banned);
 					$sender->sendMessage($this->translateString("info.denied", [TextFormat::GREEN . $denied]));
 					$sender->sendMessage($this->translateString("info.biome", [TextFormat::GREEN . $plot->biome]));
 				}else{
@@ -62,7 +62,7 @@ class InfoSubCommand extends SubCommand
 			$sender->sendMessage($this->translateString("info.plotname", [TextFormat::GREEN . $plot->name]));
 			$helpers = implode(", ", $plot->helpers);
 			$sender->sendMessage($this->translateString("info.helpers", [TextFormat::GREEN . $helpers]));
-			$denied = implode(", ", $plot->denied);
+			$denied = implode(", ", $plot->banned);
 			$sender->sendMessage($this->translateString("info.denied", [TextFormat::GREEN . $denied]));
 			$sender->sendMessage($this->translateString("info.biome", [TextFormat::GREEN . $plot->biome]));
 		}

@@ -37,7 +37,7 @@ class ArchiveSubCommand extends SubCommand{
 			$plot->name = TextFormat::GREEN . $sender->getName() . "'s Archived Plot";
 			$plot->owner = 'NetherGamesMC';
 			$plot->helpers = [];
-			$plot->denied = [];
+			$plot->banned = [];
 			if($this->getPlugin()->getProvider()->savePlot($plot)) {
 				$sender->sendMessage($this->translateString('archive.success'));
 			}else{

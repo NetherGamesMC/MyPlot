@@ -19,16 +19,16 @@ class UnBanPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 			[
 				new Dropdown(
 					$plugin->getLanguage()->get("unbanplayer.dropdown"),
-					empty($this->plot->denied) ? [TextFormat::DARK_BLUE . $plugin->getLanguage()->get("unbanplayer.formnodenied")] : array_map(function(string $text) {
+					empty($this->plot->banned) ? [TextFormat::DARK_BLUE . $plugin->getLanguage()->get("unbanplayer.formnodenied")] : array_map(function(string $text) {
 						return TextFormat::DARK_BLUE . $text;
-					}, $this->plot->denied),
+					}, $this->plot->banned),
 					-1,
 					function(Player $player, int $data) use ($plugin) : void {
-						if(empty($this->plot->denied)) {
+						if(empty($this->plot->banned)) {
 							return;
 						}
 
-						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("unbanplayer.name") . ' "' . $this->plot->denied[$data] . '"', true);
+						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("unbanplayer.name") . ' "' . $this->plot->banned[$data] . '"', true);
 					}
 				)
 			]

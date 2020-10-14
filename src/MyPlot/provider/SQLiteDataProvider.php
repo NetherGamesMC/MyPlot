@@ -69,7 +69,7 @@ class SQLiteDataProvider extends DataProvider
 	 */
 	public function savePlot(Plot $plot) : bool {
 		$helpers = implode(",", $plot->helpers);
-		$denied = implode(",", $plot->denied);
+		$denied = implode(",", $plot->banned);
 		if($plot->id >= 0) {
 			$stmt = $this->sqlSavePlotById;
 			$stmt->bindValue(":id", $plot->id, SQLITE3_INTEGER);

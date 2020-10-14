@@ -66,7 +66,7 @@ class MySQLProvider extends DataProvider {
 	public function savePlot(Plot $plot) : bool {
 		$this->reconnect();
 		$helpers = implode(',', $plot->helpers);
-		$denied = implode(',', $plot->denied);
+		$denied = implode(',', $plot->banned);
 		if($plot->id >= 0) {
 			$stmt = $this->sqlSavePlotById;
 			$stmt->bind_param('isiisssssi', $plot->id, $plot->levelName, $plot->X, $plot->Z, $plot->name, $plot->owner, $helpers, $denied, $plot->biome, $plot->pvp);

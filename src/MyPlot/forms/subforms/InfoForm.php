@@ -34,9 +34,9 @@ class InfoForm extends ComplexMyPlotForm{
 				),
 				new Dropdown(
 					$plugin->getLanguage()->get("info.formdenied"),
-					empty($this->plot->denied) ? [TextFormat::DARK_BLUE . $plugin->getLanguage()->get("info.formnodenied")] : array_map(function(string $text) {
+					empty($this->plot->banned) ? [TextFormat::DARK_BLUE . $plugin->getLanguage()->get("info.formnodenied")] : array_map(function(string $text) {
 						return TextFormat::DARK_BLUE . $text;
-					}, $this->plot->denied)
+					}, $this->plot->banned)
 				),
 				new Dropdown(
 					$plugin->getLanguage()->get("info.formbiome"),
