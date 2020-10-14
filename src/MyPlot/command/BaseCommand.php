@@ -23,7 +23,8 @@ abstract class BaseCommand extends Command{
 			new PlatinumPlotsCommand(),
 			new TphereCommand(),
 			new TptoCommand(),
-			new VanishCommand()
+			new VanishCommand(),
+			new ClearInventoryCommand()
 		]);
 	}
 
