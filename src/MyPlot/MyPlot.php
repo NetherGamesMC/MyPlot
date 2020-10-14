@@ -46,8 +46,7 @@ use pocketmine\world\World;
 use function strlen;
 use const PHP_INT_MAX;
 
-class MyPlot extends PluginBase
-{
+class MyPlot extends PluginBase{
 	/** @var MyPlot|null $instance */
 	private static $instance = null;
 
@@ -64,7 +63,9 @@ class MyPlot extends PluginBase
 	/** @var Commands */
 	private $commands;
 
+	/** @var array */
 	public $stopTime = [];
+	/** @var array */
 	public $bannedItems = [
 		ItemIds::TNT,
 		ItemIds::SPAWN_EGG,
