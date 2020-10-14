@@ -13,7 +13,7 @@ class ClearInventoryCommand extends BaseCommand{
 		parent::__construct('clearinventory');
 
 		$this->setAliases(['ci']);
-		//$this->setPermission('nethergames.vip.legend');todo uncomment
+		$this->setPermission('nethergames.vip.legend');
 		$this->setPermissionMessage('command.ci.noperm');
 		$this->setDescription('Command used for clearing your inventory for Legend players');
 	}

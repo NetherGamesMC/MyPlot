@@ -1070,20 +1070,18 @@ class MyPlot extends PluginBase{
 	}
 
 	protected function onEnable() : void {
-		/* todo uncomment this after tests
 		if(!($ess = $this->getServer()->getPluginManager()->getPlugin('NGEssentials')) instanceof NGEssentials) {
 			$this->getServer()->getPluginManager()->disablePlugin($this);
 			$this->getServer()->shutdown();
 			self::$instance = null;
 			return;
 		}
-		*/
 
 		if($this->isDisabled()) {
 			return;
 		}
 
-		//$this->ess = $ess; todo uncomment
+		$this->ess = $ess;
 
 		foreach(["Creative", "Mega", "Platinum"] as $world){
 			$this->getServer()->getWorldManager()->loadWorld($world);
@@ -1164,7 +1162,7 @@ class MyPlot extends PluginBase{
 		}
 
 		foreach(["Creative", "Mega", "Platinum"] as $world){
-			//$this->getServer()->getWorldManager()->getWorldByName($world)->save(true);todo uncomment
+			$this->getServer()->getWorldManager()->getWorldByName($world)->save(true);
 		}
 
 		self::$instance = null;

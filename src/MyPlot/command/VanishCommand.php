@@ -13,7 +13,7 @@ class VanishCommand extends BaseCommand{
 	public function __construct() {
 		parent::__construct('vanish');
 
-		//$this->setPermission('nethergames.vip.legend');todo uncomment
+		$this->setPermission('nethergames.vip.legend');
 		$this->setPermissionMessage('command.vanish.noperm');
 		$this->setDescription('Command used for making yourself vanish for Legend players');
 	}

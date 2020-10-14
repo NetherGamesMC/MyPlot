@@ -12,7 +12,7 @@ class ClearEntitiesCommand extends BaseCommand{
 	public function __construct() {
 		parent::__construct('ce');
 
-		//$this->setPermission('nethergames.executive');todo uncomment
+		$this->setPermission('nethergames.executive');
 		$this->setPermissionMessage('command.reserved.estaff');
 		$this->setDescription('Command used for clearing unnecessary entities in worlds');
 	}
