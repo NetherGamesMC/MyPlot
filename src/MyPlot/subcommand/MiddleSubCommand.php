@@ -43,7 +43,7 @@ class MiddleSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
+	public function getForm(Player $player) : ?MyPlotForm {
 		return null;
 	}
 }

@@ -74,7 +74,7 @@ class BiomeSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
+	public function getForm(Player $player) : ?MyPlotForm {
 		if($this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
 			return new BiomeForm(array_keys(self::BIOMES));
 		return null;

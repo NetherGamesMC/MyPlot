@@ -60,7 +60,7 @@ class ListSubCommand extends SubCommand {
 		return true;
 	}
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
+	public function getForm(Player $player) : ?MyPlotForm {
 		return null; // this will probably be merged into the homes command
 	}
 }

@@ -55,7 +55,7 @@ class UnBanSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
+	public function getForm(Player $player) : ?MyPlotForm {
 		if($this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
 			return new UnBanPlayerForm();
 		return null;

@@ -76,7 +76,7 @@ class BanPlayerSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
+	public function getForm(Player $player) : ?MyPlotForm {
 		if(($plot = $this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot)
 			return new BanPlayerForm($plot);
 		return null;

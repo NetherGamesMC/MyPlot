@@ -69,7 +69,7 @@ class ClaimSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
+	public function getForm(Player $player) : ?MyPlotForm {
 		return new ClaimForm($player);
 	}
 }
