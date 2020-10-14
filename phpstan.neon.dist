@@ -12,6 +12,7 @@ parameters:
         - /source/src
         - /source/NGEssentials/src
         - phar:///source/PharBuilder/libasynql.phar/src
+        - /source/PharBuilder/WorldStyler/src
     excludes_analyse:
         - /source/src/MyPlot/provider/EconomySProvider.php
         - /source/src/MyPlot/provider/PocketMoneyProvider.php

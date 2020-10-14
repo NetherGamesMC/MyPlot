@@ -1097,11 +1097,13 @@ class MyPlot extends PluginBase{
 		$this->getLogger()->debug(TF::BOLD . "Loading economy settings");
 		if($this->getConfig()->get("UseEconomy", false) === true) {
 			if(($plugin = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI")) !== null) {
+				/* @phpstan-ignore-next-line */
 				if($plugin instanceof EconomyAPI) {
 					$this->economyProvider = new EconomySProvider($plugin);
 					$this->getLogger()->debug("Eco set to EconomySProvider");
-				}else
+				}else{
 					$this->getLogger()->debug("Eco not instance of EconomyAPI");
+				}
 			}
 			if(!isset($this->economyProvider)) {
 				$this->getLogger()->info("No supported economy plugin found!");

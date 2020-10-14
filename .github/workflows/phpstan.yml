@@ -25,6 +25,12 @@ jobs:
           token: ${{ secrets.ng_token }}
           path: PharBuilder
           ref: PMMP4.0
+      - name: Checkout WorldStyler
+        uses: actions/checkout@v2
+        with:
+          repository: Ifera/WorldStyler
+          path: PharBuilder
+          ref: 4.0
       - name: Run PHPStan
         uses: nxtlvlsoftware/pmmp-phpstan-action@3
         with:
