@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
+use MyPlot\forms\subforms\MidForm;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class MiddleSubCommand extends SubCommand
-{
+class MiddleSubCommand extends SubCommand{
 	/**
 	 * @param CommandSender $sender
 	 *
@@ -44,6 +45,6 @@ class MiddleSubCommand extends SubCommand
 	}
 
 	public function getForm(Player $player) : ?MyPlotForm {
-		return null;
+		return new MidForm($player);
 	}
 }

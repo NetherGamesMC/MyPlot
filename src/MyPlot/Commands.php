@@ -71,6 +71,7 @@ class Commands extends Command implements PluginOwned
 		$this->loadSubCommand(new InfoSubCommand($plugin, "info"));
 		$this->loadSubCommand(new NameSubCommand($plugin, "name"));
 		$this->loadSubCommand(new BiomeSubCommand($plugin, "biome"));
+		$this->loadSubCommand(new MiddleSubCommand($plugin, "middle"));
 		$this->loadSubCommand(new AddHelperSubCommand($plugin, "addhelper"));
 		$this->loadSubCommand(new RemoveHelperSubCommand($plugin, "removehelper"));
 		$this->loadSubCommand(new HomeSubCommand($plugin, "home"));
@@ -80,9 +81,8 @@ class Commands extends Command implements PluginOwned
 		$this->loadSubCommand(new GiveSubCommand($plugin, "give"));
 		$this->loadSubCommand(new ClearSubCommand($plugin, "clear"));
 		$this->loadSubCommand(new ResetSubCommand($plugin, "reset"));
-		$this->loadSubCommand(new MiddleSubCommand($plugin, "middle"));
 		$this->loadSubCommand(new BanPlayerSubCommand($plugin, "banplayer"));
-		$this->loadSubCommand(new UnBanSubCommand($plugin, "undenyplayer"));
+		$this->loadSubCommand(new UnBanSubCommand($plugin, "unbanplayer"));
 		$this->loadSubCommand(new SetOwnerSubCommand($plugin, "setowner"));
 		$this->loadSubCommand(new ListSubCommand($plugin, "list"));
 		$this->loadSubCommand(new PvpSubCommand($plugin, "pvp"));
