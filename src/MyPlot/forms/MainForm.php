@@ -7,7 +7,6 @@ use libforms\elements\Button;
 use libforms\FormManager;
 use MyPlot\forms\interfaces\DangerZone;
 use MyPlot\forms\interfaces\PlotAdminForm;
-use MyPlot\forms\interfaces\PlotButtonForm;
 use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
 use MyPlot\subcommand\SubCommand;
@@ -61,11 +60,6 @@ class MainForm extends SimpleMyPlotForm{
 			}
 
 			$elements[] = new Button($form->getName(), static function(Player $player) use ($form) {
-				if($form instanceof PlotButtonForm) {
-					$form->onButtonClick($player);
-					return;
-				}
-
 				$form->sendForm();
 			});
 		}

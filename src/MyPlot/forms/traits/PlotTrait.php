@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace MyPlot\forms\traits;
 
+use MyPlot\forms\interfaces\PlotButtonForm;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
@@ -22,6 +23,11 @@ trait PlotTrait{
 
 	public function sendForm() : void {
 		if(!$this->preHandle($this->getPlayer())) {
+			return;
+		}
+
+		if($this instanceof PlotButtonForm) {
+			$this->onButtonClick($this->getPlayer());
 			return;
 		}
 
