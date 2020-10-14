@@ -6,6 +6,7 @@ namespace MyPlot;
 //use jasonwynn10\EasyCommandAutofill\Main;
 use MyPlot\forms\MainForm;
 use MyPlot\subcommand\AddHelperSubCommand;
+use MyPlot\subcommand\ArchiveSubCommand;
 use MyPlot\subcommand\AutoSubCommand;
 use MyPlot\subcommand\BiomeSubCommand;
 use MyPlot\subcommand\ClaimSubCommand;
@@ -74,6 +75,7 @@ class Commands extends Command implements PluginOwned
 		$this->loadSubCommand(new RemoveHelperSubCommand($plugin, "removehelper"));
 		$this->loadSubCommand(new HomeSubCommand($plugin, "home"));
 		$this->loadSubCommand(new HomesSubCommand($plugin, "homes"));
+		$this->loadSubCommand(new ArchiveSubCommand($plugin, "archive"));
 		$this->loadSubCommand(new DisposeSubCommand($plugin, "dispose"));
 		$this->loadSubCommand(new GiveSubCommand($plugin, "give"));
 		$this->loadSubCommand(new ClearSubCommand($plugin, "clear"));
