@@ -1070,7 +1070,7 @@ class MyPlot extends PluginBase
 
 	protected function onEnable() : void {
 		/* todo uncomment this after tests
-		if(($ess = $this->getServer()->getPluginManager()->getPlugin('NGEssentials')) === null) {
+		if(!($ess = $this->getServer()->getPluginManager()->getPlugin('NGEssentials')) instanceof NGEssentials) {
 			$this->getServer()->getPluginManager()->disablePlugin($this);
 			$this->getServer()->shutdown();
 			self::$instance = null;
