@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
@@ -11,15 +12,14 @@ use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
-class BanPlayerSubCommand extends SubCommand
-{
+class BanPlayerSubCommand extends SubCommand{
 	/**
 	 * @param CommandSender $sender
 	 *
 	 * @return bool
 	 */
 	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.banplayer");
+		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.banplayer") and ($sender->hasPermission("nethergames.tier.platinum") || $sender->hasPermission("nethergames.vip.legend"));
 	}
 
 	/**
@@ -31,6 +31,9 @@ class BanPlayerSubCommand extends SubCommand
 	public function execute(CommandSender $sender, array $args) : bool {
 		if(empty($args)) {
 			return false;
+		}
+		if(!$sender->hasPermission('nethergames.tier.platinum') || !$sender->hasPermission('nethergames.vip.legend')) {
+			$sender->sendMessage("§cYou don't have permission to ban other players from accessing your plot. Buy the §l§bLEGEND §r§crank at §bngmc.co/store §cto ban them!");
 		}
 		$dplayer = $args[0];
 		$plot = $this->getPlugin()->getPlotByPosition($sender->getPosition());
@@ -44,7 +47,7 @@ class BanPlayerSubCommand extends SubCommand
 		}
 		if($dplayer === "*") {
 			$dplayer = new OfflinePlayer(Server::getInstance(), "*");
-			GOTO STAR;
+			goto STAR;
 		}
 		$dplayer = $this->getPlugin()->getServer()->getPlayer($dplayer);
 		if(!$dplayer instanceof Player) {
@@ -64,7 +67,7 @@ class BanPlayerSubCommand extends SubCommand
 				$dplayer->sendMessage($this->translateString("banplayer.success2", [$plot->X, $plot->Z, $sender->getName()]));
 			}
 			if($dplayer->getName() === "*") {
-				foreach($this->getPlugin()->getServer()->getOnlinePlayers() as $player) {
+				foreach($this->getPlugin()->getServer()->getOnlinePlayers() as $player){
 					if($this->getPlugin()->getPlotBB($plot)->isVectorInside($player->getPosition()) and !($player->getName() === $plot->owner) and !$plot->isHelper($player->getName()))
 						$this->getPlugin()->teleportPlayerToPlot($player, $plot);
 				}
