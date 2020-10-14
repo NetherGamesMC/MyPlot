@@ -78,7 +78,7 @@ class MainForm extends SimpleMyPlotForm{
 					$settings->addButton($button);
 				}
 
-				$button = new Button("§cDanger Zone", function(Player $player) use ($dangerForms) {
+				$button = new Button("§cDanger Zone", function(Player $player) use ($dangerForms, $settings) {
 					$dangerZone = FormManager::createSimpleForm($player);
 					$dangerZone->setTitle("Danger Zone");
 
@@ -90,10 +90,19 @@ class MainForm extends SimpleMyPlotForm{
 						$dangerZone->addButton($button);
 					}
 
+					$dangerZone->addButton(new Button("Back", function(Player $player) use ($settings) {
+						$settings->sendForm(); // go back to settings form
+					}));
+
 					$dangerZone->sendForm();
 				});
 
-				$settings->addButton($button);
+				$settings->addButton($button); // danger zone button
+				$settings->addButton(new Button("Back", function(Player $player) {
+					// go back to main form
+					$player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
+				}));
+
 				$settings->sendForm();
 			});
 		}
@@ -101,18 +110,23 @@ class MainForm extends SimpleMyPlotForm{
 		// only add admin form if the player has admin perms
 		if($player->hasPermission('myplot.admin') || $player->hasPermission('nethergames.admin')) {
 			$elements[] = new Button("Admin Settings", function(Player $player) use ($adminForms) {
-				$settings = FormManager::createSimpleForm($player);
-				$settings->setTitle("Admin Settings");
+				$admin = FormManager::createSimpleForm($player);
+				$admin->setTitle("Admin Settings");
 
 				foreach($adminForms as $name => $form){
 					$button = new Button($form->getName(), function(Player $player) use ($form) {
 						$form->sendForm();
 					});
 
-					$settings->addButton($button);
+					$admin->addButton($button);
 				}
 
-				$settings->sendForm();
+				$admin->addButton(new Button("Back", function(Player $player) {
+					// go back to main form
+					$player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
+				}));
+
+				$admin->sendForm();
 			});
 		}
 
