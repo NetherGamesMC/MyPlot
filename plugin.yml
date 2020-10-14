@@ -9,11 +9,13 @@ authors:
 - jasonwynn10
 - Ifera
 description: "Plots and Protection Plugin for PocketMine-MP Servers"
-load: STARTUP
+load: POSTWORLD
 softdepend:
 - EconomyAPI
 - DEVirion
 - WorldStyler
+- DevTools
+- NGEssentials
 permissions:
   myplot.command:
     default: op
