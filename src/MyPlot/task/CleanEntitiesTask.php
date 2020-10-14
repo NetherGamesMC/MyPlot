@@ -9,6 +9,7 @@ use pocketmine\entity\Human;
 use pocketmine\scheduler\Task;
 
 class CleanEntitiesTask extends Task{
+	/** @var MyPlot */
 	private $plugin;
 
 	public function __construct(MyPlot $plugin) {

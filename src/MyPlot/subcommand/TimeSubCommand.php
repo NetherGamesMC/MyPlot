@@ -36,9 +36,9 @@ class TimeSubCommand extends SubCommand{
 		return true;
 	}
 
-    /**
-     * @param mixed $value
-     */
+	/**
+	 * @param mixed $value
+	 */
 	private function getInteger($value, int $min = 30000000, int $max = -30000000) : int {
 		$i = (int)$value;
 		if($i < $min) {
