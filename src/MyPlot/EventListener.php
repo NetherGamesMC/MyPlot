@@ -349,7 +349,7 @@ class EventListener implements Listener{
 				$ev->uncancel();
 			}
 			$username = $player->getName();
-			if($plot->owner !== $username and ($plot->isDenied($username) or $plot->isDenied("*")) and !$player->hasPermission("myplot.admin.denyplayer.bypass")) {
+			if($plot->owner !== $username and ($plot->isDenied($username) or $plot->isDenied("*")) and !$player->hasPermission("myplot.admin.banplayer.bypass")) {
 				$ev->cancel();
 			}
 			$ev->call();
@@ -391,7 +391,7 @@ class EventListener implements Listener{
 			}else{
 				$event->uncancel();
 			}
-		}elseif($plotFrom !== null and $plot !== null and ($plot->isDenied($player->getName()) or $plot->isDenied("*")) and $plot->owner !== $player->getName() and !$player->hasPermission("myplot.admin.denyplayer.bypass")){
+		}elseif($plotFrom !== null and $plot !== null and ($plot->isDenied($player->getName()) or $plot->isDenied("*")) and $plot->owner !== $player->getName() and !$player->hasPermission("myplot.admin.banplayer.bypass")){
 			$this->plugin->teleportPlayerToPlot($player, $plot, false);
 		}
 	}
