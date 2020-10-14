@@ -45,7 +45,7 @@ class TphereCommand extends BaseCommand{
 				}
 			}elseif($args[0] === 'd' || $args[0] === 'decline'){
 				if(isset($args[1])) {
-					if(!($player = $sender->getServer()->getPlayer($args[1])) instanceof Player) {
+					if(($player = $sender->getServer()->getPlayer($args[1])) instanceof Player) {
 						if(isset($this->requests[$sender->getName()][$player->getName()])) {
 							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.declined.receiver', array($player->getName())));
 							$player->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.declined.sender', array($sender->getName())));
