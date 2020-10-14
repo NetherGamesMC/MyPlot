@@ -491,6 +491,10 @@ class EventListener implements Listener{
 		$player = $event->getPlayer();
 		$command = explode(' ', strtolower($event->getMessage()));
 
+		if($player->hasPermission("myplot.admin")){
+		    return;
+        }
+
 		if(($command[0] === '/p' || $command[0] === '/plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
 			$player->sendMessage('§cThat command is blocked in this world.');
 			$event->cancel();
