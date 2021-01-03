@@ -47,10 +47,10 @@ class BanPlayerSubCommand extends SubCommand{
 			return true;
 		}
 		if($dplayer === "*") {
-			$dplayer = new OfflinePlayer(Server::getInstance(), "*");
+			$dplayer = new OfflinePlayer( "*", null);
 			goto STAR;
 		}
-		$dplayer = $this->getPlugin()->getServer()->getPlayer($dplayer);
+		$dplayer = $this->getPlugin()->getServer()->getPlayerExact($dplayer);
 		if(!$dplayer instanceof Player) {
 			$sender->sendMessage($this->translateString("banplayer.notaplayer"));
 			return true;

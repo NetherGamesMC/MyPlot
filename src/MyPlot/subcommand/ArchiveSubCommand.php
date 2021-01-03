@@ -22,7 +22,7 @@ class ArchiveSubCommand extends SubCommand{
 			return false;
 		}
 
-		$player = $sender->getServer()->getPlayer($sender->getName());
+		$player = $sender->getServer()->getPlayerExact($sender->getName());
 		$plot = $this->getPlugin()->getPlotByPosition($player->getPosition());
 		if($plot === null) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString('notinplot'));

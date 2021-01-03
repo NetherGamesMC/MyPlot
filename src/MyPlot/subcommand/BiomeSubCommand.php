@@ -35,7 +35,7 @@ class BiomeSubCommand extends SubCommand
 			$sender->sendMessage($this->translateString("biome.possible", [$biomes]));
 			return true;
 		}
-		$player = $sender->getServer()->getPlayer($sender->getName());
+		$player = $sender->getServer()->getPlayerExact($sender->getName());
 		$biome = strtoupper($args[0]);
 		$plot = $this->getPlugin()->getPlotByPosition($player->getPosition());
 		if($plot === null) {

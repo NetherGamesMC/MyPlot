@@ -28,7 +28,7 @@ class TphereCommand extends BaseCommand{
 
 			if($args[0] === 'a' || $args[0] === 'accept') {
 				if(isset($args[1])) {
-					if(($player = $sender->getServer()->getPlayer($args[1])) instanceof Player) {
+					if(($player = $sender->getServer()->getPlayerExact($args[1])) instanceof Player) {
 						if(isset($this->requests[$sender->getName()][$player->getName()])) {
 							$sender->teleport($player->getPosition());
 							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.accepted.receiver', array($player->getName())));
@@ -45,7 +45,7 @@ class TphereCommand extends BaseCommand{
 				}
 			}elseif($args[0] === 'd' || $args[0] === 'decline'){
 				if(isset($args[1])) {
-					if(($player = $sender->getServer()->getPlayer($args[1])) instanceof Player) {
+					if(($player = $sender->getServer()->getPlayerExact($args[1])) instanceof Player) {
 						if(isset($this->requests[$sender->getName()][$player->getName()])) {
 							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.declined.receiver', array($player->getName())));
 							$player->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.declined.sender', array($sender->getName())));
@@ -59,7 +59,7 @@ class TphereCommand extends BaseCommand{
 				}else{
 					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tp.specify'));
 				}
-			}elseif(($player = $sender->getServer()->getPlayer($args[0])) instanceof Player){
+			}elseif(($player = $sender->getServer()->getPlayerExact($args[0])) instanceof Player){
 				if($sender->hasPermission('nethergames.vip.emerald')) {
 					$this->requests[$player->getName()][$sender->getName()] = $sender->getName();
 					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.send', array($player->getName())));
