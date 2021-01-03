@@ -32,6 +32,6 @@ jobs:
           path: WorldStyler
           ref: PM4.0
       - name: Run PHPStan
-        uses: nxtlvlsoftware/pmmp-phpstan-action@3
+        uses: larryTheCoder/pmmp-phpstan-action@master
         with:
           phpstan-config: phpstan.neon.dist
