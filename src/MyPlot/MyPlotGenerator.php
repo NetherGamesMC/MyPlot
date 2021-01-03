@@ -5,7 +5,7 @@ namespace MyPlot;
 
 use pocketmine\block\Block;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\world\biome\Biome;
+use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\world\ChunkManager;
 use pocketmine\world\generator\Generator;
 
@@ -33,12 +33,11 @@ class MyPlotGenerator extends Generator{
 	/**
 	 * MyPlotGenerator constructor.
 	 *
-	 * @param ChunkManager $world
 	 * @param int $seed
 	 * @param array $options
 	 */
-	public function __construct(ChunkManager $world, int $seed, array $options = []) {
-		parent::__construct($world, $seed, $options);
+	public function __construct(int $seed, array $options = []) {
+		parent::__construct($seed, $options);
 		if(isset($options["preset"])) {
 			$options = json_decode($options["preset"], true);
 			if($options === false or is_null($options)) {
@@ -72,18 +71,18 @@ class MyPlotGenerator extends Generator{
 	 * @param int $chunkX
 	 * @param int $chunkZ
 	 */
-	public function generateChunk(int $chunkX, int $chunkZ) : void {
+	public function generateChunk(ChunkManager $chunkManager, int $chunkX, int $chunkZ) : void {
 		$shape = $this->getShape($chunkX << 4, $chunkZ << 4);
-		$chunk = $this->world->getChunk($chunkX, $chunkZ);
+		$chunk = $chunkManager->getChunk($chunkX, $chunkZ);
 		$bottomBlockId = $this->bottomBlock->getFullId();
 		$plotFillBlockId = $this->plotFillBlock->getFullId();
 		$plotFloorBlockId = $this->plotFloorBlock->getFullId();
 		$roadBlockId = $this->roadBlock->getFullId();
 		$wallBlockId = $this->wallBlock->getFullId();
 		$groundHeight = $this->groundHeight;
-		for($Z = 0; $Z < 16; ++$Z){
-			for($X = 0; $X < 16; ++$X){
-				$chunk->setBiomeId($X, $Z, Biome::PLAINS);
+		for($Z = 0; $Z < 16; ++$Z) {
+			for($X = 0; $X < 16; ++$X) {
+				$chunk->setBiomeId($X, $Z, BiomeIds::PLAINS);
 				$chunk->setFullBlock($X, 0, $Z, $bottomBlockId);
 				$chunk->setFullBlock($X, 0, $Z, $bottomBlockId);
 				for($y = 1; $y < $groundHeight; ++$y){
@@ -103,7 +102,7 @@ class MyPlotGenerator extends Generator{
 		$chunk->setX($chunkX);
 		$chunk->setZ($chunkZ);
 		$chunk->setGenerated();
-		$this->world->setChunk($chunkX, $chunkZ, $chunk);
+		$chunkManager->setChunk($chunkX, $chunkZ, $chunk);
 	}
 
 	/**
@@ -164,9 +163,9 @@ class MyPlotGenerator extends Generator{
 	}
 
 	/**
+	 * @param ChunkManager $world
 	 * @param int $chunkX
 	 * @param int $chunkZ
 	 */
-	public function populateChunk(int $chunkX, int $chunkZ) : void {
-	}
+	public function populateChunk(ChunkManager $world, int $chunkX, int $chunkZ) : void {}
 }
