@@ -11,7 +11,6 @@ parameters:
     scanDirectories:
         - /source/src
         - /source/NGEssentials/src
-        - phar:///source/PharBuilder/libasynql.phar/src
         - /source/WorldStyler/src
     excludes_analyse:
         - /source/src/MyPlot/provider/EconomySProvider.php

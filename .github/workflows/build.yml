@@ -27,8 +27,6 @@ jobs:
           echo Building...
           chmod +x PharBuilder/BuildScript.php
           php -dphar.readonly=0 PharBuilder/BuildScript.php --make "" --out PharBuilder/NGPlots.phar
-          echo Injecting Virions...
-          php -dphar.readonly=0 PharBuilder/libasynql.phar PharBuilder/NGPlots.phar
           echo Build completed!
       - name: Upload
         uses: actions/upload-artifact@v1
