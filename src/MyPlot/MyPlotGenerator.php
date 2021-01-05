@@ -99,9 +99,6 @@ class MyPlotGenerator extends Generator{
 				}
 			}
 		}
-		$chunk->setX($chunkX);
-		$chunk->setZ($chunkZ);
-		$chunk->setGenerated();
 		$chunkManager->setChunk($chunkX, $chunkZ, $chunk);
 	}
 

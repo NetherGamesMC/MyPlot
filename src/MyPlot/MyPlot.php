@@ -26,19 +26,21 @@ use MyPlot\task\ClearPlotTask;
 use NetherGames\NGEssentials\NGEssentials;
 use onebone\economyapi\EconomyAPI;
 use pocketmine\block\VanillaBlocks;
+use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\event\world\WorldLoadEvent;
 use pocketmine\item\ItemIds;
 use pocketmine\lang\Language;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
+use pocketmine\permission\DefaultPermissions;
 use pocketmine\permission\Permission;
-use pocketmine\permission\PermissionManager;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\world\biome\Biome;
+use pocketmine\world\biome\BiomeRegistry;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\Position;
@@ -608,8 +610,9 @@ class MyPlot extends PluginBase{
 			$plugin->getLogger()->debug(TF::GREEN . 'Pasted ' . number_format($changed) . ' blocks in ' . number_format($time, 10) . 's from the MyPlot clipboard.');
 		});
 		$styler->removeSelection(99997);
-		foreach($this->getPlotChunks($plotTo) as $chunk){
-			$level->setChunk($chunk->getX(), $chunk->getZ(), $chunk, false);
+		foreach($this->getPlotChunks($plotTo) as $chunkHash => $chunk){
+		    World::getXZ($chunkHash, $chunkX, $chunkZ);
+			$level->setChunk($chunkX, $chunkZ, $chunk, false);
 		}
 		return true;
 	}
@@ -697,9 +700,10 @@ class MyPlot extends PluginBase{
 				$plugin->getLogger()->debug('Set ' . number_format($changed) . ' blocks in ' . number_format($time, 10) . 's');
 			});
 			$styler->removeSelection(99998);
-			foreach($this->getPlotChunks($plot) as $chunk){
-				$plotBeginPos->world->setChunk($chunk->getX(), $chunk->getZ(), $chunk, false);
-			}
+            foreach($this->getPlotChunks($plot) as $chunkHash => $chunk){
+                World::getXZ($chunkHash, $chunkX, $chunkZ);
+                $plotBeginPos->world->setChunk($chunkX, $chunkZ, $chunk, false);
+            }
 			$this->getScheduler()->scheduleDelayedTask(new ClearBorderTask($this, $plot), 1);
 			return true;
 		}
@@ -765,23 +769,24 @@ class MyPlot extends PluginBase{
 			return false;
 		}
 		$plot = $ev->getPlot();
-		$biome = Biome::getBiome(defined(Biome::class . "::" . $plot->biome) ? constant(Biome::class . "::" . $plot->biome) : Biome::PLAINS);
+		$biome = BiomeRegistry::getInstance()->getBiome(defined(BiomeIds::class . "::" . $plot->biome) ? constant(BiomeIds::class . "::" . $plot->biome) : BiomeIds::PLAINS);
 		$plotWorld = $this->getLevelSettings($plot->levelName);
 		if($plotWorld === null) {
 			return false;
 		}
 		$world = $this->getServer()->getWorldManager()->getWorldByName($plot->levelName);
 		$chunks = $this->getPlotChunks($plot);
-		foreach($chunks as $chunk){
+		foreach($chunks as $chunkHash => $chunk){
+		    World::getXZ($chunkHash, $chunkX, $chunkZ);
 			for($x = 0; $x < 16; ++$x){
 				for($z = 0; $z < 16; ++$z){
-					$chunkPlot = $this->getPlotByPosition(new Position(($chunk->getX() << 4) + $x, $plotWorld->groundHeight, ($chunk->getZ() << 4) + $z, $world));
+					$chunkPlot = $this->getPlotByPosition(new Position(($chunkX << 4) + $x, $plotWorld->groundHeight, ($chunkZ << 4) + $z, $world));
 					if($chunkPlot instanceof Plot and $chunkPlot->isSame($plot)) {
 						$chunk->setBiomeId($x, $z, $biome->getId());
 					}
 				}
 			}
-			$world->setChunk($chunk->getX(), $chunk->getZ(), $chunk, false);
+			$world->setChunk($chunkX, $chunkZ, $chunk, false);
 		}
 		return $this->savePlot($plot);
 	}
@@ -909,7 +914,7 @@ class MyPlot extends PluginBase{
 		$chunks = [];
 		for($x = $pos->x >> 4; $x <= $xMax; $x++){
 			for($z = $pos->z >> 4; $z <= $zMax; $z++){
-				$chunks[] = $world->getChunk($x, $z, true);
+				$chunks[World::chunkHash($x,$z)] = $world->getOrLoadChunkAtPosition($pos);
 			}
 		}
 		return $chunks;
@@ -932,8 +937,13 @@ class MyPlot extends PluginBase{
 			return PHP_INT_MAX;
 		}
 
+        $rootPermissions = [DefaultPermissions::ROOT_USER => true];
+        if($this->getServer()->isOp($player->getName())){
+            $rootPermissions[DefaultPermissions::ROOT_OPERATOR] = true;
+        }
+
 		/** @var Permission[] $perms */
-		$perms = array_merge(PermissionManager::getInstance()->getDefaultPermissions($player->isOp()), $player->getEffectivePermissions());
+		$perms = array_merge($rootPermissions, $player->getEffectivePermissions());
 		$perms = array_filter($perms, function(string $name) use ($levelName, $length) {
 			return (substr($name, 0, 19 + $length) === "myplot.claimplots.$levelName.");
 		}, ARRAY_FILTER_USE_KEY);
