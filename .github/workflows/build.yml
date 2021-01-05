@@ -17,6 +17,11 @@ jobs:
           token: ${{ secrets.ng_token }}
           path: PharBuilder
           ref: PMMP4.0
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.3'
+          ini-values: phar.readonly=0
       - name: Build
         run: |
           echo Building...
