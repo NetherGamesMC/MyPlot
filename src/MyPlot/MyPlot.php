@@ -1094,7 +1094,7 @@ class MyPlot extends PluginBase{
 		$this->ess = $ess;
 
 		foreach(["Creative", "Mega", "Platinum"] as $world){
-			$this->getServer()->getWorldManager()->loadWorld($world);
+			$this->getServer()->getWorldManager()->loadWorld($world, true);
 		}
 
 		$this->getLogger()->debug(TF::BOLD . "Loading MyPlot Commands");
