@@ -1093,7 +1093,7 @@ class MyPlot extends PluginBase{
 
 		$this->ess = $ess;
 
-		foreach(["Creative", "Mega", "Platinum"] as $world){
+		foreach(["Creative", "MEGA", "Platinum"] as $world){
 			$this->getServer()->getWorldManager()->loadWorld($world, true);
 		}
 
@@ -1171,7 +1171,7 @@ class MyPlot extends PluginBase{
 			$this->dataProvider->close();
 		}
 
-		foreach(["Creative", "Mega", "Platinum"] as $world){
+		foreach(["Creative", "MEGA", "Platinum"] as $world){
 			$this->getServer()->getWorldManager()->getWorldByName($world)->save(true);
 		}
 

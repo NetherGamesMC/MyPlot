@@ -18,7 +18,7 @@ class TimeSubCommand extends SubCommand{
 		if(!$sender instanceof Player) {
 			return true;
 		}
-		if($sender->hasPermission('nethergames.tier.platinum') || $sender->hasPermission('nethergames.vip.legend')) {
+		if($sender->hasPermission('nethergames.vip.legend')) {
 			if(count($args) !== 1) {
 				return false;
 			}

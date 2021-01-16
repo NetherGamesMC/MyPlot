@@ -19,7 +19,7 @@ class BanPlayerSubCommand extends SubCommand{
 	 * @return bool
 	 */
 	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.banplayer") and ($sender->hasPermission("nethergames.tier.platinum") || $sender->hasPermission("nethergames.vip.legend"));
+		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.banplayer") and $sender->hasPermission("nethergames.vip.legend");
 	}
 
 	/**
@@ -32,7 +32,7 @@ class BanPlayerSubCommand extends SubCommand{
 		if(empty($args)) {
 			return false;
 		}
-		if(!$sender->hasPermission('nethergames.tier.platinum') || !$sender->hasPermission('nethergames.vip.legend')) {
+		if(!$sender->hasPermission('nethergames.vip.legend')) {
 			$sender->sendMessage("§cYou don't have permission to ban other players from accessing your plot. Buy the §l§bLEGEND §r§crank at §bngmc.co/store §cto ban them!");
 			return true;
 		}
