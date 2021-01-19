@@ -912,9 +912,9 @@ class MyPlot extends PluginBase{
 		$xMax = ($pos->x + $plotSize) >> 4;
 		$zMax = ($pos->z + $plotSize) >> 4;
 		$chunks = [];
-		for($x = $pos->x >> 4; $x <= $xMax; $x++){
-			for($z = $pos->z >> 4; $z <= $zMax; $z++){
-				$chunks[World::chunkHash($x, $z)] = $world->getOrLoadChunkAtPosition($pos);
+		for($X = $pos->x >> 4; $X <= $xMax; $X++){
+			for($Z = $pos->z >> 4; $Z <= $zMax; $Z++){
+				$chunks[World::chunkHash($X, $Z)] = $world->getOrLoadChunkAtPosition($pos);
 			}
 		}
 		return $chunks;

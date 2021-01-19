@@ -7,6 +7,7 @@ use pocketmine\block\Block;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\world\ChunkManager;
+use pocketmine\world\format\Chunk;
 use pocketmine\world\generator\Generator;
 
 class MyPlotGenerator extends Generator{
@@ -73,7 +74,7 @@ class MyPlotGenerator extends Generator{
 	 */
 	public function generateChunk(ChunkManager $chunkManager, int $chunkX, int $chunkZ) : void {
 		$shape = $this->getShape($chunkX << 4, $chunkZ << 4);
-		$chunk = $chunkManager->getChunk($chunkX, $chunkZ);
+		$chunk = $chunkManager->getChunk($chunkX, $chunkZ) ?? new Chunk();
 		$bottomBlockId = $this->bottomBlock->getFullId();
 		$plotFillBlockId = $this->plotFillBlock->getFullId();
 		$plotFloorBlockId = $this->plotFloorBlock->getFullId();
