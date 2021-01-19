@@ -33,7 +33,6 @@ use pocketmine\lang\Language;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
-use pocketmine\permission\DefaultPermissions;
 use pocketmine\permission\Permission;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
@@ -47,7 +46,6 @@ use pocketmine\world\Position;
 use pocketmine\world\World;
 use function count;
 use function strlen;
-use function var_dump;
 use const PHP_INT_MAX;
 
 class MyPlot extends PluginBase{
