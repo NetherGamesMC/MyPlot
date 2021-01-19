@@ -1171,8 +1171,13 @@ class MyPlot extends PluginBase{
 			$this->dataProvider->close();
 		}
 
+		$worldManager = $this->getServer()->getWorldManager();
 		foreach(["Creative", "MEGA", "Platinum"] as $world){
-			$this->getServer()->getWorldManager()->getWorldByName($world)->save(true);
+		    if($worldManager->getWorldByName($world) !== null){
+                $worldManager->getWorldByName($world)->save(true);
+            }else{
+		        $this->getLogger()->error("World: " . $world . " not found!");
+            }
 		}
 
 		self::$instance = null;
