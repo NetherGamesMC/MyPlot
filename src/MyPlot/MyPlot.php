@@ -182,7 +182,7 @@ class MyPlot extends PluginBase{
 	 *
 	 * @return bool
 	 */
-	public function generateLevel(string $worldName, string $generator = "myplot", array $settings = []) : bool {
+	public function generateWorld(string $worldName, string $generator = "myplot", array $settings = []) : bool {
 		$ev = new MyPlotGenerationEvent($worldName, $generator, $settings);
 		$ev->call();
 		$worldManager = $this->getServer()->getWorldManager();
@@ -914,7 +914,7 @@ class MyPlot extends PluginBase{
 		$chunks = [];
 		for($x = $pos->x >> 4; $x <= $xMax; $x++){
 			for($z = $pos->z >> 4; $z <= $zMax; $z++){
-				$chunks[World::chunkHash($x,$z)] = $world->getOrLoadChunkAtPosition($pos);
+				$chunks[World::chunkHash($x, $z)] = $world->getOrLoadChunkAtPosition($pos);
 			}
 		}
 		return $chunks;

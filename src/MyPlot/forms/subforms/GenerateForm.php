@@ -9,7 +9,6 @@ use libforms\elements\Toggle;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\forms\interfaces\PlotAdminForm;
 use MyPlot\MyPlot;
-use MyPlot\Plot;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
@@ -44,20 +43,20 @@ class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm{
 			}
 		}
 
-		$elements["teleport"] = new Toggle($plugin->getLanguage()->get("generate.formteleport"));
+		//$elements["teleport"] = new Toggle($plugin->getLanguage()->get("generate.formteleport"));
 
 		parent::__construct(
 			null,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("generate.form")]),
 			$elements,
 			function(Player $player, ?array $data = []) use ($plugin) {
-				$world = array_shift($data);
-				if($player->getServer()->getWorldManager()->isWorldGenerated($world)) {
-					$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("generate.exists", [$world]));
+				$worldName = array_shift($data);
+				if($player->getServer()->getWorldManager()->isWorldGenerated($worldName)) {
+					$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("generate.exists", [$worldName]));
 					return;
 				}
 
-				$teleport = array_pop($data);
+				//$teleport = array_pop($data);
 				$data = array_map(
 					function($val) {
 						if(!is_string($val)) {
@@ -81,12 +80,11 @@ class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm{
 					$data
 				);
 
-				if($plugin->generateLevel($world, array_shift($data), $data)) {
-					if($teleport) {
-						$plugin->teleportPlayerToPlot($player, new Plot($world, 0, 0));
-					}
-
-					$player->sendMessage($plugin->getLanguage()->translateString("generate.success", [$world]));
+				if($plugin->generateWorld($worldName, array_shift($data), $data)) {
+					/* if($teleport) {
+						$plugin->teleportPlayerToPlot($player, new Plot($worldName, 0, 0));
+					} */
+					$player->sendMessage($plugin->getLanguage()->translateString("generate.success", [$worldName]));
 				}else{
 					$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("generate.error"));
 				}
