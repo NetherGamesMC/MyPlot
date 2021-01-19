@@ -45,7 +45,9 @@ use pocketmine\world\format\Chunk;
 use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\Position;
 use pocketmine\world\World;
+use function count;
 use function strlen;
+use function var_dump;
 use const PHP_INT_MAX;
 
 class MyPlot extends PluginBase{
@@ -937,19 +939,17 @@ class MyPlot extends PluginBase{
 			return PHP_INT_MAX;
 		}
 
-        $rootPermissions = [DefaultPermissions::ROOT_USER => true];
-        if($this->getServer()->isOp($player->getName())){
-            $rootPermissions[DefaultPermissions::ROOT_OPERATOR] = true;
-        }
-
-		/** @var Permission[] $perms */
-		$perms = array_merge($rootPermissions, $player->getEffectivePermissions());
-		$perms = array_filter($perms, function(string $name) use ($levelName, $length) {
+        $perms = $player->getEffectivePermissions();
+        $perms = array_filter($perms, function(string $name) use ($levelName, $length) {
 			return (substr($name, 0, 19 + $length) === "myplot.claimplots.$levelName.");
 		}, ARRAY_FILTER_USE_KEY);
-		if(count($perms) === 0)
-			return 0;
+
+		if(count($perms) === 0) {
+		    return 0;
+        }
+
 		krsort($perms, SORT_FLAG_CASE | SORT_NATURAL);
+
 		/**
 		 * @var string $name
 		 * @var Permission $perm
@@ -960,6 +960,7 @@ class MyPlot extends PluginBase{
 				return (int)$maxPlots;
 			}
 		}
+
 		return 0;
 	}
 
