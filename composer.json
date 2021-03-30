@@ -1,0 +1,13 @@
+{
+    "name": "nethergamesmc/plots",
+    "description": "A Plots plugin for PocketMine-MP",
+    "license": "proprietary",
+    "type": "project",
+    "require": {
+        "php": "^7.4 || ^8.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.81"
+    },
+    "minimum-stability": "dev"
+}

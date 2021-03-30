@@ -1,17 +1,15 @@
 parameters:
     level: 6
-
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
-
     paths:
-        - /source/src
+        - src
     bootstrapFiles:
-        - phar:///source/PharBuilder/PocketMine-MP.phar/vendor/autoload.php
+        - phar://PharBuilder/PocketMine-MP.phar/vendor/autoload.php
     scanDirectories:
-        - /source/src
-        - /source/NGEssentials/src
-        - /source/WorldStyler/src
-    excludes_analyse:
-        - /source/src/MyPlot/provider/EconomySProvider.php
-        - /source/src/MyPlot/provider/PocketMoneyProvider.php
+        - src
+        - NGEssentials/src
+        - WorldStyler/src
+    excludePaths:
+        analyse:
+            - /src/MyPlot/provider
