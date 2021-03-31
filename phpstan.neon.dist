@@ -12,4 +12,4 @@ parameters:
         - WorldStyler/src
     excludePaths:
         analyse:
-            - /src/MyPlot/provider
+            - src/MyPlot/provider
