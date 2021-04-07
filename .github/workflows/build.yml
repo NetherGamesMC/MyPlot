@@ -32,7 +32,7 @@ jobs:
           ./bin/php7/bin/php PharBuilder/BuildScript.php --make "" --out PharBuilder/NGPlots.phar
           echo Build completed!
       - name: Upload
-        uses: actions/upload-artifact@v2.2.2
+        uses: actions/upload-artifact@v2.2.3
         with:
           name: NGPlots
           path: PharBuilder/NGPlots.phar
