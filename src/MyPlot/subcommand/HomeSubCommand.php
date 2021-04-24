@@ -52,11 +52,11 @@ class HomeSubCommand extends SubCommand
 		});
 		/** @var Plot $plot */
 		$plot = $plots[$plotNumber - 1];
-		if($this->getPlugin()->teleportPlayerToPlot($sender, $plot)) {
-			$sender->sendMessage($this->translateString("home.success", [$plot->__toString(), $plot->levelName]));
-		}else{
-			$sender->sendMessage(TextFormat::RED . $this->translateString("home.error"));
-		}
+        $this->getPlugin()->teleportPlayerToPlot($sender, $plot, false, function () use ($sender, $plot) : void{
+            $sender->sendMessage($this->translateString("home.success", [$plot->__toString(), $plot->levelName]));
+        }, function () use ($sender) : void{
+            $sender->sendMessage(TextFormat::RED . $this->translateString("home.error"));
+        });
 		return true;
 	}
 
