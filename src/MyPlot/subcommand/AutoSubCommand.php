@@ -33,7 +33,7 @@ class AutoSubCommand extends SubCommand{
 			return true;
 		}
 		if(($plot = $this->getPlugin()->getNextFreePlot($worldName)) !== null) {
-            $this->getPlugin()->teleportPlayerToPlot($sender, $plot, true, function () use ($sender, $plot) : void{
+            $this->getPlugin()->teleportPlayerToPlot($sender, $plot, true, function () use ($sender, $plot, $args) : void{
                 $sender->sendMessage($this->translateString("auto.success", [$plot->X, $plot->Z]));
                 $cmd = new ClaimSubCommand($this->getPlugin(), "claim");
                 if(isset($args[0]) and strtolower($args[0]) == "true" and $cmd->canUse($sender)) {

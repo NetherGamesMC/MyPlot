@@ -1145,7 +1145,6 @@ class MyPlot extends PluginBase{
 			if(($plugin = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI")) !== null) {
 				/* @phpstan-ignore-next-line */
 				if($plugin instanceof EconomyAPI) {
-					/* @phpstan-ignore-next-line */
 					$this->economyProvider = new EconomySProvider($plugin);
 					$this->getLogger()->debug("Eco set to EconomySProvider");
 				}else{
