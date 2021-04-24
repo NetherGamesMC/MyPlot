@@ -115,3 +115,5 @@ permissions:
     default: op
   myplot.claimplots.unlimited:
     default: op
+  myplot.command.archive:
+    default: op

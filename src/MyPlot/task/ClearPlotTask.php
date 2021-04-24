@@ -75,7 +75,7 @@ class ClearPlotTask extends Task {
 		$blocks = 0;
 		while($this->pos->x < $this->xMax) {
 			while($this->pos->z < $this->zMax) {
-				while($this->pos->y < $this->level->getWorldHeight()) {
+				while($this->pos->y < $this->level->getMaxY()) {
 					if($this->pos->y === 0) {
 						$block = $this->bottomBlock;
 					}elseif($this->pos->y < $this->height) {
