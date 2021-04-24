@@ -46,6 +46,7 @@ use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use pocketmine\world\WorldCreationOptions;
+use function abs;
 use function count;
 use function strlen;
 use const PHP_INT_MAX;
@@ -792,7 +793,7 @@ class MyPlot extends PluginBase{
 				for($z = 0; $z < 16; ++$z){
 					$chunkPlot = $this->getPlotByPosition(new Position(($chunkX << 4) + $x, $plotWorld->groundHeight, ($chunkZ << 4) + $z, $world));
 					if($chunkPlot instanceof Plot and $chunkPlot->isSame($plot)) {
-						$chunk->setBiomeId($x, $z, $biome->getId());
+                        $chunk->setBiomeId($x, $z, $biome->getId());
 					}
 				}
 			}
@@ -924,7 +925,7 @@ class MyPlot extends PluginBase{
 		$chunks = [];
 		for($X = $pos->x >> 4; $X <= $xMax; $X++){
 			for($Z = $pos->z >> 4; $Z <= $zMax; $Z++){
-				$chunks[World::chunkHash($X, $Z)] = $world->getOrLoadChunkAtPosition($pos);
+				$chunks[World::chunkHash($X, $Z)] = $world->getChunk($X, $Z) ?? new Chunk();
 			}
 		}
 		return $chunks;
