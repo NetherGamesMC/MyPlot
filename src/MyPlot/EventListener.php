@@ -215,7 +215,15 @@ class EventListener implements Listener{
 			}
 		}
 		$event->cancel();
-		$this->plugin->getLogger()->debug("Block placement/break/interaction of {$event->getBlock()->getName()} was cancelled at " . $event->getBlock()->getPos()->__toString());
+
+        $player = $event->getPlayer();
+        if($event instanceof BlockPlaceEvent) $type = "placement";
+		else if($event instanceof BlockBreakEvent) $type = "break";
+		else if($event instanceof PlayerInteractEvent) $type = "interaction";
+        else if($event instanceof SignChangeEvent) $type = "interaction (sign)";
+        else $type = "unknown";
+
+        $this->plugin->getLogger()->debug("Block {$type} of {$event->getBlock()->getName()} was cancelled at " . $event->getBlock()->getPos()->__toString() . ". [Player: {$player->getName()}, Gamemode: {$player->getGamemode()->getEnglishName()}, {$player->getPosition()->__toString()}]");
 	}
 
 	/**
@@ -498,7 +506,7 @@ class EventListener implements Listener{
 
 		if(($command[0] === '/p' || $command[0] === '/plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
 			$player->sendMessage('§cThat command is blocked in this world.');
-			//$event->cancel();
+			$event->cancel();
 		}
 	}
 
