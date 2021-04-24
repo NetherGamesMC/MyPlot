@@ -44,6 +44,7 @@ use pocketmine\world\format\Chunk;
 use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\Position;
 use pocketmine\world\World;
+use pocketmine\world\WorldCreationOptions;
 use function count;
 use function strlen;
 use const PHP_INT_MAX;
@@ -199,7 +200,10 @@ class MyPlot extends PluginBase{
 		}, ARRAY_FILTER_USE_KEY);
 		new Config($this->getDataFolder() . "worlds" . DIRECTORY_SEPARATOR . $worldName . ".yml", Config::YAML, $default);
 		$settings = ["preset" => json_encode($settings)];
-		$return = $worldManager->generateWorld($worldName, null, $generator, $settings);
+        $creationOptions = WorldCreationOptions::create();
+        $creationOptions->setGeneratorClass($generator);
+        $creationOptions->setGeneratorOptions($settings["preset"]);
+        $return = $worldManager->generateWorld($worldName, $creationOptions);
 		$world = $worldManager->getWorldByName($worldName);
 		if($world !== null)
 			$world->setSpawnLocation(new Vector3(0, (int)$this->getConfig()->getNested("DefaultWorld.GroundHeight", 64) + 1, 0));
@@ -463,7 +467,7 @@ class MyPlot extends PluginBase{
 			0,
 			min($pos->z, $pos->z + $plotSize),
 			max($pos->x, $pos->x + $plotSize),
-			$pos->getWorld()->getWorldHeight(),
+			$pos->getWorld()->getMaxY(),
 			max($pos->z, $pos->z + $plotSize)
 		);
 	}
@@ -587,7 +591,7 @@ class MyPlot extends PluginBase{
 		$plugin = $this;
 		$selection = $styler->getSelection(99997);
 		$selection->setPosition(1, $plotBeginPos);
-		$vec2 = new Vector3($plotBeginPos->x + $plotSize + 1, $level->getWorldHeight() - 1, $plotBeginPos->z + $plotSize + 1);
+		$vec2 = new Vector3($plotBeginPos->x + $plotSize + 1, $level->getMaxY() - 1, $plotBeginPos->z + $plotSize + 1);
 		$selection->setPosition(2, $vec2);
 		$cuboid = Cuboid::fromSelection($selection);
 		//$cuboid = $cuboid->async(); // do not use async because WorldStyler async is very broken right now
@@ -602,7 +606,7 @@ class MyPlot extends PluginBase{
 		$plotBeginPos = $plotBeginPos->subtract(1, 0, 1);
 		$plotBeginPos->y = 0;
 		$selection->setPosition(1, $plotBeginPos);
-		$vec2 = new Vector3($plotBeginPos->x + $plotSize + 1, $level->getWorldHeight() - 1, $plotBeginPos->z + $plotSize + 1);
+		$vec2 = new Vector3($plotBeginPos->x + $plotSize + 1, $level->getMaxY() - 1, $plotBeginPos->z + $plotSize + 1);
 		$selection->setPosition(2, $vec2);
 		$commonShape = CommonShape::fromSelection($selection);
 		//$commonShape = $commonShape->async(); // do not use async because WorldStyler async is very broken right now

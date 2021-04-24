@@ -59,17 +59,18 @@ class EventListener implements Listener{
 	 * @param WorldLoadEvent $event
 	 */
 	public function onLevelLoad(WorldLoadEvent $event) : void {
-		if(file_exists($this->plugin->getDataFolder() . "worlds" . DIRECTORY_SEPARATOR . $event->getWorld()->getFolderName() . ".yml")) {
-			$this->plugin->getLogger()->debug("MyPlot level " . $event->getWorld()->getFolderName() . " loaded!");
-			$settings = $event->getWorld()->getProvider()->getWorldData()->getGeneratorOptions();
-			if(!isset($settings["preset"]) or empty($settings["preset"])) {
+	    $world = $event->getWorld();
+		if(file_exists($this->plugin->getDataFolder() . "worlds" . DIRECTORY_SEPARATOR . $world->getFolderName() . ".yml")) {
+			$this->plugin->getLogger()->debug("MyPlot level " . $world->getFolderName() . " loaded!");
+			$settings = $world->getProvider()->getWorldData()->getGeneratorOptions();
+			if($settings === "") {
 				return;
 			}
-			$settings = json_decode($settings["preset"], true);
+			$settings = json_decode($settings, true);
 			if($settings === false) {
 				return;
 			}
-			$levelName = $event->getWorld()->getFolderName();
+			$levelName = $world->getFolderName();
 			$default = array_filter($this->plugin->getConfig()->get("DefaultWorld", []), function($key) {
 				return !in_array($key, ["PlotSize", "GroundHeight", "RoadWidth", "RoadBlock", "WallBlock", "PlotFloorBlock", "PlotFillBlock", "BottomBlock"]);
 			}, ARRAY_FILTER_USE_KEY);
@@ -497,7 +498,7 @@ class EventListener implements Listener{
 
 		if(($command[0] === '/p' || $command[0] === '/plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
 			$player->sendMessage('§cThat command is blocked in this world.');
-			$event->cancel();
+			//$event->cancel();
 		}
 	}
 
