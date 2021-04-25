@@ -1028,7 +1028,6 @@ class MyPlot extends PluginBase{
 			function() use ($player, $pos, $onSuccess, $onFailure) : void {
 				if($player->teleport($pos)) {
 					if($onSuccess !== null) ($onSuccess)();
-
 				}else{
 					if($onFailure !== null) $onFailure();
 				}
