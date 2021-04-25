@@ -202,10 +202,10 @@ class MyPlot extends PluginBase{
 		}, ARRAY_FILTER_USE_KEY);
 		new Config($this->getDataFolder() . "worlds" . DIRECTORY_SEPARATOR . $worldName . ".yml", Config::YAML, $default);
 		$settings = ["preset" => json_encode($settings)];
-        $creationOptions = WorldCreationOptions::create();
-        $creationOptions->setGeneratorClass($generator);
-        $creationOptions->setGeneratorOptions($settings["preset"]);
-        $return = $worldManager->generateWorld($worldName, $creationOptions);
+		$creationOptions = WorldCreationOptions::create();
+		$creationOptions->setGeneratorClass($generator);
+		$creationOptions->setGeneratorOptions($settings["preset"]);
+		$return = $worldManager->generateWorld($worldName, $creationOptions);
 		$world = $worldManager->getWorldByName($worldName);
 		if($world !== null)
 			$world->setSpawnLocation(new Vector3(0, (int)$this->getConfig()->getNested("DefaultWorld.GroundHeight", 64) + 1, 0));
@@ -622,7 +622,7 @@ class MyPlot extends PluginBase{
 		});
 		$styler->removeSelection(99997);
 		foreach($this->getPlotChunks($plotTo) as $chunkHash => $chunk){
-		    World::getXZ($chunkHash, $chunkX, $chunkZ);
+			World::getXZ($chunkHash, $chunkX, $chunkZ);
 			$level->setChunk($chunkX, $chunkZ, $chunk, false);
 		}
 		return true;
@@ -711,10 +711,10 @@ class MyPlot extends PluginBase{
 				$plugin->getLogger()->debug('Set ' . number_format($changed) . ' blocks in ' . number_format($time, 10) . 's');
 			});
 			$styler->removeSelection(99998);
-            foreach($this->getPlotChunks($plot) as $chunkHash => $chunk){
-                World::getXZ($chunkHash, $chunkX, $chunkZ);
-                $plotBeginPos->world->setChunk($chunkX, $chunkZ, $chunk, false);
-            }
+			foreach($this->getPlotChunks($plot) as $chunkHash => $chunk){
+				World::getXZ($chunkHash, $chunkX, $chunkZ);
+				$plotBeginPos->world->setChunk($chunkX, $chunkZ, $chunk, false);
+			}
 			$this->getScheduler()->scheduleDelayedTask(new ClearBorderTask($this, $plot), 1);
 			return true;
 		}
@@ -788,12 +788,12 @@ class MyPlot extends PluginBase{
 		$world = $this->getServer()->getWorldManager()->getWorldByName($plot->levelName);
 		$chunks = $this->getPlotChunks($plot);
 		foreach($chunks as $chunkHash => $chunk){
-		    World::getXZ($chunkHash, $chunkX, $chunkZ);
+			World::getXZ($chunkHash, $chunkX, $chunkZ);
 			for($x = 0; $x < 16; ++$x){
 				for($z = 0; $z < 16; ++$z){
 					$chunkPlot = $this->getPlotByPosition(new Position(($chunkX << 4) + $x, $plotWorld->groundHeight, ($chunkZ << 4) + $z, $world));
 					if($chunkPlot instanceof Plot and $chunkPlot->isSame($plot)) {
-                        $chunk->setBiomeId($x, $z, $biome->getId());
+						$chunk->setBiomeId($x, $z, $biome->getId());
 					}
 				}
 			}
@@ -948,14 +948,14 @@ class MyPlot extends PluginBase{
 			return PHP_INT_MAX;
 		}
 
-        $perms = $player->getEffectivePermissions();
-        $perms = array_filter($perms, function(string $name) use ($levelName, $length) {
+		$perms = $player->getEffectivePermissions();
+		$perms = array_filter($perms, function(string $name) use ($levelName, $length) {
 			return (substr($name, 0, 19 + $length) === "myplot.claimplots.$levelName.");
 		}, ARRAY_FILTER_USE_KEY);
 
 		if(count($perms) === 0) {
-		    return 0;
-        }
+			return 0;
+		}
 
 		krsort($perms, SORT_FLAG_CASE | SORT_NATURAL);
 
@@ -1210,11 +1210,11 @@ class MyPlot extends PluginBase{
 
 		$worldManager = $this->getServer()->getWorldManager();
 		foreach(["Creative", "MEGA", "Platinum"] as $world){
-		    if($worldManager->getWorldByName($world) !== null){
-                $worldManager->getWorldByName($world)->save(true);
-            }else{
-		        $this->getLogger()->error("World: " . $world . " not found!");
-            }
+			if($worldManager->getWorldByName($world) !== null) {
+				$worldManager->getWorldByName($world)->save(true);
+			}else{
+				$this->getLogger()->error("World: " . $world . " not found!");
+			}
 		}
 
 		self::$instance = null;
