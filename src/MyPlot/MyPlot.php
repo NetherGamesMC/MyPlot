@@ -482,30 +482,30 @@ class MyPlot extends PluginBase{
 	 * @param Player $player
 	 * @param Plot $plot
 	 * @param bool $center
-     * @param Closure|null $onSuccess
-     * @param Closure|null $onFailure
+	 * @param Closure|null $onSuccess
+	 * @param Closure|null $onFailure
 	 */
 	public function teleportPlayerToPlot(Player $player, Plot $plot, bool $center = false, Closure $onSuccess = null, Closure $onFailure = null) : void {
 		$ev = new MyPlotTeleportEvent($plot, $player, $center);
 		$ev->call();
 		if($ev->isCancelled()) {
-		    if($onFailure !== null) $onFailure();
+			if($onFailure !== null) $onFailure();
 			return;
 		}
-		if($center){
-            $this->teleportMiddle($player, $plot, $onSuccess, $onFailure);
-            return;
-        }
+		if($center) {
+			$this->teleportMiddle($player, $plot, $onSuccess, $onFailure);
+			return;
+		}
 		$plotWorld = $this->getLevelSettings($plot->levelName);
-		if($plotWorld === null){
-            if($onFailure !== null) $onFailure();
-            return;
-        }
+		if($plotWorld === null) {
+			if($onFailure !== null) $onFailure();
+			return;
+		}
 		$pos = $this->getPlotPosition($plot);
 		$pos->x += floor($plotWorld->plotSize / 2);
 		$pos->y += 1.5;
 		$pos->z -= 1;
-        $this->teleport($player, $pos, $onSuccess, $onFailure);
+		$this->teleport($player, $pos, $onSuccess, $onFailure);
 	}
 
 	/**
@@ -1000,44 +1000,44 @@ class MyPlot extends PluginBase{
 	 *
 	 * @param Plot $plot
 	 * @param Player $player
-     * @param Closure|null $onSuccess
-     * @param Closure|null $onFailure
+	 * @param Closure|null $onSuccess
+	 * @param Closure|null $onFailure
 	 */
 	private function teleportMiddle(Player $player, Plot $plot, Closure $onSuccess = null, Closure $onFailure = null) : void {
 		$mid = $this->getPlotMid($plot);
 		if($mid === null) {
-            if($onFailure !== null) $onFailure();
+			if($onFailure !== null) $onFailure();
 			return;
 		}
 		$this->teleport($player, $mid, $onSuccess, $onFailure);
 	}
 
-    /**
-     * Workaround for PM4 teleport crashes
-     *
-     * @internal
-     *
-     * @param Player $player
-     * @param Position $pos
-     * @param Closure|null $onSuccess
-     * @param Closure|null $onFailure
-     */
-	private function teleport(Player $player, Position $pos, Closure $onSuccess = null, Closure $onFailure = null) : void{
-	    $world = $pos->getWorld();
-        $world->orderChunkPopulation($pos->x >> 4, $pos->z >> 4, null)->onCompletion(
-            function () use ($player, $pos, $onSuccess, $onFailure) : void {
-                if($player->teleport($pos)){
-                    if($onSuccess !== null) ($onSuccess)();
+	/**
+	 * Workaround for PM4 teleport crashes
+	 *
+	 * @internal
+	 *
+	 * @param Player $player
+	 * @param Position $pos
+	 * @param Closure|null $onSuccess
+	 * @param Closure|null $onFailure
+	 */
+	private function teleport(Player $player, Position $pos, Closure $onSuccess = null, Closure $onFailure = null) : void {
+		$world = $pos->getWorld();
+		$world->orderChunkPopulation($pos->x >> 4, $pos->z >> 4, null)->onCompletion(
+			function() use ($player, $pos, $onSuccess, $onFailure) : void {
+				if($player->teleport($pos)) {
+					if($onSuccess !== null) ($onSuccess)();
 
-                }else{
-                    if($onFailure !== null) $onFailure();
-                }
-            },
-            function () use ($onFailure) : void{
-                if($onFailure !== null) $onFailure();
-            }
-        );
-    }
+				}else{
+					if($onFailure !== null) $onFailure();
+				}
+			},
+			function() use ($onFailure) : void {
+				if($onFailure !== null) $onFailure();
+			}
+		);
+	}
 
 	/* -------------------------- Non-API part -------------------------- */
 	protected function onLoad() : void {
