@@ -33,15 +33,15 @@ class AutoSubCommand extends SubCommand{
 			return true;
 		}
 		if(($plot = $this->getPlugin()->getNextFreePlot($worldName)) !== null) {
-            $this->getPlugin()->teleportPlayerToPlot($sender, $plot, true, function () use ($sender, $plot, $args) : void{
-                $sender->sendMessage($this->translateString("auto.success", [$plot->X, $plot->Z]));
-                $cmd = new ClaimSubCommand($this->getPlugin(), "claim");
-                if(isset($args[0]) and strtolower($args[0]) == "true" and $cmd->canUse($sender)) {
-                    $cmd->execute($sender, [$args[1] ?? null]);
-                }
-            }, function () use ($sender) : void{
-                $sender->sendMessage(TextFormat::RED . $this->translateString("error"));
-            });
+			$this->getPlugin()->teleportPlayerToPlot($sender, $plot, true, function() use ($sender, $plot, $args) : void {
+				$sender->sendMessage($this->translateString("auto.success", [$plot->X, $plot->Z]));
+				$cmd = new ClaimSubCommand($this->getPlugin(), "claim");
+				if(isset($args[0]) and strtolower($args[0]) == "true" and $cmd->canUse($sender)) {
+					$cmd->execute($sender, [$args[1] ?? null]);
+				}
+			}, function() use ($sender) : void {
+				$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
+			});
 		}else{
 			$sender->sendMessage(TextFormat::RED . $this->translateString("auto.noplots"));
 		}

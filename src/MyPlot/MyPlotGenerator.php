@@ -80,8 +80,8 @@ class MyPlotGenerator extends Generator{
 		$roadBlockId = $this->roadBlock->getFullId();
 		$wallBlockId = $this->wallBlock->getFullId();
 		$groundHeight = $this->groundHeight;
-		for($Z = 0; $Z < 16; ++$Z) {
-			for($X = 0; $X < 16; ++$X) {
+		for($Z = 0; $Z < 16; ++$Z){
+			for($X = 0; $X < 16; ++$X){
 				$chunk->setBiomeId($X, $Z, BiomeIds::PLAINS);
 				$chunk->setFullBlock($X, 0, $Z, $bottomBlockId);
 				$chunk->setFullBlock($X, 0, $Z, $bottomBlockId);

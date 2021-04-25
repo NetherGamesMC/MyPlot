@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
@@ -9,12 +10,11 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class KickSubCommand extends SubCommand
-{
+class KickSubCommand extends SubCommand{
 	/**
 	 * @param CommandSender $sender
 	 *
- 	 * @return bool
+	 * @return bool
 	 */
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.kick");
@@ -51,12 +51,12 @@ class KickSubCommand extends SubCommand
 			$target->sendMessage($this->translateString("kick.attemptkick", [$target->getName()]));
 			return true;
 		}
-        $this->getPlugin()->teleportPlayerToPlot($sender, $plot, false, function () use ($sender, $target, $plot) : void{
-            $sender->sendMessage($this->translateString("kick.success1", [$target->getName(), $plot->__toString()]));
-            $target->sendMessage($this->translateString("kick.success2", [$sender->getName(), $plot->__toString()]));
-        }, function () use ($sender) : void{
-            $sender->sendMessage($this->translateString("error"));
-        });
+		$this->getPlugin()->teleportPlayerToPlot($sender, $plot, false, function() use ($sender, $target, $plot) : void {
+			$sender->sendMessage($this->translateString("kick.success1", [$target->getName(), $plot->__toString()]));
+			$target->sendMessage($this->translateString("kick.success2", [$sender->getName(), $plot->__toString()]));
+		}, function() use ($sender) : void {
+			$sender->sendMessage($this->translateString("error"));
+		});
 		return true;
 	}
 

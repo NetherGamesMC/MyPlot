@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
@@ -45,12 +46,12 @@ class WarpSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("warp.unclaimed"));
 			return true;
 		}
-        $this->getPlugin()->teleportPlayerToPlot($sender, $plot, false, function () use ($sender, $plot) : void{
-            $plot = TextFormat::GREEN . $plot . TextFormat::WHITE;
-            $sender->sendMessage($this->translateString("warp.success", [$plot]));
-        }, function () use ($sender) : void{
-            $sender->sendMessage(TextFormat::RED . $this->translateString("generate.error"));
-        });
+		$this->getPlugin()->teleportPlayerToPlot($sender, $plot, false, function() use ($sender, $plot) : void {
+			$plot = TextFormat::GREEN . $plot . TextFormat::WHITE;
+			$sender->sendMessage($this->translateString("warp.success", [$plot]));
+		}, function() use ($sender) : void {
+			$sender->sendMessage(TextFormat::RED . $this->translateString("generate.error"));
+		});
 		return true;
 	}
 

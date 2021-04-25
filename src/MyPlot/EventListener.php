@@ -59,7 +59,7 @@ class EventListener implements Listener{
 	 * @param WorldLoadEvent $event
 	 */
 	public function onLevelLoad(WorldLoadEvent $event) : void {
-	    $world = $event->getWorld();
+		$world = $event->getWorld();
 		if(file_exists($this->plugin->getDataFolder() . "worlds" . DIRECTORY_SEPARATOR . $world->getFolderName() . ".yml")) {
 			$this->plugin->getLogger()->debug("MyPlot level " . $world->getFolderName() . " loaded!");
 			$settings = $world->getProvider()->getWorldData()->getGeneratorOptions();
@@ -216,14 +216,14 @@ class EventListener implements Listener{
 		}
 		$event->cancel();
 
-        $player = $event->getPlayer();
-        $type = "unknown";
-        if($event instanceof BlockPlaceEvent) $type = "placement";
+		$player = $event->getPlayer();
+		$type = "unknown";
+		if($event instanceof BlockPlaceEvent) $type = "placement";
 		else if($event instanceof BlockBreakEvent) $type = "break";
 		else if($event instanceof PlayerInteractEvent) $type = "interaction";
-        else if($event instanceof SignChangeEvent) $type = "interaction (sign)";
+		else if($event instanceof SignChangeEvent) $type = "interaction (sign)";
 
-        $this->plugin->getLogger()->debug("Block {$type} of {$event->getBlock()->getName()} was cancelled at " . $event->getBlock()->getPos()->__toString() . ". [Player: {$player->getName()}, Gamemode: {$player->getGamemode()->getEnglishName()}]");
+		$this->plugin->getLogger()->debug("Block {$type} of {$event->getBlock()->getName()} was cancelled at " . $event->getBlock()->getPos()->__toString() . ". [Player: {$player->getName()}, Gamemode: {$player->getGamemode()->getEnglishName()}]");
 	}
 
 	/**
@@ -500,9 +500,9 @@ class EventListener implements Listener{
 		$player = $event->getPlayer();
 		$command = explode(' ', strtolower($event->getMessage()));
 
-		if($player->hasPermission("myplot.admin")){
-		    return;
-        }
+		if($player->hasPermission("myplot.admin")) {
+			return;
+		}
 
 		if(($command[0] === '/p' || $command[0] === '/plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
 			$player->sendMessage('§cThat command is blocked in this world.');

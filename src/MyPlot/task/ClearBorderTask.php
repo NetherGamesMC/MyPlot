@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\task;
 
 use MyPlot\MyPlot;
@@ -45,7 +46,7 @@ class ClearBorderTask extends Task {
 		$this->plot = $plot;
 		$this->plotBeginPos = $plugin->getPlotPosition($plot);
 		$this->level = $this->plotBeginPos->getWorld();
-		$this->plotBeginPos = $this->plotBeginPos->subtract(1,0,1);
+		$this->plotBeginPos = $this->plotBeginPos->subtract(1, 0, 1);
 		$plotLevel = $plugin->getLevelSettings($plot->levelName);
 		$plotSize = $plotLevel->plotSize;
 		$this->xMax = (int)($this->plotBeginPos->x + $plotSize + 1);
@@ -77,7 +78,7 @@ class ClearBorderTask extends Task {
 		}
 		for($z = $this->plotBeginPos->z; $z <= $this->zMax; $z++) {
 			for($y = 0; $y < $this->level->getMaxY(); ++$y) {
-				if($y > $this->height+1)
+				if($y > $this->height + 1)
 					$block = VanillaBlocks::AIR();
 				elseif($y === $this->height + 1)
 					$block = $this->plotWallBlock;

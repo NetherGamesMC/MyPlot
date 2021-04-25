@@ -47,7 +47,7 @@ class BanPlayerSubCommand extends SubCommand{
 			return true;
 		}
 		if($dplayer === "*") {
-			$dplayer = new OfflinePlayer( "*", null);
+			$dplayer = new OfflinePlayer("*", null);
 			goto STAR;
 		}
 		$dplayer = $this->getPlugin()->getServer()->getPlayerExact($dplayer);

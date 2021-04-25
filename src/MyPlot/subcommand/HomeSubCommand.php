@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
@@ -52,11 +53,11 @@ class HomeSubCommand extends SubCommand
 		});
 		/** @var Plot $plot */
 		$plot = $plots[$plotNumber - 1];
-        $this->getPlugin()->teleportPlayerToPlot($sender, $plot, false, function () use ($sender, $plot) : void{
-            $sender->sendMessage($this->translateString("home.success", [$plot->__toString(), $plot->levelName]));
-        }, function () use ($sender) : void{
-            $sender->sendMessage(TextFormat::RED . $this->translateString("home.error"));
-        });
+		$this->getPlugin()->teleportPlayerToPlot($sender, $plot, false, function() use ($sender, $plot) : void {
+			$sender->sendMessage($this->translateString("home.success", [$plot->__toString(), $plot->levelName]));
+		}, function() use ($sender) : void {
+			$sender->sendMessage(TextFormat::RED . $this->translateString("home.error"));
+		});
 		return true;
 	}
 
