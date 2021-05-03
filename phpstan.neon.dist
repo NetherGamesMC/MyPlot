@@ -4,12 +4,11 @@ parameters:
     checkGenericClassInNonGenericObjectType: false
     paths:
         - src
-    bootstrapFiles:
-        - phar://PharBuilder/PocketMine-MP.phar/vendor/autoload.php
     scanDirectories:
         - src
         - NGEssentials/src
         - WorldStyler/src
+        - phar://PharBuilder/PocketMine-MP.phar
     excludePaths:
         analyse:
             - src/MyPlot/provider
