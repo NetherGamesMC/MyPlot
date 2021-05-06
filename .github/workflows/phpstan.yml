@@ -16,6 +16,7 @@ jobs:
           file: PHP_Linux.tar.gz
           repo: NetherGamesMC/php-build-scripts
           version: "tags/8.0.3"
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Untar PHP Release
         run: tar -xzvf PHP_Linux.tar.gz
       - name: Download Composer
