@@ -12,11 +12,6 @@ use pocketmine\utils\TextFormat;
 
 class HomeSubCommand extends SubCommand
 {
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.home");
 	}
@@ -28,7 +23,7 @@ class HomeSubCommand extends SubCommand
 	 * @return bool
 	 */
 	public function execute(CommandSender $sender, array $args) : bool {
-		if(empty($args)) {
+		if(count($args) === 0) {
 			$plotNumber = 1;
 		}elseif(is_numeric($args[0])) {
 			$plotNumber = (int) $args[0];
@@ -37,7 +32,7 @@ class HomeSubCommand extends SubCommand
 		}
 		$levelName = $args[1] ?? $sender->getWorld()->getFolderName();
 		$plots = $this->getPlugin()->getPlotsOfPlayer($sender->getName(), $levelName);
-		if(empty($plots)) {
+		if(count($plots) === 0) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("home.noplots"));
 			return true;
 		}
@@ -51,7 +46,6 @@ class HomeSubCommand extends SubCommand
 			}
 			return ($plot1->levelName < $plot2->levelName) ? -1 : 1;
 		});
-		/** @var Plot $plot */
 		$plot = $plots[$plotNumber - 1];
 		$this->getPlugin()->teleportPlayerToPlot($sender, $plot, false, function() use ($sender, $plot) : void {
 			$sender->sendMessage($this->translateString("home.success", [$plot->__toString(), $plot->levelName]));
@@ -61,8 +55,8 @@ class HomeSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
-		if(count($this->getPlugin()->getPlotsOfPlayer($player->getName(), $player->getWorld()->getFolderName())) > 0)
+	public function getForm(?Player $player = null) : ?MyPlotForm {
+		if($player !== null and count($this->getPlugin()->getPlotsOfPlayer($player->getName(), $player->getWorld()->getFolderName())) > 0)
 			return new HomeForm($player);
 		return null;
 	}

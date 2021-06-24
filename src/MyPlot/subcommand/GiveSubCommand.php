@@ -11,11 +11,6 @@ use pocketmine\utils\TextFormat;
 
 class GiveSubCommand extends SubCommand
 {
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.give");
 	}
@@ -27,7 +22,7 @@ class GiveSubCommand extends SubCommand
 	 * @return bool
 	 */
 	public function execute(CommandSender $sender, array $args) : bool {
-		if(empty($args)) {
+		if(count($args) === 0) {
 			return false;
 		}
 		$newOwner = $args[0];
@@ -40,7 +35,7 @@ class GiveSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$newOwner = $this->getPlugin()->getServer()->getPlayerExact($newOwner);
+		$newOwner = $this->getPlugin()->getServer()->getPlayerByPrefix($newOwner);
 		if(!$newOwner instanceof Player) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("give.notonline"));
 			return true;
@@ -49,7 +44,13 @@ class GiveSubCommand extends SubCommand
 			return true;
 		}
 		$maxPlots = $this->getPlugin()->getMaxPlotsOfPlayer($newOwner);
-		$plotsOfPlayer = count($this->getPlugin()->getPlotsOfPlayer($newOwner->getName(), $newOwner->getWorld()->getFolderName()));
+		$plotsOfPlayer = 0;
+		foreach($this->getPlugin()->getPlotLevels() as $level => $settings) {
+			$level = $this->getPlugin()->getServer()->getWorldManager()->getWorldByName((string)$level);
+			if($level !== null and !$level->isClosed()) {
+				$plotsOfPlayer += count($this->getPlugin()->getPlotsOfPlayer($newOwner->getName(), $level->getFolderName()));
+			}
+		}
 		if($plotsOfPlayer >= $maxPlots) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("give.maxedout", [$maxPlots]));
 			return true;
@@ -72,8 +73,8 @@ class GiveSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
-		if($this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
+	public function getForm(?Player $player = null) : ?MyPlotForm {
+		if($player !== null and $this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
 			return new GiveForm();
 		return null;
 	}

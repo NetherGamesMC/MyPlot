@@ -10,12 +10,8 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use function strtolower;
 
-class AutoSubCommand extends SubCommand{
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
+class AutoSubCommand extends SubCommand
+{
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.auto");
 	}
@@ -37,7 +33,7 @@ class AutoSubCommand extends SubCommand{
 				$sender->sendMessage($this->translateString("auto.success", [$plot->X, $plot->Z]));
 				$cmd = new ClaimSubCommand($this->getPlugin(), "claim");
 				if(isset($args[0]) and strtolower($args[0]) == "true" and $cmd->canUse($sender)) {
-					$cmd->execute($sender, [$args[1] ?? null]);
+					$cmd->execute($sender, isset($args[1]) ? [$args[1]] : []);
 				}
 			}, function() use ($sender) : void {
 				$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
@@ -48,7 +44,7 @@ class AutoSubCommand extends SubCommand{
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
-		return new AutoForm($player);
+	public function getForm(?Player $player = null) : ?MyPlotForm {
+		return $player !== null ?  new AutoForm($player) : null;
 	}
 }

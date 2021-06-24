@@ -18,7 +18,7 @@ class AddHelperForm extends ComplexMyPlotForm implements PlotSettingsForm{
 	public function __construct(Plot $plot) {
 		$plugin = MyPlot::getInstance();
 		$players = [];
-		if(!in_array("*", $plot->helpers)) {
+		if(!in_array("*", $plot->helpers, true)) {
 			$players = ["*"];
 			$this->players = ["*"];
 		}

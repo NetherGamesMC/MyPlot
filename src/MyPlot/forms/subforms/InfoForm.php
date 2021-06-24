@@ -15,9 +15,10 @@ class InfoForm extends ComplexMyPlotForm{
 	public function __construct(Player $player) {
 		$plugin = MyPlot::getInstance();
 
-		if(!isset($this->plot)) {
+		if(!isset($this->plot))
 			$this->plot = $plugin->getPlotByPosition($player->getPosition());
-		}
+		if(!isset($this->plot))
+			return;
 
 		parent::__construct(
 			$player,
@@ -40,10 +41,10 @@ class InfoForm extends ComplexMyPlotForm{
 				),
 				new Dropdown(
 					$plugin->getLanguage()->get("info.formbiome"),
-					array_map(function(string $text) {
+					array_map(function(string $text) : string {
 						return TextFormat::DARK_BLUE . ucfirst(strtolower(str_replace("_", " ", $text)));
 					}, array_keys(BiomeSubCommand::BIOMES)),
-					(int)array_search($this->plot->biome, array_keys(BiomeSubCommand::BIOMES))
+					(int)array_search($this->plot->biome, array_keys(BiomeSubCommand::BIOMES), true)
 				),
 				new Label($plugin->getLanguage()->translateString("info.formpvp", [$this->plot->pvp ? "Enabled" : "Disabled"]))
 			]

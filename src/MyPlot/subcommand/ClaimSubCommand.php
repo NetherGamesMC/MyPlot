@@ -4,17 +4,13 @@ namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\ClaimForm;
+use MyPlot\MyPlot;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class ClaimSubCommand extends SubCommand
 {
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.claim");
 	}
@@ -47,7 +43,7 @@ class ClaimSubCommand extends SubCommand
 		$plotsOfPlayer = 0;
 		foreach($this->getPlugin()->getPlotlevels() as $level => $settings) {
 			$level = $this->getPlugin()->getServer()->getWorldManager()->getWorldByName((string)$level);
-			if(!$level->isClosed()) {
+			if($level !== null and !$level->isClosed()) {
 				$plotsOfPlayer += count($this->getPlugin()->getPlotsOfPlayer($sender->getName(), $level->getFolderName()));
 			}
 		}
@@ -55,9 +51,8 @@ class ClaimSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("claim.maxplots", [$maxPlots]));
 			return true;
 		}
-		$plotWorld = $this->getPlugin()->getlevelSettings($plot->levelName);
 		$economy = $this->getPlugin()->getEconomyProvider();
-		if($economy !== null and !$economy->reduceMoney($sender, $plotWorld->claimPrice)) {
+		if($economy !== null and !$economy->reduceMoney($sender, $plot->price)) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("claim.nomoney"));
 			return true;
 		}
@@ -69,7 +64,9 @@ class ClaimSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
-		return new ClaimForm($player);
+	public function getForm(?Player $player = null) : ?MyPlotForm {
+		if($player !== null and MyPlot::getInstance()->isLevelLoaded($player->getWorld()->getFolderName()))
+			return new ClaimForm($player);
+		return null;
 	}
 }

@@ -7,9 +7,7 @@ use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\BanPlayerForm;
 use MyPlot\Plot;
 use pocketmine\command\CommandSender;
-use pocketmine\player\OfflinePlayer;
 use pocketmine\player\Player;
-use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
 class BanPlayerSubCommand extends SubCommand{
@@ -47,32 +45,35 @@ class BanPlayerSubCommand extends SubCommand{
 			return true;
 		}
 		if($dplayer === "*") {
-			$dplayer = new OfflinePlayer("*", null);
-			goto STAR;
+			if($this->getPlugin()->addPlotDenied($plot, $dplayer)) {
+				$sender->sendMessage($this->translateString("banplayer.success1", [$dplayer]));
+				foreach($this->getPlugin()->getServer()->getOnlinePlayers() as $player) {
+					if($this->getPlugin()->getPlotBB($plot)->isVectorInside($player->getPosition()) and !($player->getName() === $plot->owner) and !$player->hasPermission("myplot.admin.banplayer.bypass") and !$plot->isHelper($player->getName()))
+						$this->getPlugin()->teleportPlayerToPlot($player, $plot);
+					else {
+						$sender->sendMessage($this->translateString("banplayer.cannotban", [$player->getName()]));
+						$player->sendMessage($this->translateString("banplayer.attemptedban", [$sender->getName()]));
+					}
+				}
+			}else{
+				$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
+			}
+			return true;
 		}
-		$dplayer = $this->getPlugin()->getServer()->getPlayerExact($dplayer);
+		$dplayer = $this->getPlugin()->getServer()->getPlayerByPrefix($dplayer);
 		if(!$dplayer instanceof Player) {
 			$sender->sendMessage($this->translateString("banplayer.notaplayer"));
 			return true;
 		}
 		if($dplayer->hasPermission("myplot.admin.banplayer.bypass") or $dplayer->getName() === $plot->owner) {
 			$sender->sendMessage($this->translateString("banplayer.cannotban", [$dplayer->getName()]));
-			if($dplayer instanceof Player)
-				$dplayer->sendMessage($this->translateString("banplayer.attemptedban", [$sender->getName()]));
+			$dplayer->sendMessage($this->translateString("banplayer.attemptedban", [$sender->getName()]));
 			return true;
 		}
-		STAR:
 		if($this->getPlugin()->addPlotDenied($plot, $dplayer->getName())) {
 			$sender->sendMessage($this->translateString("banplayer.success1", [$dplayer->getName()]));
-			if($dplayer instanceof Player) {
-				$dplayer->sendMessage($this->translateString("banplayer.success2", [$plot->X, $plot->Z, $sender->getName()]));
-			}
-			if($dplayer->getName() === "*") {
-				foreach($this->getPlugin()->getServer()->getOnlinePlayers() as $player){
-					if($this->getPlugin()->getPlotBB($plot)->isVectorInside($player->getPosition()) and !($player->getName() === $plot->owner) and !$plot->isHelper($player->getName()))
-						$this->getPlugin()->teleportPlayerToPlot($player, $plot);
-				}
-			}elseif($this->getPlugin()->getPlotBB($plot)->isVectorInside($dplayer->getPosition()))
+			$dplayer->sendMessage($this->translateString("banplayer.success2", [$plot->X, $plot->Z, $sender->getName()]));
+			if($this->getPlugin()->getPlotBB($plot)->isVectorInside($dplayer->getPosition()))
 				$this->getPlugin()->teleportPlayerToPlot($dplayer, $plot);
 		}else{
 			$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
@@ -80,7 +81,7 @@ class BanPlayerSubCommand extends SubCommand{
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
+	public function getForm(?Player $player = null) : ?MyPlotForm {
 		if(($plot = $this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot)
 			return new BanPlayerForm($plot);
 		return null;

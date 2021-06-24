@@ -10,11 +10,6 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class SetOwnerSubCommand extends SubCommand {
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.admin.setowner");
 	}
@@ -26,7 +21,7 @@ class SetOwnerSubCommand extends SubCommand {
 	 * @return bool
 	 */
 	public function execute(CommandSender $sender, array $args) : bool {
-		if(empty($args)) {
+		if(count($args) === 0) {
 			return false;
 		}
 		$plot = $this->getPlugin()->getPlotByPosition($sender->getPosition());
@@ -38,7 +33,7 @@ class SetOwnerSubCommand extends SubCommand {
 		$plotsOfPlayer = 0;
 		foreach($this->getPlugin()->getPlotLevels() as $level => $settings) {
 			$level = $this->getPlugin()->getServer()->getWorldManager()->getWorldByName($level);
-			if(!$level->isClosed()) {
+			if($level !== null and !$level->isClosed()) {
 				$plotsOfPlayer += count($this->getPlugin()->getPlotsOfPlayer($sender->getName(), $level->getFolderName()));
 			}
 		}
@@ -54,8 +49,8 @@ class SetOwnerSubCommand extends SubCommand {
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
-		if($this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
+	public function getForm(?Player $player = null) : ?MyPlotForm {
+		if($player !== null and $this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
 			return new OwnerForm();
 		return null;
 	}

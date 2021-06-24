@@ -13,12 +13,9 @@ use function strtolower;
 
 class ClaimForm extends ComplexMyPlotForm implements PlotButtonForm{
 
-	/** @var Player $player */
-	private $player;
-
 	public function __construct(Player $player) {
 		$plugin = MyPlot::getInstance();
-		$this->player = $player;
+		$this->setPlayer($player);
 
 		parent::__construct(
 			$player,
@@ -29,7 +26,7 @@ class ClaimForm extends ComplexMyPlotForm implements PlotButtonForm{
 
 	public function getName() : string {
 		$plugin = MyPlot::getInstance();
-		$player = $this->player;
+		$player = $this->getPlayer();
 		$plot = $this->plot;
 
 		if($plot === null) {

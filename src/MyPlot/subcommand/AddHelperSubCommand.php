@@ -8,15 +8,11 @@ use MyPlot\Plot;
 use pocketmine\command\CommandSender;
 use pocketmine\player\OfflinePlayer;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
 class AddHelperSubCommand extends SubCommand
 {
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.addhelper");
 	}
@@ -28,7 +24,7 @@ class AddHelperSubCommand extends SubCommand
 	 * @return bool
 	 */
 	public function execute(CommandSender $sender, array $args) : bool {
-		if(empty($args)) {
+		if(count($args) === 0) {
 			return false;
 		}
 		$helperName = $args[0];
@@ -41,9 +37,9 @@ class AddHelperSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$helper = $this->getPlugin()->getServer()->getPlayerExact($helperName);
+		$helper = $this->getPlugin()->getServer()->getPlayerByPrefix($helperName);
 		if($helper === null)
-			$helper = new OfflinePlayer($helperName, null);
+			$helper = new OfflinePlayer($helperName, Server::getInstance()->getOfflinePlayerData($helperName));
 		if($this->getPlugin()->addPlotHelper($plot, $helper->getName())) {
 			$sender->sendMessage($this->translateString("addhelper.success", [$helper->getName()]));
 		}else{
@@ -52,8 +48,8 @@ class AddHelperSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
-		if(($plot = $this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot)
+	public function getForm(?Player $player = null) : ?MyPlotForm {
+		if($player !== null and ($plot = $this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot)
 			return new AddHelperForm($plot);
 		return null;
 	}

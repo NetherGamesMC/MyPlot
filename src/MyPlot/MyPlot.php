@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MyPlot;
 
 use Closure;
+use muqsit\worldstyler\Selection;
 use muqsit\worldstyler\shapes\CommonShape;
 use muqsit\worldstyler\shapes\Cuboid;
 use muqsit\worldstyler\WorldStyler;
@@ -12,6 +13,7 @@ use MyPlot\events\MyPlotClearEvent;
 use MyPlot\events\MyPlotCloneEvent;
 use MyPlot\events\MyPlotDisposeEvent;
 use MyPlot\events\MyPlotGenerationEvent;
+use MyPlot\events\MyPlotMergeEvent;
 use MyPlot\events\MyPlotResetEvent;
 use MyPlot\events\MyPlotSettingEvent;
 use MyPlot\events\MyPlotTeleportEvent;
@@ -25,29 +27,33 @@ use MyPlot\provider\YAMLDataProvider;
 use MyPlot\task\ClearBorderTask;
 use MyPlot\task\ClearPlotTask;
 use NetherGames\NGEssentials\NGEssentials;
+use MyPlot\task\RoadFillTask;
 use onebone\economyapi\EconomyAPI;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\event\world\WorldLoadEvent;
 use pocketmine\item\ItemIds;
 use pocketmine\lang\Language;
-use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
-use pocketmine\math\Vector3;
-use pocketmine\permission\Permission;
 use pocketmine\player\Player;
-use pocketmine\plugin\PluginBase;
-use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat as TF;
+use pocketmine\Server;
 use pocketmine\world\biome\Biome;
 use pocketmine\world\biome\BiomeRegistry;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\generator\GeneratorManager;
-use pocketmine\world\Position;
 use pocketmine\world\World;
+use pocketmine\world\Position;
+use pocketmine\math\AxisAlignedBB;
+use pocketmine\math\Vector3;
+use pocketmine\permission\Permission;
+use pocketmine\plugin\PluginBase;
+use pocketmine\utils\AssumptionFailedError;
+use pocketmine\utils\Config;
+use pocketmine\utils\TextFormat as TF;
 use pocketmine\world\WorldCreationOptions;
 use function abs;
 use function count;
+use function explode;
 use function strlen;
 use const PHP_INT_MAX;
 
@@ -79,10 +85,7 @@ class MyPlot extends PluginBase{
 		ItemIds::SPLASH_POTION,
 	];
 
-	/**
-	 * @return MyPlot|null
-	 */
-	public static function getInstance() : ?self {
+	public static function getInstance() : self {
 		return self::$instance;
 	}
 
@@ -155,10 +158,13 @@ class MyPlot extends PluginBase{
 	 *
 	 * @param string $worldName
 	 *
-	 * @return PlotLevelSettings|null
+	 * @return PlotLevelSettings
 	 */
-	public function getLevelSettings(string $worldName) : ?PlotLevelSettings {
-		return $this->worlds[$worldName] ?? null;
+
+	public function getLevelSettings(string $worldName) : PlotLevelSettings {
+		if(!isset($this->worlds[$worldName]))
+			throw new AssumptionFailedError("Provided level name is not a MyPlot level");
+		return $this->worlds[$worldName];
 	}
 
 	/**
@@ -181,11 +187,11 @@ class MyPlot extends PluginBase{
 	 *
 	 * @param string $worldName
 	 * @param string $generator
-	 * @param array $settings
+	 * @param mixed[] $settings
 	 *
 	 * @return bool
 	 */
-	public function generateWorld(string $worldName, string $generator = "myplot", array $settings = []) : bool {
+	public function generateWorld(string $worldName, string $generator = MyPlotGenerator::NAME, array $settings = []) : bool {
 		$ev = new MyPlotGenerationEvent($worldName, $generator, $settings);
 		$ev->call();
 		$worldManager = $this->getServer()->getWorldManager();
@@ -193,22 +199,19 @@ class MyPlot extends PluginBase{
 			return false;
 		}
 		$generator = GeneratorManager::getInstance()->getGenerator($generator, false);
-		if(empty($settings)) {
+		if(count($settings) === 0) {
 			$this->getConfig()->reload();
 			$settings = $this->getConfig()->get("DefaultWorld", []);
 		}
-		$default = array_filter($this->getConfig()->get("DefaultWorld", []), function($key) {
-			return !in_array($key, ["PlotSize", "GroundHeight", "RoadWidth", "RoadBlock", "WallBlock", "PlotFloorBlock", "PlotFillBlock", "BottomBlock"]);
+		$default = array_filter((array) $this->getConfig()->get("DefaultWorld", []), function($key) : bool {
+			return !in_array($key, ["PlotSize", "GroundHeight", "RoadWidth", "RoadBlock", "WallBlock", "PlotFloorBlock", "PlotFillBlock", "BottomBlock"], true);
 		}, ARRAY_FILTER_USE_KEY);
 		new Config($this->getDataFolder() . "worlds" . DIRECTORY_SEPARATOR . $worldName . ".yml", Config::YAML, $default);
-		$settings = ["preset" => json_encode($settings)];
-		$creationOptions = WorldCreationOptions::create();
-		$creationOptions->setGeneratorClass($generator);
-		$creationOptions->setGeneratorOptions($settings["preset"]);
-		$return = $worldManager->generateWorld($worldName, $creationOptions);
+		$options = WorldCreationOptions::create()->setGeneratorClass($generator)->setGeneratorOptions(json_encode($settings));
+		$return = $worldManager->generateWorld($worldName, $options);
 		$world = $worldManager->getWorldByName($worldName);
 		if($world !== null)
-			$world->setSpawnLocation(new Vector3(0, (int)$this->getConfig()->getNested("DefaultWorld.GroundHeight", 64) + 1, 0));
+			$world->setSpawnLocation(new Vector3(0, $this->getConfig()->getNested("DefaultWorld.GroundHeight", 64) + 1,0));
 		return $return;
 	}
 
@@ -262,14 +265,15 @@ class MyPlot extends PluginBase{
 	 *
 	 * @return Plot|null
 	 */
-	public function getPlotByPosition(Position $position) : ?Plot {
+	public function getPlotByPosition(Position $position, bool $blockRecursion = false) : ?Plot {
 		$x = $position->x;
 		$z = $position->z;
-		$worldName = $position->world->getFolderName();
+		$worldName = $position->getWorld()->getFolderName();
+
+		if(!$this->isLevelLoaded($worldName))
+			return null;
 
 		$plotWorld = $this->getLevelSettings($worldName);
-		if($plotWorld === null)
-			return null;
 		$plotSize = $plotWorld->plotSize;
 		$roadWidth = $plotWorld->roadWidth;
 		$totalSize = $plotSize + $roadWidth;
@@ -287,10 +291,45 @@ class MyPlot extends PluginBase{
 			$Z = (int)ceil(($z - $plotSize + 1) / $totalSize);
 			$difZ = abs(($z - $plotSize + 1) % $totalSize);
 		}
+
 		if(($difX > $plotSize - 1) or ($difZ > $plotSize - 1)) {
-			return null;
+			if($blockRecursion)
+				return null;
+
+			$coordinateOffset = 14;
+			$northOrigin = $this->getPlotByPosition($position->getSide(Facing::NORTH, $coordinateOffset), true);
+			$southOrigin = $this->getPlotByPosition($position->getSide(Facing::SOUTH, $coordinateOffset), true);
+			if($northOrigin instanceof Plot) $northOrigin = $this->dataProvider->getMergeOrigin($northOrigin);
+			if($southOrigin instanceof Plot) $southOrigin = $this->dataProvider->getMergeOrigin($southOrigin);
+			if($northOrigin instanceof Plot and $southOrigin instanceof Plot and $northOrigin->isSame($southOrigin)) return $northOrigin;
+
+			$eastOrigin = $this->getPlotByPosition($position->getSide(Facing::EAST, $coordinateOffset), true);
+			$westOrigin = $this->getPlotByPosition($position->getSide(Facing::WEST, $coordinateOffset), true);
+			if($eastOrigin instanceof Plot) $eastOrigin = $this->dataProvider->getMergeOrigin($eastOrigin);
+			if($westOrigin instanceof Plot) $westOrigin = $this->dataProvider->getMergeOrigin($westOrigin);
+			if($eastOrigin instanceof Plot and $westOrigin instanceof Plot and $eastOrigin->isSame($westOrigin)) return $eastOrigin;
+
+			$southEastOrigin = $this->getPlotByPosition(Position::fromObject($position->add($coordinateOffset, 0, $coordinateOffset), $position->getWorld()), true);
+			$northEastOrigin = $this->getPlotByPosition(Position::fromObject($position->add(-$coordinateOffset, 0, $coordinateOffset), $position->getWorld()), true);
+			$southWestOrigin = $this->getPlotByPosition(Position::fromObject($position->add($coordinateOffset, 0, -$coordinateOffset), $position->getWorld()), true);
+			$northWestOrigin = $this->getPlotByPosition(Position::fromObject($position->add(-$coordinateOffset, 0, -$coordinateOffset), $position->getWorld()), true);
+			if($southEastOrigin instanceof Plot) $southEastOrigin = $this->dataProvider->getMergeOrigin($southEastOrigin);
+			if($northEastOrigin instanceof Plot) $northEastOrigin = $this->dataProvider->getMergeOrigin($northEastOrigin);
+			if($southWestOrigin instanceof Plot) $southWestOrigin = $this->dataProvider->getMergeOrigin($southWestOrigin);
+			if($northWestOrigin instanceof Plot) $northWestOrigin = $this->dataProvider->getMergeOrigin($northWestOrigin);
+
+			if($southEastOrigin instanceof Plot
+				and $northEastOrigin instanceof Plot
+				and $southWestOrigin instanceof Plot
+				and $northWestOrigin instanceof Plot
+				and $southEastOrigin->isSame($northEastOrigin)
+				and $southEastOrigin->isSame($southWestOrigin)
+				and $southEastOrigin->isSame($northWestOrigin)){
+				return $southEastOrigin;
+			}
+			return null; // this is the road and there are no plots here
 		}
-		return $this->dataProvider->getPlot($worldName, $X, $Z);
+		return $this->dataProvider->getMergeOrigin($this->dataProvider->getPlot($worldName, $X, $Z));
 	}
 
 	/**
@@ -300,17 +339,21 @@ class MyPlot extends PluginBase{
 	 *
 	 * @param Plot $plot
 	 *
-	 * @return Position|null
+	 * @return Position
 	 */
-	public function getPlotPosition(Plot $plot) : ?Position {
+	public function getPlotPosition(Plot $plot, bool $mergeOrigin = true) : Position {
 		$plotWorld = $this->getLevelSettings($plot->levelName);
-		if($plotWorld === null)
-			return null;
+		$origin = $this->dataProvider->getMergeOrigin($plot);
 		$plotSize = $plotWorld->plotSize;
 		$roadWidth = $plotWorld->roadWidth;
 		$totalSize = $plotSize + $roadWidth;
-		$x = $totalSize * $plot->X;
-		$z = $totalSize * $plot->Z;
+		if ($mergeOrigin) {
+			$x = $totalSize * $origin->X;
+			$z = $totalSize * $origin->Z;
+		} else {
+			$x = $totalSize * $plot->X;
+			$z = $totalSize * $plot->Z;
+		}
 		$world = $this->getServer()->getWorldManager()->getWorldByName($plot->levelName);
 		return new Position($x, $plotWorld->groundHeight, $z, $world);
 	}
@@ -327,41 +370,36 @@ class MyPlot extends PluginBase{
 	public function isPositionBorderingPlot(Position $position) : bool {
 		if(!$position->isValid())
 			return false;
-		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i){
+		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
 			$pos = $position->getSide($i);
 			$x = $pos->x;
 			$z = $pos->z;
 			$levelName = $pos->getWorld()->getFolderName();
 
-			$plotLevel = $this->getLevelSettings($levelName);
-			if($plotLevel === null)
+			if(!$this->isLevelLoaded($levelName))
 				return false;
+
+			$plotLevel = $this->getLevelSettings($levelName);
 			$plotSize = $plotLevel->plotSize;
 			$roadWidth = $plotLevel->roadWidth;
 			$totalSize = $plotSize + $roadWidth;
 			if($x >= 0) {
-				$X = (int)floor($x / $totalSize);
 				$difX = $x % $totalSize;
 			}else{
-				$X = (int)ceil(($x - $plotSize + 1) / $totalSize);
 				$difX = abs(($x - $plotSize + 1) % $totalSize);
 			}
 			if($z >= 0) {
-				$Z = (int)floor($z / $totalSize);
 				$difZ = $z % $totalSize;
 			}else{
-				$Z = (int)ceil(($z - $plotSize + 1) / $totalSize);
 				$difZ = abs(($z - $plotSize + 1) % $totalSize);
 			}
 			if(($difX > $plotSize - 1) or ($difZ > $plotSize - 1)) {
 				continue;
 			}
-			$plot = $this->dataProvider->getPlot($levelName, $X, $Z);
-			if($plot !== null)
-				return true;
+			return true;
 		}
-		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i){
-			for($n = Facing::NORTH; $n <= Facing::EAST; ++$n){
+		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
+			for($n = Facing::NORTH; $n <= Facing::EAST; ++$n) {
 				if($i === $n or Facing::opposite($i) === $n)
 					continue;
 				$pos = $position->getSide($i)->getSide($n);
@@ -370,31 +408,23 @@ class MyPlot extends PluginBase{
 				$levelName = $pos->getWorld()->getFolderName();
 
 				$plotLevel = $this->getLevelSettings($levelName);
-				if($plotLevel === null)
-					return false;
 				$plotSize = $plotLevel->plotSize;
 				$roadWidth = $plotLevel->roadWidth;
 				$totalSize = $plotSize + $roadWidth;
 				if($x >= 0) {
-					$X = (int)floor($x / $totalSize);
 					$difX = $x % $totalSize;
 				}else{
-					$X = (int)ceil(($x - $plotSize + 1) / $totalSize);
 					$difX = abs(($x - $plotSize + 1) % $totalSize);
 				}
 				if($z >= 0) {
-					$Z = (int)floor($z / $totalSize);
 					$difZ = $z % $totalSize;
 				}else{
-					$Z = (int)ceil(($z - $plotSize + 1) / $totalSize);
 					$difZ = abs(($z - $plotSize + 1) % $totalSize);
 				}
 				if(($difX > $plotSize - 1) or ($difZ > $plotSize - 1)) {
 					continue;
 				}
-				$plot = $this->dataProvider->getPlot($levelName, $X, $Z);
-				if($plot !== null)
-					return true;
+				return true;
 			}
 		}
 		return false;
@@ -412,15 +442,16 @@ class MyPlot extends PluginBase{
 	public function getPlotBorderingPosition(Position $position) : ?Plot {
 		if(!$position->isValid())
 			return null;
-		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i){
+		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
 			$pos = $position->getSide($i);
 			$x = $pos->x;
 			$z = $pos->z;
 			$levelName = $pos->getWorld()->getFolderName();
 
-			$plotLevel = $this->getLevelSettings($levelName);
-			if($plotLevel === null)
+			if(!$this->isLevelLoaded($levelName))
 				return null;
+
+			$plotLevel = $this->getLevelSettings($levelName);
 			$plotSize = $plotLevel->plotSize;
 			$roadWidth = $plotLevel->roadWidth;
 			$totalSize = $plotSize + $roadWidth;
@@ -439,11 +470,12 @@ class MyPlot extends PluginBase{
 				$difZ = abs(($z - $plotSize + 1) % $totalSize);
 			}
 			if(($difX > $plotSize - 1) or ($difZ > $plotSize - 1)) {
+				if($this->getPlotByPosition($pos) instanceof Plot) {
+					return $this->getPlotByPosition($pos);
+				}
 				continue;
 			}
-			$plot = $this->dataProvider->getPlot($levelName, $X, $Z);
-			if($plot !== null)
-				return $plot;
+			return $this->dataProvider->getPlot($levelName, $X, $Z);
 		}
 		return null;
 	}
@@ -455,23 +487,117 @@ class MyPlot extends PluginBase{
 	 *
 	 * @param Plot $plot
 	 *
-	 * @return AxisAlignedBB|null
+	 * @return AxisAlignedBB
 	 */
-	public function getPlotBB(Plot $plot) : ?AxisAlignedBB {
+	public function getPlotBB(Plot $plot) : AxisAlignedBB {
 		$plotWorld = $this->getLevelSettings($plot->levelName);
-		if($plotWorld === null)
-			return null;
-		$pos = $this->getPlotPosition($plot);
-		$plotSize = $plotWorld->plotSize - 1;
+		$plotSize = $plotWorld->plotSize-1;
+		$pos = $this->getPlotPosition($plot, false);
+		$xMax = (int)($pos->x + $plotSize);
+		$zMax = (int)($pos->z + $plotSize);
+		foreach ($this->dataProvider->getMergedPlots($plot) as $mergedPlot){
+			$xplot = $this->getPlotPosition($mergedPlot, false)->x;
+			$zplot = $this->getPlotPosition($mergedPlot, false)->z;
+			$xMaxPlot = (int)($xplot + $plotSize);
+			$zMaxPlot = (int)($zplot + $plotSize);
+			if($pos->x > $xplot) $pos->x = $xplot;
+			if($pos->z > $zplot) $pos->z = $zplot;
+			if($xMax < $xMaxPlot) $xMax = $xMaxPlot;
+			if($zMax < $zMaxPlot) $zMax = $zMaxPlot;
+		}
 
 		return new AxisAlignedBB(
-			min($pos->x, $pos->x + $plotSize),
+			min($pos->x, $xMax),
 			0,
-			min($pos->z, $pos->z + $plotSize),
-			max($pos->x, $pos->x + $plotSize),
+			min($pos->z, $zMax),
+			max($pos->x, $xMax),
 			$pos->getWorld()->getMaxY(),
-			max($pos->z, $pos->z + $plotSize)
+			max($pos->z, $zMax)
 		);
+	}
+
+	/**
+	 * @param Plot $plot The plot that is to be expanded
+	 * @param int $direction The Vector3 direction value to expand towards
+	 * @param int $maxBlocksPerTick
+	 *
+	 * @return bool
+	 */
+	public function mergePlots(Plot $plot, int $direction, int $maxBlocksPerTick = 256) : bool {
+		if (!$this->isLevelLoaded($plot->levelName))
+			return false;
+		/** @var Plot[][] $toMerge */
+		$toMerge = [];
+		$mergedPlots = $this->getProvider()->getMergedPlots($plot);
+		$newPlot = $plot->getSide($direction);
+		$alreadyMerged = false;
+		foreach ($mergedPlots as $mergedPlot) {
+			if ($mergedPlot->isSame($newPlot)) {
+				$alreadyMerged = true;
+			}
+		}
+		if ($alreadyMerged === false and $newPlot->isMerged()) {
+			$this->getLogger()->debug("Failed to merge due to plot origin mismatch");
+			return false;
+		}
+		$toMerge[] = [$plot, $newPlot];
+
+		foreach ($mergedPlots as $mergedPlot) {
+			$newPlot = $mergedPlot->getSide($direction);
+			$alreadyMerged = false;
+			foreach ($mergedPlots as $mergedPlot2) {
+				if ($mergedPlot2->isSame($newPlot)) {
+					$alreadyMerged = true;
+				}
+			}
+			if ($alreadyMerged === false and $newPlot->isMerged()) {
+				$this->getLogger()->debug("Failed to merge due to plot origin mismatch");
+				return false;
+			}
+			$toMerge[] = [$mergedPlot, $newPlot];
+		}
+		/** @var Plot[][] $toFill */
+		$toFill = [];
+		foreach ($toMerge as $pair) {
+			foreach ($toMerge as $pair2) {
+				for ($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
+					if ($pair[1]->getSide($i)->isSame($pair2[1])) {
+						$toFill[] = [$pair[1], $pair2[1]];
+					}
+				}
+			}
+		}
+		$ev = new MyPlotMergeEvent($this->getProvider()->getMergeOrigin($plot), $toMerge);
+		$ev->call();
+		if($ev->isCancelled()) {
+			return false;
+		}
+		foreach ($toMerge as $pair) {
+
+			//if ($pair[1]->id === -1) {
+			//	$this->getLogger()->debug("Failed to merge due to invalid Id");
+			//	return false;
+			//} else
+			if ($pair[1]->owner === "") {
+				$this->getLogger()->debug("Failed to merge due to plot not claimed");
+				return false;
+			} elseif ($plot->owner !== $pair[1]->owner) {
+				$this->getLogger()->debug("Failed to merge due to owner mismatch");
+				return false;
+			}
+		}
+
+		// TODO: WorldStyler clearing
+
+		foreach ($toMerge as $pair)
+			$this->getScheduler()->scheduleTask(new RoadFillTask($this, $pair[0], $pair[1], false, -1, $maxBlocksPerTick));
+
+		foreach ($toFill as $pair)
+			$this->getScheduler()->scheduleTask(new RoadFillTask($this, $pair[0], $pair[1], true, $direction, $maxBlocksPerTick));
+
+		return $this->getProvider()->mergePlots($this->getProvider()->getMergeOrigin($plot), ...array_map(function (array $val) : Plot {
+			return $val[1];
+		}, $toMerge));
 	}
 
 	/**
@@ -501,8 +627,58 @@ class MyPlot extends PluginBase{
 			if($onFailure !== null) $onFailure();
 			return;
 		}
+		if($plot->isMerged()){
+			$this->teleportPlayerToMerge($player, $plot, $center);
+			return;
+		}
+		$plotWorld = $this->getLevelSettings($plot->levelName);
 		$pos = $this->getPlotPosition($plot);
 		$pos->x += floor($plotWorld->plotSize / 2);
+		$pos->y += 1.5;
+		$pos->z -= 1;
+		$world = Server::getInstance()->getWorldManager()->getWorldByName($plot->levelName);
+		if($world->getOrLoadChunkAtPosition($pos) === null) {
+			$world->orderChunkPopulation($pos->getFloorX() >> 4, $pos->getFloorZ() >> 4, null);
+		}
+		$this->teleport($player, $pos, $onSuccess, $onFailure);
+	}
+
+	/**
+	 * Teleport a player to a Merge
+	 *
+	 * @api
+	 *
+	 * @param Player $player
+	 * @param Plot $plot
+	 * @param bool $center
+	 */
+	public function teleportPlayerToMerge(Player $player, Plot $plot, bool $center = false, Closure $onSuccess = null, Closure $onFailure = null) : void {
+		$ev = new MyPlotTeleportEvent($plot, $player, $center);
+		$ev->call();
+		if ($ev->isCancelled()) {
+			return;
+		}
+		if(!$plot->isMerged()){
+			$this->teleportPlayerToPlot($player, $plot, $center);
+		}
+		if($center){
+			$this->teleportMiddle($player, $plot, $onSuccess, $onFailure);
+			return;
+		}
+		$plotLevel = $this->getLevelSettings($plot->levelName);
+		$mergedPlots = $this->getProvider()->getMergedPlots($plot);
+		$minx = $this->getPlotPosition(array_reduce($mergedPlots, function(Plot $a, Plot $b) : Plot {
+			return $this->getPlotPosition($a, false)->x < $this->getPlotPosition($b, false)->x ? $a : $b;
+		}, $mergedPlots[0]), false)->x;
+		$maxx = $this->getPlotPosition(array_reduce($mergedPlots, function(Plot $a, Plot $b) : Plot {
+				return $this->getPlotPosition($a, false)->x > $this->getPlotPosition($b, false)->x ? $a : $b;
+			}, $mergedPlots[0]), false)->x + $plotLevel->plotSize;
+		$minz = $this->getPlotPosition(array_reduce($mergedPlots, function(Plot $a, Plot $b) : Plot {
+			return $this->getPlotPosition($a, false)->z < $this->getPlotPosition($b, false)->z ? $a : $b;
+		}, $mergedPlots[0]), false)->z;
+
+		$pos = new Position($minx,$plotLevel->groundHeight, $minz, $this->getServer()->getWorldManager()->getWorldByName($plot->levelName));
+		$pos->x = floor(($minx + $maxx) / 2);
 		$pos->y += 1.5;
 		$pos->z -= 1;
 		$this->teleport($player, $pos, $onSuccess, $onFailure);
@@ -522,16 +698,24 @@ class MyPlot extends PluginBase{
 	public function claimPlot(Plot $plot, string $claimer, string $plotName = "") : bool {
 		$newPlot = clone $plot;
 		$newPlot->owner = $claimer;
+		$newPlot->price = 0.0;
 		$ev = new MyPlotSettingEvent($plot, $newPlot);
 		$ev->call();
 		if($ev->isCancelled()) {
 			return false;
 		}
 		$plot = $ev->getPlot();
-		if(!empty($plotName)) {
-			$this->renamePlot($plot, $plotName);
+		$failed = false;
+		foreach($this->getProvider()->getMergedPlots($plot) as $merged) {
+			if($plotName !== "") {
+				$this->renamePlot($merged, $plotName);
+			}
+			$merged->owner = $claimer;
+			$merged->price = 0.0;
+			if(!$this->savePlot($merged))
+				$failed = true;
 		}
-		return $this->savePlot($plot);
+		return !$failed;
 	}
 
 	/**
@@ -570,10 +754,14 @@ class MyPlot extends PluginBase{
 		if(!$styler instanceof WorldStyler) {
 			return false;
 		}
-		foreach($this->getPlotChunks($plotTo) as $chunk){
-			foreach($chunk->getEntities() as $entity){
-				if($this->getPlotBB($plotTo)->isVectorInXZ($entity->getPosition())) {
-					if($entity instanceof Player) {
+		if(!$this->isLevelLoaded($plotFrom->levelName) or !$this->isLevelLoaded($plotTo->levelName)) {
+			return false;
+		}
+		$aabb = $this->getPlotBB($plotTo);
+		foreach($this->getPlotChunks($plotTo) as $chunk) {
+			foreach($chunk->getEntities() as $entity) {
+				if($aabb->isVectorInXZ($entity->getPosition())) {
+					if($entity instanceof Player){
 						$this->teleportPlayerToPlot($entity, $plotTo);
 					}
 				}
@@ -596,9 +784,20 @@ class MyPlot extends PluginBase{
 		$plotBeginPos = $plotBeginPos->subtract(1, 0, 1);
 		$plotBeginPos->y = 0;
 		$plugin = $this;
-		$selection = $styler->getSelection(99997);
+		$xMax = (int)($plotBeginPos->x + $plotSize);
+		$zMax = (int)($plotBeginPos->z + $plotSize);
+		foreach ($this->getProvider()->getMergedPlots($plotFrom) as $mergedPlot){
+			$pos = $this->getPlotPosition($mergedPlot, false)->subtract(1,0,1);
+			$xMaxPlot = (int)($pos->x + $plotSize);
+			$zMaxPlot = (int)($pos->z + $plotSize);
+			if($plotBeginPos->x > $pos->x) $plotBeginPos->x = $pos->x;
+			if($plotBeginPos->z > $pos->z) $plotBeginPos->z = $pos->z;
+			if($xMax < $xMaxPlot) $xMax = $xMaxPlot;
+			if($zMax < $zMaxPlot) $zMax = $zMaxPlot;
+		}
+		$selection = $styler->getSelection(99997) ?? new Selection(99997);
 		$selection->setPosition(1, $plotBeginPos);
-		$vec2 = new Vector3($plotBeginPos->x + $plotSize + 1, $level->getMaxY() - 1, $plotBeginPos->z + $plotSize + 1);
+		$vec2 = new Vector3($xMax + 1, $level->getMaxY() - 1, $zMax + 1);
 		$selection->setPosition(2, $vec2);
 		$cuboid = Cuboid::fromSelection($selection);
 		//$cuboid = $cuboid->async(); // do not use async because WorldStyler async is very broken right now
@@ -612,8 +811,19 @@ class MyPlot extends PluginBase{
 		$level = $plotBeginPos->getWorld();
 		$plotBeginPos = $plotBeginPos->subtract(1, 0, 1);
 		$plotBeginPos->y = 0;
+		$xMax = (int)($plotBeginPos->x + $plotSize);
+		$zMax = (int)($plotBeginPos->z + $plotSize);
+		foreach ($this->getProvider()->getMergedPlots($plotTo) as $mergedPlot){
+			$pos = $this->getPlotPosition($mergedPlot, false)->subtract(1,0,1);
+			$xMaxPlot = (int)($pos->x + $plotSize);
+			$zMaxPlot = (int)($pos->z + $plotSize);
+			if($plotBeginPos->x > $pos->x) $plotBeginPos->x = $pos->x;
+			if($plotBeginPos->z > $pos->z) $plotBeginPos->z = $pos->z;
+			if($xMax < $xMaxPlot) $xMax = $xMaxPlot;
+			if($zMax < $zMaxPlot) $zMax = $zMaxPlot;
+		}
 		$selection->setPosition(1, $plotBeginPos);
-		$vec2 = new Vector3($plotBeginPos->x + $plotSize + 1, $level->getMaxY() - 1, $plotBeginPos->z + $plotSize + 1);
+		$vec2 = new Vector3($xMax + 1, $level->getMaxY() - 1, $zMax + 1);
 		$selection->setPosition(2, $vec2);
 		$commonShape = CommonShape::fromSelection($selection);
 		//$commonShape = $commonShape->async(); // do not use async because WorldStyler async is very broken right now
@@ -621,9 +831,9 @@ class MyPlot extends PluginBase{
 			$plugin->getLogger()->debug(TF::GREEN . 'Pasted ' . number_format($changed) . ' blocks in ' . number_format($time, 10) . 's from the MyPlot clipboard.');
 		});
 		$styler->removeSelection(99997);
-		foreach($this->getPlotChunks($plotTo) as $chunkHash => $chunk){
-			World::getXZ($chunkHash, $chunkX, $chunkZ);
-			$level->setChunk($chunkX, $chunkZ, $chunk, false);
+		foreach($this->getPlotChunks($plotTo) as $id => $chunk){
+			$coords = explode(';', $id);
+			$level->setChunk((int)$coords[0], (int)$coords[1], $chunk, false);
 		}
 		return true;
 	}
@@ -649,7 +859,10 @@ class MyPlot extends PluginBase{
 			return false;
 		}
 		$maxBlocksPerTick = $ev->getMaxBlocksPerTick();
-		foreach($this->getServer()->getWorldManager()->getWorldByName($plot->levelName)->getEntities() as $entity){
+		$world = $this->getServer()->getWorldManager()->getWorldByName($plot->levelName);
+		if($world === null)
+			return false;
+		foreach($world->getEntities() as $entity) {
 			if($this->getPlotBB($plot)->isVectorInXZ($entity->getPosition())) {
 				if(!$entity instanceof Player) {
 					$entity->flagForDespawn();
@@ -658,7 +871,7 @@ class MyPlot extends PluginBase{
 				}
 			}
 		}
-		if($this->getConfig()->get("FastClearing", false)) {
+		if((bool) $this->getConfig()->get("FastClearing", false)) {
 			$styler = $this->getServer()->getPluginManager()->getPlugin("WorldStyler");
 			if(!$styler instanceof WorldStyler) {
 				return false;
@@ -666,54 +879,66 @@ class MyPlot extends PluginBase{
 			$plotWorld = $this->getLevelSettings($plot->levelName);
 			$plotSize = $plotWorld->plotSize - 1;
 			$plotBeginPos = $this->getPlotPosition($plot);
+			$xMax = (int)($plotBeginPos->x + $plotSize);
+			$zMax = (int)($plotBeginPos->z + $plotSize);
 			$plugin = $this;
+			foreach ($this->getProvider()->getMergedPlots($plot) as $mergedPlot){
+				$xplot = $this->getPlotPosition($mergedPlot, false)->x;
+				$zplot = $this->getPlotPosition($mergedPlot, false)->z;
+				$xMaxPlot = (int)($xplot + $plotSize);
+				$zMaxPlot = (int)($zplot + $plotSize);
+				if($plotBeginPos->x > $xplot) $plotBeginPos->x = $xplot;
+				if($plotBeginPos->z > $zplot) $plotBeginPos->z = $zplot;
+				if($xMax < $xMaxPlot) $xMax = $xMaxPlot;
+				if($zMax < $zMaxPlot) $zMax = $zMaxPlot;
+			}
 			// Above ground
-			$selection = $styler->getSelection(99998);
-			$plotBeginPos->y = $plotWorld->groundHeight + 1;
+			$selection = $styler->getSelection(99998) ?? new Selection(99998);
+			$plotBeginPos->y = $plotWorld->groundHeight+1;
 			$selection->setPosition(1, $plotBeginPos);
-			$selection->setPosition(2, new Vector3($plotBeginPos->x + $plotSize, World::Y_MAX, $plotBeginPos->z + $plotSize));
+			$selection->setPosition(2, new Vector3($xMax, World::Y_MAX, $zMax));
 			$cuboid = Cuboid::fromSelection($selection);
 			//$cuboid = $cuboid->async();
-			$cuboid->set($plotBeginPos->world, VanillaBlocks::AIR()->getFullId(), function(float $time, int $changed) use ($plugin) : void {
+			$cuboid->set($plotBeginPos->world, VanillaBlocks::AIR()->getFullId(), function (float $time, int $changed) use ($plugin) : void {
 				$plugin->getLogger()->debug('Set ' . number_format($changed) . ' blocks in ' . number_format($time, 10) . 's');
 			});
 			$styler->removeSelection(99998);
 			// Ground Surface
-			$selection = $styler->getSelection(99998);
+			$selection = $styler->getSelection(99998) ?? new Selection(99998);
 			$plotBeginPos->y = $plotWorld->groundHeight;
 			$selection->setPosition(1, $plotBeginPos);
-			$selection->setPosition(2, new Vector3($plotBeginPos->x + $plotSize, $plotWorld->groundHeight, $plotBeginPos->z + $plotSize));
+			$selection->setPosition(2, new Vector3($xMax, $plotWorld->groundHeight, $zMax));
 			$cuboid = Cuboid::fromSelection($selection);
 			//$cuboid = $cuboid->async();
-			$cuboid->set($plotBeginPos->world, $plotWorld->plotFloorBlock->getFullId(), function(float $time, int $changed) use ($plugin) : void {
+			$cuboid->set($plotBeginPos->world, $plotWorld->plotFloorBlock->getFullId(), function (float $time, int $changed) use ($plugin) : void {
 				$plugin->getLogger()->debug('Set ' . number_format($changed) . ' blocks in ' . number_format($time, 10) . 's');
 			});
 			$styler->removeSelection(99998);
 			// Ground
-			$selection = $styler->getSelection(99998);
+			$selection = $styler->getSelection(99998) ?? new Selection(99998);
 			$plotBeginPos->y = 1;
 			$selection->setPosition(1, $plotBeginPos);
-			$selection->setPosition(2, new Vector3($plotBeginPos->x + $plotSize, $plotWorld->groundHeight - 1, $plotBeginPos->z + $plotSize));
+			$selection->setPosition(2, new Vector3($xMax, $plotWorld->groundHeight-1, $zMax));
 			$cuboid = Cuboid::fromSelection($selection);
 			//$cuboid = $cuboid->async();
-			$cuboid->set($plotBeginPos->world, $plotWorld->plotFillBlock->getFullId(), function(float $time, int $changed) use ($plugin) : void {
+			$cuboid->set($plotBeginPos->world, $plotWorld->plotFillBlock->getFullId(), function (float $time, int $changed) use ($plugin) : void {
 				$plugin->getLogger()->debug('Set ' . number_format($changed) . ' blocks in ' . number_format($time, 10) . 's');
 			});
 			$styler->removeSelection(99998);
 			// Bottom of world
-			$selection = $styler->getSelection(99998);
+			$selection = $styler->getSelection(99998) ?? new Selection(99998);
 			$plotBeginPos->y = 0;
 			$selection->setPosition(1, $plotBeginPos);
-			$selection->setPosition(2, new Vector3($plotBeginPos->x + $plotSize, 0, $plotBeginPos->z + $plotSize));
+			$selection->setPosition(2, new Vector3($xMax, 0, $zMax));
 			$cuboid = Cuboid::fromSelection($selection);
 			//$cuboid = $cuboid->async();
-			$cuboid->set($plotBeginPos->world, $plotWorld->bottomBlock->getFullId(), function(float $time, int $changed) use ($plugin) : void {
+			$cuboid->set($plotBeginPos->world, $plotWorld->bottomBlock->getFullId(), function (float $time, int $changed) use ($plugin) : void {
 				$plugin->getLogger()->debug('Set ' . number_format($changed) . ' blocks in ' . number_format($time, 10) . 's');
 			});
 			$styler->removeSelection(99998);
-			foreach($this->getPlotChunks($plot) as $chunkHash => $chunk){
-				World::getXZ($chunkHash, $chunkX, $chunkZ);
-				$plotBeginPos->world->setChunk($chunkX, $chunkZ, $chunk, false);
+			foreach($this->getPlotChunks($plot) as $id => $chunk){
+				$coords = explode(';', $id);
+				$plotBeginPos->world->setChunk((int)$coords[0], (int)$coords[1], $chunk, false);
 			}
 			$this->getScheduler()->scheduleDelayedTask(new ClearBorderTask($this, $plot), 1);
 			return true;
@@ -737,7 +962,12 @@ class MyPlot extends PluginBase{
 		if($ev->isCancelled()) {
 			return false;
 		}
-		return $this->dataProvider->deletePlot($plot);
+		$failed = false;
+		foreach($this->getProvider()->getMergedPlots($plot) as $merged) {
+			if(!$this->getProvider()->deletePlot($merged))
+				$failed = true;
+		}
+		return !$failed;
 	}
 
 	/**
@@ -780,34 +1010,38 @@ class MyPlot extends PluginBase{
 			return false;
 		}
 		$plot = $ev->getPlot();
-		$biome = BiomeRegistry::getInstance()->getBiome(defined(BiomeIds::class . "::" . $plot->biome) ? constant(BiomeIds::class . "::" . $plot->biome) : BiomeIds::PLAINS);
-		$plotWorld = $this->getLevelSettings($plot->levelName);
-		if($plotWorld === null) {
-			return false;
+		if(defined(BiomeIds::class."::".$plot->biome) and is_int(constant(BiomeIds::class."::".$plot->biome))) {
+			$biome = constant(BiomeIds::class."::".$plot->biome);
+		}else{
+			$biome = BiomeIds::PLAINS;
 		}
+		$biome = BiomeRegistry::getInstance()->getBiome($biome);
+		if(!$this->isLevelLoaded($plot->levelName))
+			return false;
+		$failed = false;
+		foreach($this->getProvider()->getMergedPlots($plot) as $merged) {
+			$merged->biome = $plot->biome;
+			if($this->savePlot($merged))
+				$failed = true;
+		}
+		$plotWorld = $this->getLevelSettings($plot->levelName);
 		$world = $this->getServer()->getWorldManager()->getWorldByName($plot->levelName);
 		$chunks = $this->getPlotChunks($plot);
-		foreach($chunks as $chunkHash => $chunk){
-			World::getXZ($chunkHash, $chunkX, $chunkZ);
+		foreach($chunks as $id => $chunk){
+			$coords = explode(';', $id);
 			for($x = 0; $x < 16; ++$x){
 				for($z = 0; $z < 16; ++$z){
-					$chunkPlot = $this->getPlotByPosition(new Position(($chunkX << 4) + $x, $plotWorld->groundHeight, ($chunkZ << 4) + $z, $world));
+					$chunkPlot = $this->getPlotByPosition(new Position((((int)$coords[0]) << 4) + $x, $plotWorld->groundHeight, (((int)$coords[1]) << 4) + $z, $world));
 					if($chunkPlot instanceof Plot and $chunkPlot->isSame($plot)) {
 						$chunk->setBiomeId($x, $z, $biome->getId());
 					}
 				}
 			}
-			$world->setChunk($chunkX, $chunkZ, $chunk, false);
+			$world->setChunk((int)$coords[0], (int)$coords[1], $chunk, false);
 		}
-		return $this->savePlot($plot);
+		return !$failed;
 	}
 
-	/**
-	 * @param Plot $plot
-	 * @param bool $pvp
-	 *
-	 * @return bool
-	 */
 	public function setPlotPvp(Plot $plot, bool $pvp) : bool {
 		$newPlot = clone $plot;
 		$newPlot->pvp = $pvp;
@@ -819,12 +1053,6 @@ class MyPlot extends PluginBase{
 		return $this->savePlot($ev->getPlot());
 	}
 
-	/**
-	 * @param Plot $plot
-	 * @param string $player
-	 *
-	 * @return bool
-	 */
 	public function addPlotHelper(Plot $plot, string $player) : bool {
 		$newPlot = clone $plot;
 		$ev = new MyPlotSettingEvent($plot, $newPlot);
@@ -837,12 +1065,6 @@ class MyPlot extends PluginBase{
 		return $this->savePlot($ev->getPlot());
 	}
 
-	/**
-	 * @param Plot $plot
-	 * @param string $player
-	 *
-	 * @return bool
-	 */
 	public function removePlotHelper(Plot $plot, string $player) : bool {
 		$newPlot = clone $plot;
 		$ev = new MyPlotSettingEvent($plot, $newPlot);
@@ -855,12 +1077,6 @@ class MyPlot extends PluginBase{
 		return $this->savePlot($ev->getPlot());
 	}
 
-	/**
-	 * @param Plot $plot
-	 * @param string $player
-	 *
-	 * @return bool
-	 */
 	public function addPlotDenied(Plot $plot, string $player) : bool {
 		$newPlot = clone $plot;
 		$ev = new MyPlotSettingEvent($plot, $newPlot);
@@ -873,23 +1089,73 @@ class MyPlot extends PluginBase{
 		return $this->savePlot($ev->getPlot());
 	}
 
-	/**
-	 * @param Plot $plot
-	 * @param string $player
-	 *
-	 * @return bool
-	 */
 	public function removePlotDenied(Plot $plot, string $player) : bool {
 		$newPlot = clone $plot;
 		$ev = new MyPlotSettingEvent($plot, $newPlot);
-		if(!$newPlot->unBanPlayer($player)) {
+		if(!$newPlot->unBanPlayer($player))
 			$ev->cancel();
-		}
 		$ev->call();
 		if($ev->isCancelled()) {
 			return false;
 		}
 		return $this->savePlot($ev->getPlot());
+	}
+
+	/**
+	 * Assigns a price to a plot
+	 *
+	 * @api
+	 *
+	 * @param Plot $plot
+	 * @param float $price
+	 *
+	 * @return bool
+	 */
+	public function sellPlot(Plot $plot, float $price) : bool {
+		if($this->getEconomyProvider() === null or $price < 0)
+			return false;
+
+		$newPlot = clone $plot;
+		$newPlot->price = $price;
+		$ev = new MyPlotSettingEvent($plot, $newPlot);
+		$ev->call();
+		if($ev->isCancelled()) {
+			return false;
+		}
+		$plot = $ev->getPlot();
+		return $this->savePlot($plot);
+	}
+
+	/**
+	 * Resets the price, adds the money to the player's account and claims a plot in a players name
+	 *
+	 * @api
+	 *
+	 * @param Plot $plot
+	 * @param Player $player
+	 *
+	 * @return bool
+	 */
+	public function buyPlot(Plot $plot, Player $player) : bool {
+		if($this->getEconomyProvider() === null or !$this->getEconomyProvider()->reduceMoney($player, $plot->price) or !$this->getEconomyProvider()->addMoney($this->getServer()->getOfflinePlayer($plot->owner), $plot->price))
+			return false;
+		$failed = false;
+		foreach ($this->dataProvider->getMergedPlots($plot) as $mergedPlot) {
+			$newPlot = clone $mergedPlot;
+			$newPlot->owner = $player->getName();
+			$newPlot->helpers = [];
+			$newPlot->banned = [];
+			$newPlot->price = 0.0;
+			$ev = new MyPlotSettingEvent($mergedPlot, $newPlot);
+			$ev->call();
+			if ($ev->isCancelled()) {
+				return false;
+			}
+			$mergedPlot = $ev->getPlot();
+			if($this->savePlot($mergedPlot))
+				$failed = true;
+		}
+		return !$failed;
 	}
 
 	/**
@@ -910,22 +1176,25 @@ class MyPlot extends PluginBase{
 	 *
 	 * @param Plot $plot
 	 *
-	 * @return Chunk[]
+	 * @return array<string, Chunk>
 	 */
 	public function getPlotChunks(Plot $plot) : array {
-		$plotWorld = $this->getLevelSettings($plot->levelName);
-		if($plotWorld === null) {
+		if(!$this->isLevelLoaded($plot->levelName))
 			return [];
-		}
+		$plotWorld = $this->getLevelSettings($plot->levelName);
 		$world = $this->getServer()->getWorldManager()->getWorldByName($plot->levelName);
-		$pos = $this->getPlotPosition($plot);
+		if($world === null)
+			return [];
 		$plotSize = $plotWorld->plotSize;
-		$xMax = ($pos->x + $plotSize) >> 4;
-		$zMax = ($pos->z + $plotSize) >> 4;
 		$chunks = [];
-		for($X = $pos->x >> 4; $X <= $xMax; $X++){
-			for($Z = $pos->z >> 4; $Z <= $zMax; $Z++){
-				$chunks[World::chunkHash($X, $Z)] = $world->getChunk($X, $Z) ?? new Chunk();
+		foreach ($this->dataProvider->getMergedPlots($plot) as $mergedPlot){
+			$pos = $this->getPlotPosition($mergedPlot, false);
+			$xMax = ($pos->x + $plotSize) >> 4;
+			$zMax = ($pos->z + $plotSize) >> 4;
+			for($x = $pos->x >> 4; $x <= $xMax; $x++) {
+				for($z = $pos->z >> 4; $z <= $zMax; $z++) {
+					$chunks["$x;$z"] = $world->getChunk($x, $z); //TODO: verify ?? new Chunk();
+				}
 			}
 		}
 		return $chunks;
@@ -947,7 +1216,7 @@ class MyPlot extends PluginBase{
 		if($player->hasPermission("myplot.claimplots.$levelName.unlimited")) {
 			return PHP_INT_MAX;
 		}
-
+		$player->recalculatePermissions();
 		$perms = $player->getEffectivePermissions();
 		$perms = array_filter($perms, function(string $name) use ($levelName, $length) {
 			return (substr($name, 0, 19 + $length) === "myplot.claimplots.$levelName.");
@@ -983,14 +1252,40 @@ class MyPlot extends PluginBase{
 	 * @return Position|null
 	 */
 	public function getPlotMid(Plot $plot) : ?Position {
-		$plotWorld = $this->getLevelSettings($plot->levelName);
-		if($plotWorld === null) {
+		if(!$this->isLevelLoaded($plot->levelName))
 			return null;
-		}
+		$plotWorld = $this->getLevelSettings($plot->levelName);
 		$plotSize = $plotWorld->plotSize;
 		$pos = $this->getPlotPosition($plot);
-		$pos = new Position($pos->x + ($plotSize / 2), $pos->y + 1, $pos->z + ($plotSize / 2), $pos->getWorld());
-		return $pos;
+		return new Position($pos->x + ($plotSize / 2), $pos->y + 1, $pos->z + ($plotSize / 2), $pos->getWorld());
+	}
+
+	/**
+	 * Finds the exact center of the Merge at ground level
+	 *
+	 * @api
+	 *
+	 * @param Plot $plot
+	 *
+	 * @return Position|null
+	 */
+	public function getMergeMid(Plot $plot) : ?Position {
+		$plotLevel = $this->getLevelSettings($plot->levelName);
+		$plotSize = $plotLevel->plotSize;
+		$mergedPlots = $this->getProvider()->getMergedPlots($plot);
+		$minx = $this->getPlotPosition(array_reduce($mergedPlots, function(Plot $a, Plot $b) : Plot {
+			return $this->getPlotPosition($a, false)->x < $this->getPlotPosition($b, false)->x ? $a : $b;
+		}, $mergedPlots[0]), false)->x;
+		$maxx = $this->getPlotPosition(array_reduce($mergedPlots, function(Plot $a, Plot  $b) : Plot {
+				return $this->getPlotPosition($a, false)->x > $this->getPlotPosition($b, false)->x ? $a : $b;
+			}, $mergedPlots[0]), false)->x + $plotSize;
+		$minz = $this->getPlotPosition(array_reduce($mergedPlots, function(Plot $a, Plot $b) : Plot {
+			return $this->getPlotPosition($a, false)->z < $this->getPlotPosition($b, false)->z ? $a : $b;
+		}, $mergedPlots[0]), false)->z;
+		$maxz = $this->getPlotPosition(array_reduce($mergedPlots, function(Plot $a, Plot $b) : Plot {
+				return $this->getPlotPosition($a, false)->z > $this->getPlotPosition($b, false)->z ? $a : $b;
+			}, $mergedPlots[0]), false)->z + $plotSize;
+		return new Position(($minx + $maxx) / 2, $plotLevel->groundHeight, ($minz + $maxz) / 2, $this->getServer()->getWorldManager()->getWorldByName($plot->levelName));
 	}
 
 	/**
@@ -1004,8 +1299,12 @@ class MyPlot extends PluginBase{
 	 * @param Closure|null $onFailure
 	 */
 	private function teleportMiddle(Player $player, Plot $plot, Closure $onSuccess = null, Closure $onFailure = null) : void {
-		$mid = $this->getPlotMid($plot);
-		if($mid === null) {
+		if($plot->isMerged()){
+			$mid = $this->getMergeMid($plot);
+		}else {
+			$mid = $this->getPlotMid($plot);
+		}
+		if ($mid === null) {
 			if($onFailure !== null) $onFailure();
 			return;
 		}
@@ -1027,7 +1326,7 @@ class MyPlot extends PluginBase{
 		$world->orderChunkPopulation($pos->x >> 4, $pos->z >> 4, null)->onCompletion(
 			function() use ($player, $pos, $onSuccess, $onFailure) : void {
 				if($player->teleport($pos)) {
-					if($onSuccess !== null) ($onSuccess)();
+					if($onSuccess !== null) $onSuccess();
 				}else{
 					if($onFailure !== null) $onFailure();
 				}
@@ -1051,11 +1350,11 @@ class MyPlot extends PluginBase{
 		// Loading Languages
 		/** @var string $lang */
 		$lang = $this->getConfig()->get("Language", Language::FALLBACK_LANGUAGE);
-		if($this->getConfig()->get("Custom Messages", false)) {
-			if(!file_exists($this->getDataFolder() . "lang.ini")) {
+		if((bool) $this->getConfig()->get("Custom Messages", false)) {
+			if(!file_exists($this->getDataFolder()."lang.ini")) {
 				/** @var string|resource $resource */
-				$resource = $this->getResource($lang . ".ini") ?? file_get_contents($this->getFile() . "resources/" . Language::FALLBACK_LANGUAGE . ".ini");
-				file_put_contents($this->getDataFolder() . "lang.ini", $resource);
+				$resource = $this->getResource($lang.".ini") ?? file_get_contents($this->getFile()."resources/".Language::FALLBACK_LANGUAGE.".ini");
+				file_put_contents($this->getDataFolder()."lang.ini", $resource);
 				if(!is_string($resource)) {
 					/** @var resource $resource */
 					fclose($resource);
@@ -1076,41 +1375,50 @@ class MyPlot extends PluginBase{
 		// Initialize DataProvider
 		/** @var int $cacheSize */
 		$cacheSize = $this->getConfig()->get("PlotCacheSize", 256);
-		switch(strtolower($this->getConfig()->get("DataProvider", "sqlite3"))){
-			case "mysqli":
-			case "mysql":
-				if(extension_loaded("mysqli")) {
-					$settings = $this->getConfig()->get("MySQLSettings");
-					$this->dataProvider = new MySQLProvider($this, $cacheSize, $settings);
-				}else{
-					$this->getLogger()->warning("MySQLi is not installed in your php build! JSON will be used instead.");
-					$this->dataProvider = new JSONDataProvider($this, $cacheSize);
+		$dataProvider = $this->getConfig()->get("DataProvider", "sqlite3");
+		if(!is_string($dataProvider))
+			$this->dataProvider = new JSONDataProvider($this, $cacheSize);
+		else
+			try {
+				switch(strtolower($dataProvider)) {
+					case "mysqli":
+					case "mysql":
+						if(extension_loaded("mysqli")) {
+							$settings = (array) $this->getConfig()->get("MySQLSettings");
+							$this->dataProvider = new MySQLProvider($this, $cacheSize, $settings);
+						}else {
+							$this->getLogger()->warning("MySQLi is not installed in your php build! JSON will be used instead.");
+							$this->dataProvider = new JSONDataProvider($this, $cacheSize);
+						}
+					break;
+					case "yaml":
+						if(extension_loaded("yaml")) {
+							$this->dataProvider = new YAMLDataProvider($this, $cacheSize);
+						}else {
+							$this->getLogger()->warning("YAML is not installed in your php build! JSON will be used instead.");
+							$this->dataProvider = new JSONDataProvider($this, $cacheSize);
+						}
+					break;
+					case "sqlite3":
+					case "sqlite":
+						if(extension_loaded("sqlite3")) {
+							$this->dataProvider = new SQLiteDataProvider($this, $cacheSize);
+						}else {
+							$this->getLogger()->warning("SQLite3 is not installed in your php build! JSON will be used instead.");
+							$this->dataProvider = new JSONDataProvider($this, $cacheSize);
+						}
+					break;
+					case "json":
+					default:
+						$this->dataProvider = new JSONDataProvider($this, $cacheSize);
+					break;
 				}
-				break;
-			case "yaml":
-				if(extension_loaded("yaml")) {
-					$this->dataProvider = new YAMLDataProvider($this, $cacheSize);
-				}else{
-					$this->getLogger()->warning("YAML is not installed in your php build! JSON will be used instead.");
-					$this->dataProvider = new JSONDataProvider($this, $cacheSize);
-				}
-				break;
-			case "sqlite3":
-			case "sqlite":
-				if(extension_loaded("sqlite3")) {
-					$this->dataProvider = new SQLiteDataProvider($this, $cacheSize);
-				}else{
-					$this->getLogger()->warning("SQLite3 is not installed in your php build! JSON will be used instead.");
-					$this->dataProvider = new JSONDataProvider($this, $cacheSize);
-				}
-				break;
-			case "json":
-			default:
+			}catch(\Exception $e) {
+				$this->getLogger()->error("The selected data provider crashed. JSON will be used instead.");
 				$this->dataProvider = new JSONDataProvider($this, $cacheSize);
-				break;
-		}
+			}
 		$this->getLogger()->debug(TF::BOLD . "Loading Plot Clearing settings");
-		if($this->getConfig()->get("FastClearing", false) and $this->getServer()->getPluginManager()->getplugin("WorldStyler") === null) {
+		if($this->getConfig()->get("FastClearing", false) and $this->getServer()->getPluginManager()->getPlugin("WorldStyler") === null) {
 			$this->getConfig()->set("FastClearing", false);
 			$this->getLogger()->info(TF::BOLD . "WorldStyler not found. Legacy clearing will be used.");
 		}
@@ -1162,7 +1470,7 @@ class MyPlot extends PluginBase{
 		$this->getServer()->getPluginManager()->registerEvents($eventListener, $this);
 
 		$this->getLogger()->debug(TF::BOLD . "Registering Loaded Worlds");
-		foreach($this->getServer()->getWorldManager()->getWorlds() as $world){
+		foreach($this->getServer()->getWorldManager()->getWorlds() as $world) {
 			$eventListener->onLevelLoad(new WorldLoadEvent($world));
 		}
 
@@ -1177,22 +1485,11 @@ class MyPlot extends PluginBase{
 		return $this->commands;
 	}
 
-	/**
-	 * @param string $worldName
-	 * @param PlotLevelSettings $settings
-	 *
-	 * @return bool
-	 */
 	public function addLevelSettings(string $worldName, PlotLevelSettings $settings) : bool {
 		$this->worlds[$worldName] = $settings;
 		return true;
 	}
 
-	/**
-	 * @param string $worldName
-	 *
-	 * @return bool
-	 */
 	public function unloadLevelSettings(string $worldName) : bool {
 		if(isset($this->worlds[$worldName])) {
 			unset($this->worlds[$worldName]);

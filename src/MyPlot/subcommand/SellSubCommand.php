@@ -3,18 +3,14 @@ declare(strict_types=1);
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
-use MyPlot\forms\subforms\RemoveHelperForm;
-use MyPlot\Plot;
 use pocketmine\command\CommandSender;
-use pocketmine\player\OfflinePlayer;
 use pocketmine\player\Player;
-use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
-class RemoveHelperSubCommand extends SubCommand
+class SellSubCommand extends SubCommand
 {
 	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.removehelper");
+		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.sell");
 	}
 
 	/**
@@ -27,21 +23,22 @@ class RemoveHelperSubCommand extends SubCommand
 		if(count($args) === 0) {
 			return false;
 		}
-		$helperName = $args[0];
 		$plot = $this->getPlugin()->getPlotByPosition($sender->getPosition());
-		if($plot === null) {
+		if($plot === null){
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
 			return true;
 		}
-		if($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.removehelper")) {
+		if($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.sell")){
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$helper = $this->getPlugin()->getServer()->getPlayerByPrefix($helperName);
-		if($helper === null)
-			$helper = new OfflinePlayer($helperName, Server::getInstance()->getOfflinePlayerData($helperName));
-		if($this->getPlugin()->removePlotHelper($plot, $helper->getName())) {
-			$sender->sendMessage($this->translateString("removehelper.success", [$helper->getName()]));
+		if(!is_numeric($args[0]))
+			return false;
+		$price = (float)$args[0];
+		if($this->getPlugin()->sellPlot($plot, $price) and $price > 0) {
+			$sender->sendMessage($this->translateString("sell.success", ["{$plot->X};{$plot->Z}", $price]));
+		}elseif($price <= 0){
+			$sender->sendMessage(TextFormat::RED . $this->translateString("sell.unlisted", ["{$plot->X};{$plot->Z}"]));
 		}else{
 			$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
 		}
@@ -49,8 +46,7 @@ class RemoveHelperSubCommand extends SubCommand
 	}
 
 	public function getForm(?Player $player = null) : ?MyPlotForm {
-		if($player !== null and $this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
-			return new RemoveHelperForm();
+		// TODO: Implement getForm() method.
 		return null;
 	}
 }

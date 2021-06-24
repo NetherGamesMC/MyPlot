@@ -11,11 +11,6 @@ use pocketmine\utils\TextFormat;
 
 class WarpSubCommand extends SubCommand
 {
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.warp");
 	}
@@ -27,7 +22,7 @@ class WarpSubCommand extends SubCommand
 	 * @return bool
 	 */
 	public function execute(CommandSender $sender, array $args) : bool {
-		if(empty($args)) {
+		if(count($args) === 0) {
 			return false;
 		}
 		$levelName = $args[1] ?? $sender->getWorld()->getFolderName();
@@ -55,7 +50,7 @@ class WarpSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
-		return new WarpForm($player);
+	public function getForm(?Player $player = null) : ?MyPlotForm {
+		return $player !== null ? new WarpForm($player) : null;
 	}
 }

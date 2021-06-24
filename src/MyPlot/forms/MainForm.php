@@ -26,6 +26,7 @@ class MainForm extends SimpleMyPlotForm{
 	 */
 	public function __construct(Player $player, array $subCommands) {
 		$plugin = MyPlot::getInstance();
+
 		$this->plot = $plugin->getPlotByPosition($player->getPosition());
 
 		$elements = [];
@@ -70,7 +71,7 @@ class MainForm extends SimpleMyPlotForm{
 				$settings = FormManager::createSimpleForm($player);
 				$settings->setTitle("Plot Settings");
 
-				foreach($settingForms as $name => $form){
+				foreach($settingForms as $form){
 					$button = new Button($form->getName(), function(Player $player) use ($form) {
 						$form->sendForm();
 					});
@@ -82,7 +83,7 @@ class MainForm extends SimpleMyPlotForm{
 					$dangerZone = FormManager::createSimpleForm($player);
 					$dangerZone->setTitle("Danger Zone");
 
-					foreach($dangerForms as $name => $form){
+					foreach($dangerForms as $form){
 						$button = new Button($form->getName(), function(Player $player) use ($form) {
 							$form->sendForm();
 						});
@@ -113,7 +114,7 @@ class MainForm extends SimpleMyPlotForm{
 				$admin = FormManager::createSimpleForm($player);
 				$admin->setTitle("Admin Settings");
 
-				foreach($adminForms as $name => $form){
+				foreach($adminForms as $form){
 					$button = new Button($form->getName(), function(Player $player) use ($form) {
 						$form->sendForm();
 					});

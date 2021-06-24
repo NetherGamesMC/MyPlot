@@ -17,13 +17,17 @@ class KickForm extends ComplexMyPlotForm implements PlotSettingsForm{
 	public function __construct() {
 		$plugin = MyPlot::getInstance();
 		$players = [];
-		foreach($plugin->getServer()->getOnlinePlayers() as $player){
-			if(isset($this->plot) and !$plugin->getPlotByPosition($player->getPosition())->isSame($this->plot)) {
+
+		foreach($plugin->getServer()->getOnlinePlayers() as $player) {
+			$plot = $plugin->getPlotByPosition($player->getPosition());
+			if($plot === null)
 				continue;
-			}
+			if($this->plot !== null and !$plot->isSame($this->plot))
+				continue;
 			$players[] = $player->getDisplayName();
 			$this->players[] = $player->getName();
 		}
+
 		parent::__construct(
 			null,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("kick.form")]),

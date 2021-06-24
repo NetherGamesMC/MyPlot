@@ -4,17 +4,14 @@ namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\GenerateForm;
+use MyPlot\MyPlotGenerator;
+use MyPlot\Plot;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class GenerateSubCommand extends SubCommand
 {
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
 	public function canUse(CommandSender $sender) : bool {
 		return $sender->hasPermission("myplot.command.generate");
 	}
@@ -26,7 +23,7 @@ class GenerateSubCommand extends SubCommand
 	 * @return bool
 	 */
 	public function execute(CommandSender $sender, array $args) : bool {
-		if(empty($args)) {
+		if(count($args) === 0) {
 			return false;
 		}
 		$levelName = $args[0];
@@ -34,10 +31,10 @@ class GenerateSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("generate.exists", [$levelName]));
 			return true;
 		}
-		if($this->getPlugin()->generateWorld($levelName, $args[2] ?? "myplot")) {
-			/*if(isset($args[1]) and $args[1] == true and $sender instanceof Player) {
+		if($this->getPlugin()->generateWorld($levelName, $args[2] ?? MyPlotGenerator::NAME)) {
+			if(isset($args[1]) and $args[1] == true and $sender instanceof Player) {
 				$this->getPlugin()->teleportPlayerToPlot($sender, new Plot($levelName, 0, 0));
-			}*/
+			}
 			$sender->sendMessage($this->translateString("generate.success", [$levelName]));
 		}else{
 			$sender->sendMessage(TextFormat::RED . $this->translateString("generate.error"));
@@ -45,7 +42,7 @@ class GenerateSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
-		return new GenerateForm();
+	public function getForm(?Player $player = null) : ?MyPlotForm {
+		return $player != null ? new GenerateForm() : null;
 	}
 }

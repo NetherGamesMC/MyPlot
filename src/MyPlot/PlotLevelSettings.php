@@ -42,6 +42,8 @@ class PlotLevelSettings
 	public $restrictPVP = false;
 	/** @var bool $updatePlotLiquids */
 	public $updatePlotLiquids = false;
+	/** @var bool $allowOutsidePlotSpread */
+	public $allowOutsidePlotSpread = false;
 	/** @var bool $displayDoneNametags */
 	public $displayDoneNametags = false;
 	/** @var bool $editBorderBlocks */
@@ -51,11 +53,11 @@ class PlotLevelSettings
 	 * PlotLevelSettings constructor.
 	 *
 	 * @param string $name
-	 * @param array $settings
+	 * @param mixed[] $settings
 	 */
 	public function __construct(string $name, array $settings = []) {
 		$this->name = $name;
-		if(!empty($settings)) {
+		if(count($settings) > 0) {
 			$this->roadBlock = self::parseBlock($settings, "RoadBlock", VanillaBlocks::OAK_PLANKS());
 			$this->wallBlock = self::parseBlock($settings, "WallBlock", VanillaBlocks::SMOOTH_STONE_SLAB());
 			$this->plotFloorBlock = self::parseBlock($settings, "PlotFloorBlock", VanillaBlocks::GRASS());
@@ -72,12 +74,13 @@ class PlotLevelSettings
 			$this->restrictEntityMovement = self::parseBool($settings, "RestrictEntityMovement", true);
 			$this->restrictPVP = self::parseBool($settings, "RestrictPVP", false);
 			$this->updatePlotLiquids = self::parseBool($settings, "UpdatePlotLiquids", false);
+			$this->allowOutsidePlotSpread = self::parseBool($settings, "AllowOutsidePlotSpread", false);
 			$this->editBorderBlocks = self::parseBool($settings, "EditBorderBlocks", true);
 		}
 	}
 
 	/**
-	 * @param array $array
+	 * @param string[] $array
 	 * @param string|int $key
 	 * @param Block $default
 	 *
@@ -103,7 +106,7 @@ class PlotLevelSettings
 	}
 
 	/**
-	 * @param array $array
+	 * @param string[] $array
 	 * @param string|int $key
 	 * @param int $default
 	 *
@@ -118,7 +121,7 @@ class PlotLevelSettings
 	}
 
 	/**
-	 * @param array $array
+	 * @param mixed[] $array
 	 * @param string|int $key
 	 * @param bool $default
 	 *
@@ -126,7 +129,7 @@ class PlotLevelSettings
 	 */
 	public static function parseBool(array &$array, $key, bool $default) : bool {
 		if(isset($array[$key]) and is_bool($array[$key])) {
-			return (bool) $array[$key];
+			return $array[$key];
 		}else{
 			return $default;
 		}

@@ -64,7 +64,7 @@ abstract class SubCommand implements PluginOwned
         return ($alias == $this->name . ".alias") ? "" : $alias;
     }
 
-	public abstract function getForm(Player $player) : ?MyPlotForm;
+	public abstract function getForm(?Player $player = null) : ?MyPlotForm;
 
 	/**
 	 * @param string[] $args

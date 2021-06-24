@@ -9,11 +9,6 @@ use pocketmine\utils\TextFormat;
 
 class HomesSubCommand extends SubCommand
 {
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.homes");
 	}
@@ -27,7 +22,7 @@ class HomesSubCommand extends SubCommand
 	public function execute(CommandSender $sender, array $args) : bool {
 		$levelName = $args[0] ?? $sender->getWorld()->getFolderName();
 		$plots = $this->getPlugin()->getPlotsOfPlayer($sender->getName(), $levelName);
-		if(empty($plots)) {
+		if(count($plots) === 0) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("homes.noplots"));
 			return true;
 		}
@@ -44,7 +39,7 @@ class HomesSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
+	public function getForm(?Player $player = null) : ?MyPlotForm {
 		return null; // we can just list homes in the home form
 	}
 }

@@ -9,6 +9,7 @@ use MyPlot\subcommand\AddHelperSubCommand;
 use MyPlot\subcommand\ArchiveSubCommand;
 use MyPlot\subcommand\AutoSubCommand;
 use MyPlot\subcommand\BiomeSubCommand;
+use MyPlot\subcommand\BuySubCommand;
 use MyPlot\subcommand\ClaimSubCommand;
 use MyPlot\subcommand\ClearSubCommand;
 use MyPlot\subcommand\CloneSubCommand;
@@ -22,11 +23,13 @@ use MyPlot\subcommand\HomeSubCommand;
 use MyPlot\subcommand\InfoSubCommand;
 use MyPlot\subcommand\KickSubCommand;
 use MyPlot\subcommand\ListSubCommand;
+use MyPlot\subcommand\MergeSubCommand;
 use MyPlot\subcommand\MiddleSubCommand;
 use MyPlot\subcommand\NameSubCommand;
 use MyPlot\subcommand\PvpSubCommand;
 use MyPlot\subcommand\RemoveHelperSubCommand;
 use MyPlot\subcommand\ResetSubCommand;
+use MyPlot\subcommand\SellSubCommand;
 use MyPlot\subcommand\SetOwnerSubCommand;
 use MyPlot\subcommand\SubCommand;
 use MyPlot\subcommand\TimeSubCommand;
@@ -34,10 +37,6 @@ use MyPlot\subcommand\UnBanSubCommand;
 use MyPlot\subcommand\WarpSubCommand;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-//use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
-//use pocketmine\network\mcpe\protocol\types\command\CommandData;
-//use pocketmine\network\mcpe\protocol\types\command\CommandEnum;
-//use pocketmine\network\mcpe\protocol\types\command\CommandParameter;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
 use pocketmine\player\Player;
@@ -87,8 +86,13 @@ class Commands extends Command implements PluginOwned
 		$this->loadSubCommand(new ListSubCommand($plugin, "list"));
 		$this->loadSubCommand(new PvpSubCommand($plugin, "pvp"));
 		$this->loadSubCommand(new KickSubCommand($plugin, "kick"));
-		$styler = $plugin->getServer()->getPluginManager()->getPlugin("WorldStyler");
-		if($styler !== null && ((bool)$plugin->getConfig()->getNested("enable.clone", false))) {
+		$this->loadSubCommand(new MergeSubCommand($plugin, "merge"));
+		if($plugin->getEconomyProvider() !== null) {
+			$this->loadSubCommand(new SellSubCommand($plugin, "sell"));
+			$this->loadSubCommand(new BuySubCommand($plugin, "buy"));
+		}
+		$styler = $this->getOwningPlugin()->getServer()->getPluginManager()->getPlugin("WorldStyler");
+		if($styler !== null) {
 			$this->loadSubCommand(new CloneSubCommand($plugin, "clone"));
 		}
 		$plugin->getLogger()->debug("Commands Registered to MyPlot");
@@ -101,9 +105,6 @@ class Commands extends Command implements PluginOwned
 		return $this->subCommands;
 	}
 
-	/**
-	 * @param SubCommand $command
-	 */
 	public function loadSubCommand(SubCommand $command) : void {
 		$this->subCommands[$command->getName()] = $command;
 		if($command->getAlias() != "") {
@@ -111,9 +112,6 @@ class Commands extends Command implements PluginOwned
 		}
 	}
 
-	/**
-	 * @param string $name
-	 */
 	public function unloadSubCommand(string $name) : void {
 		$subcommand = $this->subCommands[$name] ?? $this->aliasSubCommands[$name] ?? null;
 		if($subcommand !== null) {
@@ -145,7 +143,7 @@ class Commands extends Command implements PluginOwned
 				return true;
 			}
 		}
-		$subCommand = strtolower(array_shift($args));
+		$subCommand = strtolower((string)array_shift($args));
 		if(isset($this->subCommands[$subCommand])) {
 			$command = $this->subCommands[$subCommand];
 		}elseif(isset($this->aliasSubCommands[$subCommand])){

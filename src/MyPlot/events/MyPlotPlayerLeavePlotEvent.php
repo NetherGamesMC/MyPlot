@@ -23,9 +23,6 @@ class MyPlotPlayerLeavePlotEvent extends MyPlotPlotEvent implements Cancellable 
 		parent::__construct($plot);
 	}
 
-	/**
-	 * @return Player
-	 */
 	public function getPlayer() : Player {
 		return $this->player;
 	}

@@ -8,11 +8,6 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat as TF;
 
 class ListSubCommand extends SubCommand {
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.list");
 	}
@@ -25,7 +20,7 @@ class ListSubCommand extends SubCommand {
 	 */
 	public function execute(CommandSender $sender, array $args) : bool {
 		if($sender->hasPermission("myplot.admin.list")) {
-			if(!empty($args)) {
+			if(count($args) > 0) {
 				foreach($this->getPlugin()->getPlotLevels() as $levelName => $settings) {
 					$plots = $this->getPlugin()->getPlotsOfPlayer($args[0], $levelName);
 					foreach($plots as $plot) {
@@ -60,7 +55,7 @@ class ListSubCommand extends SubCommand {
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
+	public function getForm(?Player $player = null) : ?MyPlotForm {
 		return null; // this will probably be merged into the homes command
 	}
 }

@@ -38,9 +38,6 @@ class MyPlotBlockEvent extends MyPlotPlotEvent implements Cancellable {
 		parent::__construct($plot);
 	}
 
-	/**
-	 * @return Block
-	 */
 	public function getBlock() : Block {
 		return $this->block;
 	}
@@ -52,9 +49,6 @@ class MyPlotBlockEvent extends MyPlotPlotEvent implements Cancellable {
 		return $this->event;
 	}
 
-	/**
-	 * @return Player
-	 */
 	public function getPlayer() : Player {
 		return $this->player;
 	}

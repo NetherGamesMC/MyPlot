@@ -4,6 +4,7 @@ namespace MyPlot\provider;
 
 use MyPlot\MyPlot;
 use MyPlot\Plot;
+use pocketmine\math\Facing;
 use pocketmine\utils\Config;
 
 class YAMLDataProvider extends DataProvider {
@@ -24,19 +25,14 @@ class YAMLDataProvider extends DataProvider {
 		$this->yaml = new Config($this->plugin->getDataFolder() . "Data" . DIRECTORY_SEPARATOR . "plots.yml", Config::YAML, ["count" => -1, "plots" => []]);
 	}
 
-	/**
-	 * @param Plot $plot
-	 *
-	 * @return bool
-	 */
 	public function savePlot(Plot $plot) : bool {
 		$plots = $this->yaml->get("plots", []);
 		if($plot->id > -1) {
-			$plots[$plot->id] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->banned, "biome" => $plot->biome, "pvp" => $plot->pvp];
+			$plots[$plot->id] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->banned, "biome" => $plot->biome, "pvp" => $plot->pvp, "price" => $plot->price];
 		}else{
 			$id = $this->yaml->get("count", 0) + 1;
 			$plot->id = $id;
-			$plots[$id] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->banned, "biome" => $plot->biome, "pvp" => $plot->pvp];
+			$plots[$id] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->banned, "biome" => $plot->biome, "pvp" => $plot->pvp, "price" => $plot->price];
 			$this->yaml->set("count", $id);
 		}
 		$this->yaml->set("plots", $plots);
@@ -45,11 +41,6 @@ class YAMLDataProvider extends DataProvider {
 		return true;
 	}
 
-	/**
-	 * @param Plot $plot
-	 *
-	 * @return bool
-	 */
 	public function deletePlot(Plot $plot) : bool {
 		$plots = $this->yaml->get("plots", []);
 		unset($plots[$plot->id]);
@@ -60,18 +51,11 @@ class YAMLDataProvider extends DataProvider {
 		return true;
 	}
 
-	/**
-	 * @param string $levelName
-	 * @param int $X
-	 * @param int $Z
-	 *
-	 * @return Plot
-	 */
 	public function getPlot(string $levelName, int $X, int $Z) : Plot {
 		if(($plot = $this->getPlotFromCache($levelName, $X, $Z)) !== null) {
 			return $plot;
 		}
-		$plots = $this->yaml->get("plots");
+		$plots = $this->yaml->get("plots", []);
 		$levelKeys = $xKeys = $zKeys = [];
 		foreach($plots as $key => $plotData) {
 			if($plotData["level"] === $levelName)
@@ -100,7 +84,8 @@ class YAMLDataProvider extends DataProvider {
 			$denied = (array)$plots[$key]["denied"];
 			$biome = strtoupper($plots[$key]["biome"]);
 			$pvp = (bool)$plots[$key]["pvp"];
-			return new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $key);
+			$price = (float)$plots[$key]["price"];
+			return new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $price, $key);
 		}
 		return new Plot($levelName, $X, $Z);
 	}
@@ -116,8 +101,8 @@ class YAMLDataProvider extends DataProvider {
 		$ownerPlots = [];
 		if($levelName != "") {
 			/** @var int[] $levelKeys */
-			$levelKeys = array_keys($plots, $levelName);
-			$ownerKeys = array_keys($plots, $owner);
+			$levelKeys = array_keys($plots, $levelName, true);
+			$ownerKeys = array_keys($plots, $owner, true);
 			foreach($levelKeys as $levelKey) {
 				foreach($ownerKeys as $ownerKey) {
 					if($levelKey == $ownerKey) {
@@ -129,13 +114,14 @@ class YAMLDataProvider extends DataProvider {
 						$denied = $plots[$levelKey]["denied"] == [] ? [] : $plots[$levelKey]["denied"];
 						$biome = strtoupper($plots[$levelKey]["biome"]) == "PLAINS" ? "PLAINS" : strtoupper($plots[$levelKey]["biome"]);
 						$pvp = $plots[$levelKey]["pvp"] == null ? false : $plots[$levelKey]["pvp"];
-						$ownerPlots[] = new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $levelKey);
+						$price = $plots[$levelKey]["price"] == null ? 0 : $plots[$levelKey]["price"];
+						$ownerPlots[] = new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $price, $levelKey);
 					}
 				}
 			}
 		}else{
 			/** @var int[] $ownerKeys */
-			$ownerKeys = array_keys($plots, $owner);
+			$ownerKeys = array_keys($plots, $owner, true);
 			foreach($ownerKeys as $key) {
 				$levelName = $plots[$key]["level"];
 				$X = $plots[$key]["x"];
@@ -146,18 +132,13 @@ class YAMLDataProvider extends DataProvider {
 				$denied = $plots[$key]["denied"] == [] ? [] : $plots[$key]["denied"];
 				$biome = strtoupper($plots[$key]["biome"]) == "PLAINS" ? "PLAINS" : strtoupper($plots[$key]["biome"]);
 				$pvp = $plots[$key]["pvp"] == null ? false : $plots[$key]["pvp"];
-				$ownerPlots[] = new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $key);
+				$price = $plots[$key]["price"] == null ? 0 : $plots[$key]["price"];
+				$ownerPlots[] = new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $price, $key);
 			}
 		}
 		return $ownerPlots;
 	}
 
-	/**
-	 * @param string $levelName
-	 * @param int $limitXZ
-	 *
-	 * @return Plot|null
-	 */
 	public function getNextFreePlot(string $levelName, int $limitXZ = 0) : ?plot {
 		$plotsArr = $this->yaml->get("plots", []);
 		for($i = 0; $limitXZ <= 0 or $i < $limitXZ; $i++) {
@@ -178,28 +159,93 @@ class YAMLDataProvider extends DataProvider {
 			if(count($plots) === max(1, 8 * $i)) {
 				continue;
 			}
-			if($ret = self::findEmptyPlotSquared(0, $i, $plots)) {
-				list($X, $Z) = $ret;
+			if(($ret = self::findEmptyPlotSquared(0, $i, $plots)) !== null) {
+				[$X, $Z] = $ret;
 				$plot = new Plot($levelName, $X, $Z);
 				$this->cachePlot($plot);
 				return $plot;
 			}
 			for($a = 1; $a < $i; $a++) {
-				if($ret = self::findEmptyPlotSquared($a, $i, $plots)) {
-					list($X, $Z) = $ret;
+				if(($ret = self::findEmptyPlotSquared($a, $i, $plots)) !== null) {
+					[$X, $Z] = $ret;
 					$plot = new Plot($levelName, $X, $Z);
 					$this->cachePlot($plot);
 					return $plot;
 				}
 			}
-			if($ret = self::findEmptyPlotSquared($i, $i, $plots)) {
-				list($X, $Z) = $ret;
+			if(($ret = self::findEmptyPlotSquared($i, $i, $plots)) !== null) {
+				[$X, $Z] = $ret;
 				$plot = new Plot($levelName, $X, $Z);
 				$this->cachePlot($plot);
 				return $plot;
 			}
 		}
 		return null;
+	}
+
+	public function mergePlots(Plot $base, Plot ...$plots) : bool {
+		$originId = $base->id;
+		$mergedIds = $this->yaml->getNested("merges.$originId", []);
+		$mergedIds = array_merge($mergedIds, array_map(function(Plot $val) {
+			return $val->id;
+		}, $plots));
+		$mergedIds = array_unique($mergedIds, SORT_NUMERIC);
+		$this->yaml->setNested("merges.$originId", $mergedIds);
+		$this->yaml->save();
+		return true;
+	}
+
+	public function getMergedPlots(Plot $plot, bool $adjacent = false) : array {
+		$originId = $plot->id;
+		$mergedIds = $this->yaml->getNested("merges.$originId", []);
+		$plotDatums = $this->yaml->get("plots", []);
+		$plots = [$plot];
+		foreach($mergedIds as $mergedId) {
+			if(!isset($plotDatums[$mergedIds]))
+				continue;
+			$levelName = $plotDatums[$mergedId]["level"];
+			$X = $plotDatums[$mergedId]["x"];
+			$Z = $plotDatums[$mergedId]["z"];
+			$plotName = $plotDatums[$mergedId]["name"] == "" ? "" : $plotDatums[$mergedId]["name"];
+			$owner = $plotDatums[$mergedId]["owner"] == "" ? "" : $plotDatums[$mergedId]["owner"];
+			$helpers = $plotDatums[$mergedId]["helpers"] == [] ? [] : $plotDatums[$mergedId]["helpers"];
+			$denied = $plotDatums[$mergedId]["denied"] == [] ? [] : $plotDatums[$mergedId]["denied"];
+			$biome = strtoupper($plotDatums[$mergedId]["biome"]) == "PLAINS" ? "PLAINS" : strtoupper($plotDatums[$mergedId]["biome"]);
+			$pvp = $plotDatums[$mergedId]["pvp"] == null ? false : $plotDatums[$mergedId]["pvp"];
+            $price = $plotDatums[$mergedId]["price"] == null ? 0 : $plotDatums[$mergedId]["price"];
+			$plots[] = new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $price, $mergedId);
+		}
+		if($adjacent)
+			$plots = array_filter($plots, function(Plot $val) use ($plot) {
+				for($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
+					if($plot->getSide($i)->isSame($val))
+						return true;
+				}
+				return false;
+			});
+		return $plots;
+	}
+
+	public function getMergeOrigin(Plot $plot) : Plot {
+		$allMerges = $this->yaml->get("merges", []);
+		if(isset($allMerges[$plot->id]))
+			return $plot;
+		$originId = array_search($plot->id, $allMerges);
+		$plotDatums = $this->yaml->get("plots", []);
+		if(isset($plotDatums[$originId])) {
+			$levelName = $plotDatums[$originId]["level"];
+			$X = $plotDatums[$originId]["x"];
+			$Z = $plotDatums[$originId]["z"];
+			$plotName = $plotDatums[$originId]["name"] == "" ? "" : $plotDatums[$originId]["name"];
+			$owner = $plotDatums[$originId]["owner"] == "" ? "" : $plotDatums[$originId]["owner"];
+			$helpers = $plotDatums[$originId]["helpers"] == [] ? [] : $plotDatums[$originId]["helpers"];
+			$denied = $plotDatums[$originId]["denied"] == [] ? [] : $plotDatums[$originId]["denied"];
+			$biome = strtoupper($plotDatums[$originId]["biome"]) == "PLAINS" ? "PLAINS" : strtoupper($plotDatums[$originId]["biome"]);
+			$pvp = $plotDatums[$originId]["pvp"] == null ? false : $plotDatums[$originId]["pvp"];
+            $price = $plotDatums[$originId]["price"] == null ? 0 : $plotDatums[$originId]["price"];
+			return new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $price, $originId);
+		}
+		return $plot;
 	}
 
 	public function close() : void {

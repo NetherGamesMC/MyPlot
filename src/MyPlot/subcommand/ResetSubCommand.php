@@ -11,11 +11,6 @@ use pocketmine\utils\TextFormat;
 
 class ResetSubCommand extends SubCommand
 {
-	/**
-	 * @param CommandSender $sender
-	 *
-	 * @return bool
-	 */
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.reset");
 	}
@@ -57,7 +52,7 @@ class ResetSubCommand extends SubCommand
 		return true;
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
+	public function getForm(?Player $player = null) : ?MyPlotForm {
         if(($plot = $this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot){
             return new ResetForm();
         }

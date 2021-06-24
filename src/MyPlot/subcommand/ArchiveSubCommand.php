@@ -51,7 +51,7 @@ class ArchiveSubCommand extends SubCommand{
 	}
 
 
-	public function getForm(Player $player) : ?MyPlotForm {
-		return new ArchiveForm();
+	public function getForm(?Player $player = null) : ?MyPlotForm {
+		return $player !== null ? new ArchiveForm() : null;
 	}
 }

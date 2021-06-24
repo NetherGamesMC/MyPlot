@@ -62,7 +62,7 @@ class TimeSubCommand extends SubCommand{
 		$this->getPlugin()->stopTime[] = $player->getName();
 	}
 
-	public function getForm(Player $player) : ?MyPlotForm {
-		return new TimeForm($player);
+	public function getForm(?Player $player = null) : ?MyPlotForm {
+		return $player !== null ? new TimeForm($player) : null;
 	}
 }

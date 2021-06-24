@@ -11,6 +11,8 @@ use MyPlot\events\MyPlotPvpEvent;
 use pocketmine\block\Block;
 use pocketmine\block\Sapling;
 use pocketmine\block\utils\TreeType;
+use pocketmine\block\Liquid;
+use pocketmine\block\VanillaBlocks;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\BlockSpreadEvent;
@@ -60,25 +62,23 @@ class EventListener implements Listener{
 	 */
 	public function onLevelLoad(WorldLoadEvent $event) : void {
 		$world = $event->getWorld();
-		if(file_exists($this->plugin->getDataFolder() . "worlds" . DIRECTORY_SEPARATOR . $world->getFolderName() . ".yml")) {
+		if(file_exists($this->plugin->getDataFolder() . "worlds".  DIRECTORY_SEPARATOR . $world->getFolderName() . ".yml")) {
 			$this->plugin->getLogger()->debug("MyPlot level " . $world->getFolderName() . " loaded!");
-			$settings = $world->getProvider()->getWorldData()->getGeneratorOptions();
-			if($settings === "") {
-				return;
-			}
-			$settings = json_decode($settings, true);
-			if($settings === false) {
-				return;
-			}
+			$options = $world->getProvider()->getWorldData()->getGeneratorOptions();
+			$settings = json_decode($options, true, 512, JSON_THROW_ON_ERROR);
 			$levelName = $world->getFolderName();
-			$default = array_filter($this->plugin->getConfig()->get("DefaultWorld", []), function($key) {
-				return !in_array($key, ["PlotSize", "GroundHeight", "RoadWidth", "RoadBlock", "WallBlock", "PlotFloorBlock", "PlotFillBlock", "BottomBlock"]);
+			$default = array_filter((array) $this->plugin->getConfig()->get("DefaultWorld", []), function($key) : bool {
+				return !in_array($key, ["PlotSize", "GroundHeight", "RoadWidth", "RoadBlock", "WallBlock", "PlotFloorBlock", "PlotFillBlock", "BottomBlock"], true);
 			}, ARRAY_FILTER_USE_KEY);
 			$config = new Config($this->plugin->getDataFolder() . "worlds" . DIRECTORY_SEPARATOR . $levelName . ".yml", Config::YAML, $default);
 			foreach(array_keys($default) as $key){
 				$settings[$key] = $config->get((string)$key);
 			}
 			$this->plugin->addLevelSettings($levelName, new PlotLevelSettings($levelName, $settings));
+
+			if($this->plugin->getConfig()->get('AllowFireTicking', false) === false) {
+				$world->removeRandomTickedBlock(VanillaBlocks::FIRE());
+			}
 		}
 	}
 
@@ -179,7 +179,7 @@ class EventListener implements Listener{
 
 				/** @var Sapling $block */
 				$block = $event->getBlock();
-				$maxLengthLeaves = ($block->getIdInfo()->getVariant() == TreeType::SPRUCE()->id()) ? 3 : 2;
+				$maxLengthLeaves = ($block->getIdInfo()->getVariant() == TreeType::SPRUCE()) ? 3 : 2;
 				$beginPos = $this->plugin->getPlotPosition($plot);
 				$endPos = clone $beginPos;
 				$beginPos->x += $maxLengthLeaves;
@@ -193,7 +193,7 @@ class EventListener implements Listener{
 			}
 		}elseif($event->getPlayer()->hasPermission("myplot.admin.build.road"))
 			return;
-		elseif($this->plugin->isPositionBorderingPlot($event->getBlock()->getPos()) and $this->plugin->getLevelSettings($levelName)->editBorderBlocks){
+		elseif($this->plugin->isPositionBorderingPlot($event->getBlock()->getPos()) and $this->plugin->getLevelSettings($levelName)->editBorderBlocks) {
 			$plot = $this->plugin->getPlotBorderingPosition($event->getBlock()->getPos());
 			if($plot instanceof Plot) {
 				$ev = new MyPlotBorderChangeEvent($plot, $event->getBlock(), $event->getPlayer(), $event);
@@ -246,10 +246,12 @@ class EventListener implements Listener{
 		}
 		$beginPos = $this->plugin->getPlotPosition($plot);
 		$endPos = clone $beginPos;
-		$plotSize = $this->plugin->getLevelSettings($levelName)->plotSize;
+		$levelSettings = $this->plugin->getLevelSettings($levelName);
+		$plotSize = $levelSettings->plotSize;
 		$endPos->x += $plotSize;
 		$endPos->z += $plotSize;
-		$blocks = array_filter($event->getBlockList(), function(Block $block) use ($beginPos, $endPos) {
+
+		$blocks = array_filter($event->getBlockList(), function(Block $block) use ($beginPos, $endPos) : bool {
 			if($block->getPos()->x >= $beginPos->x and $block->getPos()->z >= $beginPos->z and $block->getPos()->x < $endPos->x and $block->getPos()->z < $endPos->z) {
 				return true;
 			}
@@ -294,10 +296,28 @@ class EventListener implements Listener{
 		$levelName = $event->getBlock()->getPos()->getWorld()->getFolderName();
 		if(!$this->plugin->isLevelLoaded($levelName))
 			return;
+
 		$settings = $this->plugin->getLevelSettings($levelName);
-		if(!$settings->updatePlotLiquids and ($this->plugin->getPlotByPosition($event->getBlock()->getPos()) instanceof Plot or $this->plugin->getPlotByPosition($event->getSource()->getPos()) instanceof Plot or $this->plugin->isPositionBorderingPlot($event->getBlock()->getPos()) or $this->plugin->isPositionBorderingPlot($event->getSource()->getPos()))) {
+		$newBlockInPlot = $this->plugin->getPlotByPosition($event->getBlock()->getPos()) instanceof Plot;
+		$sourceBlockInPlot = $this->plugin->getPlotByPosition($event->getSource()->getPos()) instanceof Plot;
+
+		if($newBlockInPlot and $sourceBlockInPlot) {
+			$spreadIsSamePlot = $this->plugin->getPlotByPosition($event->getBlock()->getPos())->isSame($this->plugin->getPlotByPosition($event->getSource()->getPos()));
+		}else {
+			$spreadIsSamePlot = false;
+		}
+
+		if($event->getSource() instanceof Liquid) {
+			if(!$settings->updatePlotLiquids and ($sourceBlockInPlot or $this->plugin->isPositionBorderingPlot($event->getSource()->getPos()))) {
+				$event->cancel();
+				$this->plugin->getLogger()->debug("Cancelled {$event->getSource()->getName()} spread on [$levelName]");
+			}elseif($settings->updatePlotLiquids and ($sourceBlockInPlot or $this->plugin->isPositionBorderingPlot($event->getSource()->getPos())) and (!$newBlockInPlot or !$this->plugin->isPositionBorderingPlot($event->getBlock()->getPos()) or !$spreadIsSamePlot)) {
+				$event->cancel();
+				$this->plugin->getLogger()->debug("Cancelled {$event->getSource()->getName()} spread on [$levelName]");
+			}
+		}elseif(!$settings->allowOutsidePlotSpread and (!$newBlockInPlot or !$spreadIsSamePlot)) {
 			$event->cancel();
-			$this->plugin->getLogger()->debug("Cancelled block spread of {$event->getBlock()->getName()} on " . $levelName);
+			//$this->plugin->getLogger()->debug("Cancelled block spread of {$event->getSource()->getName()} on ".$levelName);
 		}
 	}
 
@@ -331,6 +351,7 @@ class EventListener implements Listener{
 	}
 
 	/**
+	 * @param Player $player
 	 * @param PlayerMoveEvent|EntityTeleportEvent $event
 	 */
 	private function onEventOnMove(Player $player, $event) : void {
@@ -340,7 +361,7 @@ class EventListener implements Listener{
 		$plot = $this->plugin->getPlotByPosition($event->getTo());
 		$plotFrom = $this->plugin->getPlotByPosition($event->getFrom());
 		if($plot !== null and ($plotFrom === null or !$plot->isSame($plotFrom))) {
-			if(strpos((string)$plot, "-0")) {
+			if(strpos((string) $plot, "-0") !== false) {
 				return;
 			}
 			if($event instanceof EntityTeleportEvent) {
@@ -370,22 +391,27 @@ class EventListener implements Listener{
 			if($event->isCancelled()) {
 				return;
 			}
-			if(!$this->plugin->getConfig()->get("ShowPlotPopup", true))
+			if(!(bool) $this->plugin->getConfig()->get("ShowPlotPopup", true))
 				return;
 			$popup = $this->plugin->getLanguage()->translateString("popup", [TextFormat::GREEN . $plot]);
-			if(!empty($plot->owner)) {
+			$price = TextFormat::GREEN . $plot->price;
+			if($plot->owner !== "") {
 				$owner = TextFormat::GREEN . $plot->owner;
-				$ownerPopup = $this->plugin->getLanguage()->translateString("popup.owner", [$owner]);
+				if($plot->price > 0 and $plot->owner !== $player->getName()) {
+					$ownerPopup = $this->plugin->getLanguage()->translateString("popup.forsale", [$owner.TextFormat::WHITE, $price.TextFormat::WHITE]);
+				}else{
+					$ownerPopup = $this->plugin->getLanguage()->translateString("popup.owner", [$owner.TextFormat::WHITE]);
+				}
 			}else{
-				$ownerPopup = $this->plugin->getLanguage()->translateString("popup.available", [$this->plugin->getLevelSettings($levelName)->claimPrice]);
+				$ownerPopup = $this->plugin->getLanguage()->translateString("popup.available", [$price.TextFormat::WHITE]);
 			}
 			$paddingSize = (int)floor((strlen($popup) - strlen($ownerPopup)) / 2);
 			$paddingPopup = str_repeat(" ", max(0, -$paddingSize));
 			$paddingOwnerPopup = str_repeat(" ", max(0, $paddingSize));
 			$popup = TextFormat::WHITE . $paddingPopup . $popup . "\n" . TextFormat::WHITE . $paddingOwnerPopup . $ownerPopup;
 			$ev->getPlayer()->sendTip($popup);
-		}elseif($plotFrom !== null and ($plot === null or !$plot->isSame($plotFrom))){
-			if(strpos((string)$plotFrom, "-0")) {
+		}elseif($plotFrom !== null and ($plot === null or !$plot->isSame($plotFrom))) {
+			if(strpos((string) $plotFrom, "-0") !== false) {
 				return;
 			}
 			$ev = new MyPlotPlayerLeavePlotEvent($plotFrom, $player);
@@ -401,7 +427,7 @@ class EventListener implements Listener{
 				$event->uncancel();
 			}
 		}elseif($plotFrom !== null and $plot !== null and ($plot->isBanned($player->getName()) or $plot->isBanned("*")) and $plot->owner !== $player->getName() and !$player->hasPermission("myplot.admin.banplayer.bypass")){
-			$this->plugin->teleportPlayerToPlot($player, $plot, false);
+			$this->plugin->teleportPlayerToPlot($player, $plot);
 		}
 	}
 
