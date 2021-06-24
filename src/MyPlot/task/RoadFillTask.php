@@ -92,8 +92,8 @@ class RoadFillTask extends Task{
 
 	public function onRun() : void {
 		foreach($this->world->getEntities() as $entity) {
-			if($entity->x > $this->pos->x - 1 and $entity->x < $this->xMax + 1) {
-				if($entity->z > $this->pos->z - 1 and $entity->z < $this->zMax + 1) {
+			if($entity->getLocation()->x > $this->pos->x - 1 and $entity->getLocation()->x < $this->xMax + 1) {
+				if($entity->getLocation()->z > $this->pos->z - 1 and $entity->getLocation()->z < $this->zMax + 1) {
 					if(!$entity instanceof Player){
 						$entity->flagForDespawn();
 					}else{

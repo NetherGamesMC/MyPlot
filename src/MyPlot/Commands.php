@@ -40,6 +40,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
 class Commands extends Command implements PluginOwned
@@ -91,7 +92,7 @@ class Commands extends Command implements PluginOwned
 			$this->loadSubCommand(new SellSubCommand($plugin, "sell"));
 			$this->loadSubCommand(new BuySubCommand($plugin, "buy"));
 		}
-		$styler = $this->getOwningPlugin()->getServer()->getPluginManager()->getPlugin("WorldStyler");
+		$styler = Server::getInstance()->getPluginManager()->getPlugin("WorldStyler");
 		if($styler !== null) {
 			$this->loadSubCommand(new CloneSubCommand($plugin, "clone"));
 		}

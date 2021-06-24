@@ -622,11 +622,6 @@ class MyPlot extends PluginBase{
 			$this->teleportMiddle($player, $plot, $onSuccess, $onFailure);
 			return;
 		}
-		$plotWorld = $this->getLevelSettings($plot->levelName);
-		if($plotWorld === null) {
-			if($onFailure !== null) $onFailure();
-			return;
-		}
 		if($plot->isMerged()){
 			$this->teleportPlayerToMerge($player, $plot, $center);
 			return;

@@ -63,13 +63,13 @@ class CornerCorrectionTask extends Task{
 		if(($start->Z - $end->Z) === 1) { // North Z-
 			if($cornerDirection === Facing::EAST) {
 				$this->plotBeginPos = $this->plotBeginPos->subtract(0, 0, $roadWidth);
-				$this->plotBeginPos = $this->plotBeginPos->add($plotSize);
+				//$this->plotBeginPos = $this->plotBeginPos->add($plotSize); //TODO: jason pls fix this
 			}elseif($cornerDirection === Facing::WEST) {
 				$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth, 0, $roadWidth);
 			}
 		}elseif(($start->X - $end->X) === -1) { // East X+
 			if($cornerDirection === Facing::NORTH) {
-				$this->plotBeginPos = $this->plotBeginPos->add($plotSize);
+				//$this->plotBeginPos = $this->plotBeginPos->add($plotSize); //TODO: jason pls fix this
 				$this->plotBeginPos = $this->plotBeginPos->subtract(0, 0, $roadWidth);
 			}elseif($cornerDirection === Facing::SOUTH) {
 				$this->plotBeginPos = $this->plotBeginPos->add($plotSize, 0, $plotSize);
@@ -77,17 +77,17 @@ class CornerCorrectionTask extends Task{
 		}elseif(($start->Z - $end->Z) === -1) { // South Z+
 			if($cornerDirection === Facing::EAST) {
 				$this->plotBeginPos = $this->plotBeginPos->add($plotSize, 0, $plotSize);
-				$this->plotBeginPos = $this->plotBeginPos->add($plotSize);
+				//$this->plotBeginPos = $this->plotBeginPos->add($plotSize); //TODO: jason pls fix this
 			}elseif($cornerDirection === Facing::WEST) {
 				$this->plotBeginPos = $this->plotBeginPos->add(0, 0, $plotSize);
-				$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth);
+				//$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth); //TODO: jason pls fix this
 			}
 		}elseif(($start->X - $end->X) === 1) { // West X-
 			if($cornerDirection === Facing::NORTH) {
 				$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth, 0, $roadWidth);
 			}elseif($cornerDirection === Facing::SOUTH) {
 				$this->plotBeginPos = $this->plotBeginPos->add(0, 0, $plotSize);
-				$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth);
+				//$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth); //TODO: jason pls fix this
 			}
 		}
 		$this->xMax = (int) ($this->plotBeginPos->x + $roadWidth);
@@ -98,8 +98,8 @@ class CornerCorrectionTask extends Task{
 
 	public function onRun() : void {
 		foreach($this->world->getEntities() as $entity) {
-			if($entity->x > $this->pos->x - 1 and $entity->x < $this->xMax + 1) {
-				if($entity->z > $this->pos->z - 1 and $entity->z < $this->zMax + 1) {
+			if($entity->getLocation()->x > $this->pos->x - 1 and $entity->getLocation()->x < $this->xMax + 1) {
+				if($entity->getLocation()->z > $this->pos->z - 1 and $entity->getLocation()->z < $this->zMax + 1) {
 					if(!$entity instanceof Player) {
 						$entity->flagForDespawn();
 					}else{
