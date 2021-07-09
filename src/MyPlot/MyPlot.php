@@ -24,6 +24,7 @@ use MyPlot\provider\JSONDataProvider;
 use MyPlot\provider\MySQLProvider;
 use MyPlot\provider\SQLiteDataProvider;
 use MyPlot\provider\YAMLDataProvider;
+use MyPlot\task\CleanEntitiesTask;
 use MyPlot\task\ClearBorderTask;
 use MyPlot\task\ClearPlotTask;
 use NetherGames\NGEssentials\NGEssentials;
@@ -1431,6 +1432,8 @@ class MyPlot extends PluginBase{
 		foreach(["Creative", "MEGA", "Platinum"] as $world){
 			$this->getServer()->getWorldManager()->loadWorld($world, true);
 		}
+
+		$this->getScheduler()->scheduleRepeatingTask(new CleanEntitiesTask($this), 20 * 60 * 5);
 
 		$this->getLogger()->debug(TF::BOLD . "Loading MyPlot Commands");
 		$this->commands = new Commands($this);
