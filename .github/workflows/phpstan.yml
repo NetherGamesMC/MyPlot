@@ -37,9 +37,9 @@ jobs:
       - name: Checkout WorldStyler
         uses: actions/checkout@v2
         with:
-          repository: Ifera/WorldStyler
+          repository: Muqsit/WorldStyler
           path: WorldStyler
-          ref: PM4.0
+          ref: '4.0'
       - name: Install Composer dependencies
         run: ./bin/php7/bin/php composer.phar install --prefer-dist --no-interaction
       - name: Run PHPStan
