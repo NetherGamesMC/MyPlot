@@ -10,7 +10,7 @@ use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class BiomeForm extends SimpleMyPlotForm implements PlotSettingsForm{
+class BiomeForm extends SimpleMyPlotForm implements PlotSettingsForm {
 
 	/**
 	 * BiomeForm constructor.

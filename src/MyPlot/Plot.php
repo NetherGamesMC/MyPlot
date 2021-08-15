@@ -6,45 +6,20 @@ use pocketmine\math\Facing;
 
 class Plot
 {
-	/** @var string $levelName */
-	public $levelName = "";
-	/** @var int $X */
-	public $X = -0;
-	/** @var int $Z */
-	public $Z = -0;
-	/** @var string $name */
-	public $name = "";
-	/** @var string $owner */
-	public $owner = "";
+	public string $levelName = "";
+	public int $X = -0;
+	public int $Z = -0;
+	public string $name = "";
+	public string $owner = "";
 	/** @var string[] $helpers */
-	public $helpers = [];
-	/** @var array $banned */
-	public $banned = [];
-	/** @var string $biome */
-	public $biome = "PLAINS";
-	/** @var bool $pvp */
-	public $pvp = true;
-	/** @var float $price */
-	public $price = 0.0;
-	/** @var int $id */
-	public $id = -1;
+	public array $helpers = [];
+	/** @var string[] $banned */
+	public array $banned = [];
+	public string $biome = "PLAINS";
+	public bool $pvp = true;
+	public float $price = 0.0;
 
-	/**
-	 * Plot constructor.
-	 *
-	 * @param string $levelName
-	 * @param int $X
-	 * @param int $Z
-	 * @param string $name
-	 * @param string $owner
-	 * @param string[] $helpers
-	 * @param string[] $banned
-	 * @param string $biome
-	 * @param bool|null $pvp
-	 * @param float $price
-	 * @param int $id
-	 */
-	public function __construct(string $levelName, int $X, int $Z, string $name = "", string $owner = "", array $helpers = [], array $banned = [], string $biome = "PLAINS", ?bool $pvp = null, float $price = -1, int $id = -1) {
+	public function __construct(string $levelName, int $X, int $Z, string $name = "", string $owner = "", array $helpers = [], array $banned = [], string $biome = "PLAINS", ?bool $pvp = null, float $price = -1) {
 		$this->levelName = $levelName;
 		$this->X = $X;
 		$this->Z = $Z;
@@ -63,7 +38,6 @@ class Plot
 			$this->price = $price < 0 ? $settings->claimPrice : $price;
 		else
 			$this->price = 0;
-		$this->id = $id;
 	}
 
 	/**

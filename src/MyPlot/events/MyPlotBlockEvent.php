@@ -16,12 +16,10 @@ use pocketmine\player\Player;
 class MyPlotBlockEvent extends MyPlotPlotEvent implements Cancellable {
 	use CancellableTrait;
 
-	/** @var Block $block */
-	private $block;
+	private Block $block;
 	/** @var BlockPlaceEvent|BlockBreakEvent|PlayerInteractEvent|SignChangeEvent $event */
 	private $event;
-	/** @var Player $player */
-	private $player;
+	private Player $player;
 
 	/**
 	 * MyPlotBlockEvent constructor.

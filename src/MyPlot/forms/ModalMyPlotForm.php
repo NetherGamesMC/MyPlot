@@ -11,12 +11,11 @@ use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
-abstract class ModalMyPlotForm extends ModalForm implements MyPlotForm{
+abstract class ModalMyPlotForm extends ModalForm implements MyPlotForm {
 
 	use PlotTrait;
 
-	/** @var Plot|null $plot */
-	protected $plot;
+	protected ?Plot $plot = null;
 
 	public function __construct(?Player $player, string $title, string $text, Button $yesButton, ?Button $noButton = null) {
 		parent::__construct($player);

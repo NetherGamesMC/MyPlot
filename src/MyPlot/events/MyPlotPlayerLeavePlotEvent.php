@@ -9,8 +9,8 @@ use pocketmine\player\Player;
 
 class MyPlotPlayerLeavePlotEvent extends MyPlotPlotEvent implements Cancellable {
 	use CancellableTrait;
-	/** @var Player $player */
-	private $player;
+
+	private Player $player;
 
 	/**
 	 * MyPlotPlayerLeavePlotEvent constructor.

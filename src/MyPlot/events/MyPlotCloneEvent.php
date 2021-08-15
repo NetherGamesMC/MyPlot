@@ -8,8 +8,8 @@ use pocketmine\event\CancellableTrait;
 
 class MyPlotCloneEvent extends MyPlotPlotEvent implements Cancellable {
 	use CancellableTrait;
-	/** @var Plot $clonePlot **/
-	protected $clonePlot;
+
+	protected Plot $clonePlot;
 
 	/**
 	 * MyPlotCloneEvent constructor.

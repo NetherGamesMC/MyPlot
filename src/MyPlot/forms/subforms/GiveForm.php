@@ -14,7 +14,7 @@ use pocketmine\utils\TextFormat;
 
 class GiveForm extends ComplexMyPlotForm implements PlotSettingsForm, DangerZone{
 	/** @var string[] $players */
-	private $players = [];
+	private array $players = [];
 
 	public function __construct() {
 		$plugin = MyPlot::getInstance();

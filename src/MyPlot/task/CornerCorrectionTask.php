@@ -15,34 +15,21 @@ use pocketmine\world\World;
 
 class CornerCorrectionTask extends Task{
 
-	/** @var MyPlot $plugin */
-	protected $plugin;
-	/** @var Plot $start */
-	protected $start;
-	/** @var World|null $world */
-	protected $world;
-	/** @var int $height */
-	protected $height;
-	/** @var Block $plotWallBlock */
-	protected $plotWallBlock;
-	/** @var int $maxBlocksPerTick */
-	protected $maxBlocksPerTick;
+	protected MyPlot $plugin;
+	protected Plot $start;
+	protected ?World $world;
+	protected int $height;
+	protected Block $plotWallBlock;
+	protected int $maxBlocksPerTick;
 	/** @var Position|Vector3|null $plotBeginPos */
-	protected $plotBeginPos;
-	/** @var int $xMax */
-	protected $xMax;
-	/** @var int $zMax */
-	protected $zMax;
-	/** @var int $direction */
-	protected $direction;
-	/** @var Block $roadBlock */
-	protected $roadBlock;
-	/** @var Block $groundBlock */
-	protected $groundBlock;
-	/** @var Block $bottomBlock */
-	protected $bottomBlock;
-	/** @var Vector3 $pos */
-	protected $pos;
+	protected ?Vector3 $plotBeginPos;
+	protected int $xMax;
+	protected int $zMax;
+	protected int $direction;
+	protected Block $roadBlock;
+	protected Block $groundBlock;
+	protected Block $bottomBlock;
+	protected Vector3 $pos;
 
 	public function __construct(MyPlot $plugin, Plot $start, Plot $end, int $cornerDirection, int $maxBlocksPerTick = 256) {
 		$this->plugin = $plugin;
@@ -63,13 +50,13 @@ class CornerCorrectionTask extends Task{
 		if(($start->Z - $end->Z) === 1) { // North Z-
 			if($cornerDirection === Facing::EAST) {
 				$this->plotBeginPos = $this->plotBeginPos->subtract(0, 0, $roadWidth);
-				//$this->plotBeginPos = $this->plotBeginPos->add($plotSize); //TODO: jason pls fix this
+				$this->plotBeginPos = $this->plotBeginPos->add($plotSize, 0, 0);
 			}elseif($cornerDirection === Facing::WEST) {
 				$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth, 0, $roadWidth);
 			}
 		}elseif(($start->X - $end->X) === -1) { // East X+
 			if($cornerDirection === Facing::NORTH) {
-				//$this->plotBeginPos = $this->plotBeginPos->add($plotSize); //TODO: jason pls fix this
+				$this->plotBeginPos = $this->plotBeginPos->add($plotSize, 0, 0);
 				$this->plotBeginPos = $this->plotBeginPos->subtract(0, 0, $roadWidth);
 			}elseif($cornerDirection === Facing::SOUTH) {
 				$this->plotBeginPos = $this->plotBeginPos->add($plotSize, 0, $plotSize);
@@ -77,17 +64,17 @@ class CornerCorrectionTask extends Task{
 		}elseif(($start->Z - $end->Z) === -1) { // South Z+
 			if($cornerDirection === Facing::EAST) {
 				$this->plotBeginPos = $this->plotBeginPos->add($plotSize, 0, $plotSize);
-				//$this->plotBeginPos = $this->plotBeginPos->add($plotSize); //TODO: jason pls fix this
+				$this->plotBeginPos = $this->plotBeginPos->add($plotSize, 0, 0);
 			}elseif($cornerDirection === Facing::WEST) {
 				$this->plotBeginPos = $this->plotBeginPos->add(0, 0, $plotSize);
-				//$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth); //TODO: jason pls fix this
+				$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth, 0, 0);
 			}
 		}elseif(($start->X - $end->X) === 1) { // West X-
 			if($cornerDirection === Facing::NORTH) {
 				$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth, 0, $roadWidth);
 			}elseif($cornerDirection === Facing::SOUTH) {
 				$this->plotBeginPos = $this->plotBeginPos->add(0, 0, $plotSize);
-				//$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth); //TODO: jason pls fix this
+				$this->plotBeginPos = $this->plotBeginPos->subtract($roadWidth, 0, 0);
 			}
 		}
 		$this->xMax = (int) ($this->plotBeginPos->x + $roadWidth);

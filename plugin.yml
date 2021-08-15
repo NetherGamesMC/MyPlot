@@ -1,8 +1,7 @@
 name: MyPlot
 main: MyPlot\MyPlot
-version: 2.1.0_NG
-api:
-- 4.0.0
+version: 2.2.0_NG
+api: 4.0.0
 authors:
 - Wiez
 - Exxarion
@@ -116,4 +115,10 @@ permissions:
   myplot.claimplots.unlimited:
     default: op
   myplot.command.archive:
+    default: op
+  myplot.command.merge:
+    default: op
+  myplot.command.sell:
+    default: op
+  myplot.command.buy:
     default: op

@@ -9,12 +9,11 @@ use MyPlot\forms\traits\PlotTrait;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
-abstract class SimpleMyPlotForm extends SimpleForm implements MyPlotForm{
+abstract class SimpleMyPlotForm extends SimpleForm implements MyPlotForm {
 
 	use PlotTrait;
 
-	/** @var Plot|null $plot */
-	protected $plot;
+	protected ?Plot $plot = null;
 
 	public function __construct(?Player $player, string $title, string $text, array $options) {
 		parent::__construct($player);

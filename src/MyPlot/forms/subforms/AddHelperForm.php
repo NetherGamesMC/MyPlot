@@ -13,7 +13,7 @@ use pocketmine\utils\TextFormat;
 
 class AddHelperForm extends ComplexMyPlotForm implements PlotSettingsForm{
 	/** @var string[] $players */
-	private $players = [];
+	private array $players = [];
 
 	public function __construct(Plot $plot) {
 		$plugin = MyPlot::getInstance();

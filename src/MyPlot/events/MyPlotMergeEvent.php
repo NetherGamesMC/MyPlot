@@ -10,8 +10,7 @@ class MyPlotMergeEvent extends MyPlotPlotEvent implements Cancellable {
 	use CancellableTrait;
 
     /** @var Plot[][] $toMerge */
-    private $toMerge;
-
+    private array $toMerge;
 
     /**
      * MyPlotMergeEvent constructor.
@@ -29,6 +28,4 @@ class MyPlotMergeEvent extends MyPlotPlotEvent implements Cancellable {
     public function getToMergePairs() : array {
         return $this->toMerge;
     }
-
-
 }

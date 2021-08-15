@@ -41,9 +41,9 @@ use function explode;
 use function in_array;
 use function strtolower;
 
-class EventListener implements Listener{
-	/** @var MyPlot $plugin */
-	private $plugin;
+class EventListener implements Listener
+{
+	private MyPlot $plugin;
 
 	/**
 	 * EventListener constructor.

@@ -11,12 +11,9 @@ use pocketmine\player\Player;
 class MyPlotPvpEvent extends MyPlotPlotEvent implements Cancellable {
 	use CancellableTrait;
 
-	/** @var Player $attacker */
-	private $attacker;
-	/** @var Player $damaged */
-	private $damaged;
-	/** @var EntityDamageByEntityEvent|null $event */
-	private $event;
+	private Player $attacker;
+	private Player $damaged;
+	private ?EntityDamageByEntityEvent $event;
 
 	public function __construct(Plot $plot, Player $attacker, Player $damaged, ?EntityDamageByEntityEvent $event = null) {
 		$this->attacker = $attacker;

@@ -14,36 +14,22 @@ use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class RoadFillTask extends Task{
-	/** @var MyPlot $plugin */
-	protected $plugin;
-	/** @var Plot $start */
-	protected $start;
-	/** @var Plot $end */
-	protected $end;
-	/** @var World $world */
-	protected $world;
-	/** @var int $height */
-	protected $height;
+	protected MyPlot $plugin;
+	protected Plot $start;
+	protected Plot $end;
+	protected World $world;
+	protected int $height;
 	/** @var Position|Vector3|null $plotBeginPos */
-	protected $plotBeginPos;
-	/** @var int $xMax */
-	protected $xMax;
-	/** @var int $zMax */
-	protected $zMax;
-	/** @var Block $roadBlock */
-	protected $roadBlock;
-	/** @var Block $groundBlock */
-	protected $groundBlock;
-	/** @var Block $bottomBlock */
-	protected $bottomBlock;
-	/** @var int $maxBlocksPerTick */
-	protected $maxBlocksPerTick;
-	/** @var Vector3 $pos */
-	protected $pos;
-	/** @var bool $fillCorner */
-	protected $fillCorner;
-	/** @var int $cornerDirection */
-	protected $cornerDirection = -1;
+	protected ?Vector3 $plotBeginPos;
+	protected int $xMax;
+	protected int $zMax;
+	protected Block $roadBlock;
+	protected Block $groundBlock;
+	protected Block $bottomBlock;
+	protected int $maxBlocksPerTick;
+	protected Vector3 $pos;
+	protected bool $fillCorner;
+	protected int $cornerDirection = -1;
 
 	public function __construct(MyPlot $plugin, Plot $start, Plot $end, bool $fillCorner = false, int $cornerDirection = -1, int $maxBlocksPerTick = 256) {
 		if($start->isSame($end))

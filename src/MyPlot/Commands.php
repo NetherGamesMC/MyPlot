@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace MyPlot;
 
-//use jasonwynn10\EasyCommandAutofill\Main;
 use MyPlot\forms\MainForm;
 use MyPlot\subcommand\AddHelperSubCommand;
 use MyPlot\subcommand\ArchiveSubCommand;
@@ -46,9 +45,9 @@ use pocketmine\utils\TextFormat;
 class Commands extends Command implements PluginOwned
 {
 	/** @var SubCommand[] $subCommands */
-	private $subCommands = [];
+	private array $subCommands = [];
 	/** @var SubCommand[] $aliasSubCommands */
-	private $aliasSubCommands = [];
+	private array $aliasSubCommands = [];
 
 	/**
 	 * Commands constructor.
@@ -87,15 +86,15 @@ class Commands extends Command implements PluginOwned
 		$this->loadSubCommand(new ListSubCommand($plugin, "list"));
 		$this->loadSubCommand(new PvpSubCommand($plugin, "pvp"));
 		$this->loadSubCommand(new KickSubCommand($plugin, "kick"));
-		$this->loadSubCommand(new MergeSubCommand($plugin, "merge"));
-		if($plugin->getEconomyProvider() !== null) {
-			$this->loadSubCommand(new SellSubCommand($plugin, "sell"));
-			$this->loadSubCommand(new BuySubCommand($plugin, "buy"));
-		}
-		$styler = Server::getInstance()->getPluginManager()->getPlugin("WorldStyler");
-		if($styler !== null) {
-			$this->loadSubCommand(new CloneSubCommand($plugin, "clone"));
-		}
+		//$this->loadSubCommand(new MergeSubCommand($plugin, "merge")); // dries didnt want these :(
+		//if($plugin->getEconomyProvider() !== null) {
+		//	$this->loadSubCommand(new SellSubCommand($plugin, "sell"));
+		//	$this->loadSubCommand(new BuySubCommand($plugin, "buy"));
+		//}
+		//$styler = Server::getInstance()->getPluginManager()->getPlugin("WorldStyler");
+		//if($styler !== null) {
+		//	$this->loadSubCommand(new CloneSubCommand($plugin, "clone"));
+		//}
 		$plugin->getLogger()->debug("Commands Registered to MyPlot");
 	}
 

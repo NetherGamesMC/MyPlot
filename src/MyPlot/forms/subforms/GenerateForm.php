@@ -14,7 +14,7 @@ use pocketmine\block\BlockLegacyIds;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm{
+class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm {
 
 	public function __construct() {
 		$plugin = MyPlot::getInstance();

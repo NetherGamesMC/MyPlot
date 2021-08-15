@@ -7,8 +7,7 @@ use pocketmine\player\IPlayer;
 use pocketmine\player\Player;
 
 class EconomySProvider implements EconomyProvider {
-	/** @var EconomyAPI $plugin */
-	private $plugin;
+	private EconomyAPI $plugin;
 
 	/**
 	 * EconomySProvider constructor.

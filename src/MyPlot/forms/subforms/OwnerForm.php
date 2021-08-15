@@ -12,7 +12,7 @@ use pocketmine\utils\TextFormat;
 
 class OwnerForm extends ComplexMyPlotForm implements PlotAdminForm{
 	/** @var string[] $players */
-	private $players = [];
+	private array $players = [];
 
 	public function __construct() {
 		$plugin = MyPlot::getInstance();

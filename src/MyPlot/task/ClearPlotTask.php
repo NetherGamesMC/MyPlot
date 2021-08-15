@@ -10,34 +10,24 @@ use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\world\Position;
+use pocketmine\world\World;
 
 class ClearPlotTask extends Task {
-	/** @var MyPlot $plugin */
-	protected $plugin;
-	/** @var Plot $plot */
-	protected $plot;
-	/** @var \pocketmine\world\World|null $world */
-	protected $world;
-	/** @var int $height */
-	protected $height;
-	/** @var Block $bottomBlock */
-	protected $bottomBlock;
-	/** @var Block $plotFillBlock */
-	protected $plotFillBlock;
-	/** @var Block $plotFloorBlock */
-	protected $plotFloorBlock;
-	/** @var \pocketmine\world\Position|null $plotBeginPos */
-	protected $plotBeginPos;
-	/** @var int $xMax */
-	protected $xMax;
-	/** @var int $zMax */
-	protected $zMax;
-	/** @var int $maxBlocksPerTick */
-	protected $maxBlocksPerTick;
-	/** @var Vector3 $pos */
-	protected $pos;
-    /** @var AxisAlignedBB|null $plotBB */
-    protected $plotBB;
+
+	protected MyPlot $plugin;
+	protected Plot $plot;
+	protected World $world;
+	protected int $height;
+	protected Block $bottomBlock;
+	protected Block $plotFillBlock;
+	protected Block $plotFloorBlock;
+	protected Position $plotBeginPos;
+	protected int $xMax;
+	protected int $zMax;
+	protected int $maxBlocksPerTick;
+	protected Vector3 $pos;
+	protected ?AxisAlignedBB $plotBB;
 
 	/**
 	 * ClearPlotTask constructor.

@@ -14,8 +14,7 @@ use pocketmine\utils\TextFormat;
 
 class CloneForm extends ComplexMyPlotForm implements PlotAdminForm{
 
-	/** @var Player $player */
-	private $player;
+	private Player $player;
 
 	public function __construct(Player $player) {
 		$plugin = MyPlot::getInstance();

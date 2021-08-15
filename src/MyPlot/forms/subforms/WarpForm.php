@@ -11,7 +11,7 @@ use pocketmine\utils\TextFormat;
 use function count;
 use function ksort;
 
-class WarpForm extends ComplexMyPlotForm{
+class WarpForm extends ComplexMyPlotForm {
 
 	public function __construct(Player $player) {
 		$plugin = MyPlot::getInstance();

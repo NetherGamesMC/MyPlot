@@ -13,10 +13,8 @@ class MyPlotDenyEvent extends MyPlotPlotEvent implements Cancellable {
 	public const ADD = 0;
 	public const REMOVE = 1;
 
-	/** @var int $type */
-	private $type;
-	/** @var string $player */
-	private $player;
+	private int $type;
+	private string $player;
 
 	/**
 	 * MyPlotDenyEvent constructor.

@@ -14,7 +14,7 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use function strtolower;
 
-class MainForm extends SimpleMyPlotForm{
+class MainForm extends SimpleMyPlotForm {
 
 	/**
 	 * MainForm constructor.

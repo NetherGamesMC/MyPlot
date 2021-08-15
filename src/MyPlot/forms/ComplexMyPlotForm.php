@@ -10,12 +10,11 @@ use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
-abstract class ComplexMyPlotForm extends CustomForm implements MyPlotForm{
+abstract class ComplexMyPlotForm extends CustomForm implements MyPlotForm {
 
 	use PlotTrait;
 
-	/** @var Plot|null $plot */
-	protected $plot;
+	protected ?Plot $plot = null;
 
 	public function __construct(?Player $player, string $title, array $elements, ?\Closure $onSubmit = null) {
 		parent::__construct($player, $onSubmit ?? static function(Player $player) : void {
