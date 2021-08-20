@@ -66,6 +66,18 @@ permissions:
     default: true
   myplot.command.clone:
     default: op
+  myplot.claimplots:
+    default: op
+  myplot.claimplots.unlimited:
+    default: op
+  myplot.command.archive:
+    default: op
+  myplot.command.merge:
+    default: op
+  myplot.command.sell:
+    default: op
+  myplot.command.buy:
+    default: op
   myplot.admin:
     default: op
   myplot.admin.clear:
@@ -110,15 +122,5 @@ permissions:
     default: op
   myplot.admin.clone:
     default: op
-  myplot.claimplots:
-    default: op
-  myplot.claimplots.unlimited:
-    default: op
-  myplot.command.archive:
-    default: op
-  myplot.command.merge:
-    default: op
-  myplot.command.sell:
-    default: op
-  myplot.command.buy:
+  myplot.admin.merge:
     default: op
