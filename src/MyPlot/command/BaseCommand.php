@@ -40,12 +40,12 @@ abstract class BaseCommand extends Command{
 		}
 
 		if($this->permissionMessage === null) {
-			$target->sendMessage($target->getServer()->getLanguage()->translateString(TextFormat::RED . '%' . KnownTranslationKeys::COMMANDS_GENERIC_PERMISSION));
+			$target->sendMessage($target->getServer()->getLanguage()->translateString(TextFormat::RED . KnownTranslationKeys::COMMANDS_GENERIC_PERMISSION));
 		}elseif($this->permissionMessage !== ''){
 			if($target instanceof Player) {
 				$target->sendMessage(BaseLang::translateStringPlayer($target, $this->permissionMessage));
 			}else{
-				$target->sendMessage($target->getServer()->getLanguage()->translateString(TextFormat::RED . '%' . KnownTranslationKeys::COMMANDS_GENERIC_PERMISSION));
+				$target->sendMessage($target->getServer()->getLanguage()->translateString(TextFormat::RED . KnownTranslationKeys::COMMANDS_GENERIC_PERMISSION));
 			}
 		}
 

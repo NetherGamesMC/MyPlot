@@ -80,14 +80,14 @@ class ClearPlotTask extends Task {
 			}
 		}
 		$blocks = 0;
-		while($this->pos->x < $this->xMax) {
-			while($this->pos->z < $this->zMax) {
-				while($this->pos->y < $this->world->getMaxY()) {
-					if($this->pos->y === 0) {
+		while($this->position->x < $this->xMax) {
+			while($this->position->z < $this->zMax) {
+				while($this->position->y < $this->world->getMaxY()) {
+					if($this->position->y === 0) {
 						$block = $this->bottomBlock;
-					}elseif($this->pos->y < $this->height) {
+					}elseif($this->position->y < $this->height) {
 						$block = $this->plotFillBlock;
-					}elseif($this->pos->y === $this->height) {
+					}elseif($this->position->y === $this->height) {
 						$block = $this->plotFloorBlock;
 					}else{
 						$block = VanillaBlocks::AIR();
@@ -99,17 +99,17 @@ class ClearPlotTask extends Task {
 						$this->plugin->getScheduler()->scheduleDelayedTask($this, 1);
 						return;
 					}
-					$this->pos->y++;
+					$this->position->y++;
 				}
-				$this->pos->y = 0;
-				$this->pos->z++;
+				$this->position->y = 0;
+				$this->position->z++;
 			}
-			$this->pos->z = $this->plotBeginPos->z;
-			$this->pos->x++;
+			$this->position->z = $this->plotBeginPos->z;
+			$this->position->x++;
 		}
 		foreach($this->plugin->getPlotChunks($this->plot) as $chunk) {
 			foreach($chunk->getTiles() as $tile) {
-				if(($plot = $this->plugin->getPlotByPosition($tile->getPos())) != null) {
+				if(($plot = $this->plugin->getPlotByPosition($tile->getPosition())) != null) {
 					if($this->plot->isSame($plot)) {
 						$tile->close();
 					}

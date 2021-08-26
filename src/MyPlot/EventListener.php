@@ -144,13 +144,13 @@ class EventListener implements Listener
 	 * @param BlockPlaceEvent|BlockBreakEvent|PlayerInteractEvent|SignChangeEvent $event
 	 */
 	private function onEventOnBlock($event) : void {
-		if(!$event->getBlock()->getPos()->isValid())
+		if(!$event->getBlock()->getPosition()->isValid())
 			return;
-		$levelName = $event->getBlock()->getPos()->getWorld()->getFolderName();
+		$levelName = $event->getBlock()->getPosition()->getWorld()->getFolderName();
 		if(!$this->plugin->isLevelLoaded($levelName)) {
 			return;
 		}
-		$plot = $this->plugin->getPlotByPosition($event->getBlock()->getPos());
+		$plot = $this->plugin->getPlotByPosition($event->getBlock()->getPosition());
 		if($plot !== null) {
 			if(!$event instanceof SignChangeEvent && in_array($event->getItem()->getId(), $this->plugin->bannedItems, true)) {
 				$event->cancel();
@@ -187,14 +187,14 @@ class EventListener implements Listener
 				$plotSize = $this->plugin->getLevelSettings($levelName)->plotSize;
 				$endPos->x += $plotSize - $maxLengthLeaves;
 				$endPos->z += $plotSize - $maxLengthLeaves;
-				if($block->getPos()->x >= $beginPos->x and $block->getPos()->z >= $beginPos->z and $block->getPos()->x < $endPos->x and $block->getPos()->z < $endPos->z) {
+				if($block->getPosition()->x >= $beginPos->x and $block->getPosition()->z >= $beginPos->z and $block->getPosition()->x < $endPos->x and $block->getPosition()->z < $endPos->z) {
 					return;
 				}
 			}
 		}elseif($event->getPlayer()->hasPermission("myplot.admin.build.road"))
 			return;
-		elseif($this->plugin->isPositionBorderingPlot($event->getBlock()->getPos()) and $this->plugin->getLevelSettings($levelName)->editBorderBlocks) {
-			$plot = $this->plugin->getPlotBorderingPosition($event->getBlock()->getPos());
+		elseif($this->plugin->isPositionBorderingPlot($event->getBlock()->getPosition()) and $this->plugin->getLevelSettings($levelName)->editBorderBlocks) {
+			$plot = $this->plugin->getPlotBorderingPosition($event->getBlock()->getPosition());
 			if($plot instanceof Plot) {
 				$ev = new MyPlotBorderChangeEvent($plot, $event->getBlock(), $event->getPlayer(), $event);
 				if($event->isCancelled()) {
@@ -223,7 +223,7 @@ class EventListener implements Listener
 		else if($event instanceof PlayerInteractEvent) $type = "interaction";
 		else if($event instanceof SignChangeEvent) $type = "interaction (sign)";
 
-		$this->plugin->getLogger()->debug("Block {$type} of {$event->getBlock()->getName()} was cancelled at " . $event->getBlock()->getPos()->__toString() . ". [Player: {$player->getName()}, Gamemode: {$player->getGamemode()->getEnglishName()}]");
+		$this->plugin->getLogger()->debug("Block {$type} of {$event->getBlock()->getName()} was cancelled at " . $event->getBlock()->getPosition()->__toString() . ". [Player: {$player->getName()}, Gamemode: {$player->getGamemode()->getEnglishName()}]");
 	}
 
 	/**
@@ -252,7 +252,7 @@ class EventListener implements Listener
 		$endPos->z += $plotSize;
 
 		$blocks = array_filter($event->getBlockList(), function(Block $block) use ($beginPos, $endPos) : bool {
-			if($block->getPos()->x >= $beginPos->x and $block->getPos()->z >= $beginPos->z and $block->getPos()->x < $endPos->x and $block->getPos()->z < $endPos->z) {
+			if($block->getPosition()->x >= $beginPos->x and $block->getPosition()->z >= $beginPos->z and $block->getPosition()->x < $endPos->x and $block->getPosition()->z < $endPos->z) {
 				return true;
 			}
 			return false;
@@ -293,25 +293,25 @@ class EventListener implements Listener
 		if($event->isCancelled()) {
 			return;
 		}
-		$levelName = $event->getBlock()->getPos()->getWorld()->getFolderName();
+		$levelName = $event->getBlock()->getPosition()->getWorld()->getFolderName();
 		if(!$this->plugin->isLevelLoaded($levelName))
 			return;
 
 		$settings = $this->plugin->getLevelSettings($levelName);
-		$newBlockInPlot = $this->plugin->getPlotByPosition($event->getBlock()->getPos()) instanceof Plot;
-		$sourceBlockInPlot = $this->plugin->getPlotByPosition($event->getSource()->getPos()) instanceof Plot;
+		$newBlockInPlot = $this->plugin->getPlotByPosition($event->getBlock()->getPosition()) instanceof Plot;
+		$sourceBlockInPlot = $this->plugin->getPlotByPosition($event->getSource()->getPosition()) instanceof Plot;
 
 		if($newBlockInPlot and $sourceBlockInPlot) {
-			$spreadIsSamePlot = $this->plugin->getPlotByPosition($event->getBlock()->getPos())->isSame($this->plugin->getPlotByPosition($event->getSource()->getPos()));
+			$spreadIsSamePlot = $this->plugin->getPlotByPosition($event->getBlock()->getPosition())->isSame($this->plugin->getPlotByPosition($event->getSource()->getPosition()));
 		}else {
 			$spreadIsSamePlot = false;
 		}
 
 		if($event->getSource() instanceof Liquid) {
-			if(!$settings->updatePlotLiquids and ($sourceBlockInPlot or $this->plugin->isPositionBorderingPlot($event->getSource()->getPos()))) {
+			if(!$settings->updatePlotLiquids and ($sourceBlockInPlot or $this->plugin->isPositionBorderingPlot($event->getSource()->getPosition()))) {
 				$event->cancel();
 				$this->plugin->getLogger()->debug("Cancelled {$event->getSource()->getName()} spread on [$levelName]");
-			}elseif($settings->updatePlotLiquids and ($sourceBlockInPlot or $this->plugin->isPositionBorderingPlot($event->getSource()->getPos())) and (!$newBlockInPlot or !$this->plugin->isPositionBorderingPlot($event->getBlock()->getPos()) or !$spreadIsSamePlot)) {
+			}elseif($settings->updatePlotLiquids and ($sourceBlockInPlot or $this->plugin->isPositionBorderingPlot($event->getSource()->getPosition())) and (!$newBlockInPlot or !$this->plugin->isPositionBorderingPlot($event->getBlock()->getPosition()) or !$spreadIsSamePlot)) {
 				$event->cancel();
 				$this->plugin->getLogger()->debug("Cancelled {$event->getSource()->getName()} spread on [$levelName]");
 			}
