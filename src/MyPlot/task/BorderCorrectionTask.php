@@ -87,23 +87,23 @@ class BorderCorrectionTask extends Task{
 	public function onRun() : void {
 		$blocks = 0;
 		if($this->direction === Facing::NORTH or $this->direction === Facing::SOUTH) {
-			while($this->position->z < $this->zMax) {
-				while($this->position->y < $this->world->getMaxY()) {
-					if($this->position->y > $this->height + 1)
+			while($this->pos->z < $this->zMax) {
+				while($this->pos->y < $this->world->getMaxY()) {
+					if($this->pos->y > $this->height + 1)
 						$block = BlockFactory::getInstance()->get(BlockLegacyIds::AIR, 0);
-					elseif($this->position->y === $this->height + 1){
+					elseif($this->pos->y === $this->height + 1){
 						// TODO: change by x/z coord
 						$block = $this->plotWallBlock;
-					}elseif($this->position->y === $this->height)
+					}elseif($this->pos->y === $this->height)
 						$block = $this->roadBlock;
-					elseif($this->position->y === 0)
+					elseif($this->pos->y === 0)
 						$block = $this->bottomBlock;
 					else//if($y < $this->height)
 						$block = $this->groundBlock;
 
-					$this->world->setBlock(new Vector3($this->position->x - 1, $this->position->y, $this->position->z), $block, false);
-					$this->world->setBlock(new Vector3($this->xMax, $this->position->y, $this->position->z), $block, false);
-					$this->position->y++;
+					$this->world->setBlock(new Vector3($this->pos->x - 1, $this->pos->y, $this->pos->z), $block, false);
+					$this->world->setBlock(new Vector3($this->xMax, $this->pos->y, $this->pos->z), $block, false);
+					$this->pos->y++;
 
 					$blocks += 2;
 					if($blocks >= $this->maxBlocksPerTick) {
@@ -112,25 +112,25 @@ class BorderCorrectionTask extends Task{
 						return;
 					}
 				}
-				$this->position->y = 0;
-				$this->position->z++;
+				$this->pos->y = 0;
+				$this->pos->z++;
 			}
 		}else{
-			while($this->position->x < $this->xMax) {
-				while($this->position->y < $this->world->getMaxY()) {
-					if($this->position->y > $this->height + 1)
+			while($this->pos->x < $this->xMax) {
+				while($this->pos->y < $this->world->getMaxY()) {
+					if($this->pos->y > $this->height + 1)
 						$block = VanillaBlocks::AIR();
-					elseif($this->position->y === $this->height + 1)
+					elseif($this->pos->y === $this->height + 1)
 						$block = $this->plotWallBlock; // TODO: change by x/z coord
-					elseif($this->position->y === $this->height)
+					elseif($this->pos->y === $this->height)
 						$block = $this->roadBlock;
-					elseif($this->position->y === 0)
+					elseif($this->pos->y === 0)
 						$block = $this->bottomBlock;
 					else//if($y < $this->height)
 						$block = $this->groundBlock;
-					$this->world->setBlock(new Vector3($this->position->x, $this->position->y, $this->position->z - 1), $block, false);
-					$this->world->setBlock(new Vector3($this->position->x, $this->position->y, $this->zMax), $block, false);
-					$this->position->y++;
+					$this->world->setBlock(new Vector3($this->pos->x, $this->pos->y, $this->pos->z - 1), $block, false);
+					$this->world->setBlock(new Vector3($this->pos->x, $this->pos->y, $this->zMax), $block, false);
+					$this->pos->y++;
 					$blocks += 2;
 					if($blocks >= $this->maxBlocksPerTick) {
 						$this->setHandler(null);
@@ -138,8 +138,8 @@ class BorderCorrectionTask extends Task{
 						return;
 					}
 				}
-				$this->position->y = 0;
-				$this->position->x++;
+				$this->pos->y = 0;
+				$this->pos->x++;
 			}
 		}
 

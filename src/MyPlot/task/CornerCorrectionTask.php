@@ -85,8 +85,8 @@ class CornerCorrectionTask extends Task{
 
 	public function onRun() : void {
 		foreach($this->world->getEntities() as $entity) {
-			if($entity->getLocation()->x > $this->position->x - 1 and $entity->getLocation()->x < $this->xMax + 1) {
-				if($entity->getLocation()->z > $this->position->z - 1 and $entity->getLocation()->z < $this->zMax + 1) {
+			if($entity->getLocation()->x > $this->pos->x - 1 and $entity->getLocation()->x < $this->xMax + 1) {
+				if($entity->getLocation()->z > $this->pos->z - 1 and $entity->getLocation()->z < $this->zMax + 1) {
 					if(!$entity instanceof Player) {
 						$entity->flagForDespawn();
 					}else{
@@ -96,20 +96,20 @@ class CornerCorrectionTask extends Task{
 			}
 		}
 		$blocks = 0;
-		while($this->position->x < $this->xMax) {
-			while($this->position->z < $this->zMax) {
-				while($this->position->y < $this->world->getMaxY()) {
-					if($this->position->y === 0)
+		while($this->pos->x < $this->xMax) {
+			while($this->pos->z < $this->zMax) {
+				while($this->pos->y < $this->world->getMaxY()) {
+					if($this->pos->y === 0)
 						$block = $this->bottomBlock;
-					elseif($this->position->y < $this->height)
+					elseif($this->pos->y < $this->height)
 						$block = $this->groundBlock;
-					elseif($this->position->y === $this->height)
+					elseif($this->pos->y === $this->height)
 						$block = $this->roadBlock;
 					else
 						$block = VanillaBlocks::AIR();
 
 					$this->world->setBlock($this->pos, $block, false);
-					$this->position->y++;
+					$this->pos->y++;
 
 					$blocks++;
 					if($blocks >= $this->maxBlocksPerTick) {
@@ -118,11 +118,11 @@ class CornerCorrectionTask extends Task{
 						return;
 					}
 				}
-				$this->position->y = 0;
-				$this->position->z++;
+				$this->pos->y = 0;
+				$this->pos->z++;
 			}
-			$this->position->z = $this->plotBeginPos->z;
-			$this->position->x++;
+			$this->pos->z = $this->plotBeginPos->z;
+			$this->pos->x++;
 		}
 
 		$this->plugin->getLogger()->debug("Corner Correction Task completed");
