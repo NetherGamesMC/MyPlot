@@ -109,7 +109,7 @@ class ClearPlotTask extends Task {
 		}
 		foreach($this->plugin->getPlotChunks($this->plot) as $chunk) {
 			foreach($chunk->getTiles() as $tile) {
-				if(($plot = $this->plugin->getPlotByPosition($tile->getPos())) != null) {
+				if(($plot = $this->plugin->getPlotByPosition($tile->getPosition())) != null) {
 					if($this->plot->isSame($plot)) {
 						$tile->close();
 					}
