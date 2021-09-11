@@ -754,8 +754,12 @@ class MyPlot extends PluginBase{
 			return false;
 		}
 		$aabb = $this->getPlotBB($plotTo);
-		foreach($this->getPlotChunks($plotTo) as $chunk) {
-			foreach($chunk->getEntities() as $entity) {
+		$world = $this->getServer()->getWorldManager()->getWorldByName($plotTo->levelName);
+		if($world === null)
+		    return false;
+		foreach($this->getPlotChunks($plotTo) as $id => $chunk){
+		    $coords = explode(';', $id);
+		    foreach($world->getChunkEntities((int)$coords[0], (int)$coords[1]) as $entity) {
 				if($aabb->isVectorInXZ($entity->getPosition())) {
 					if($entity instanceof Player){
 						$this->teleportPlayerToPlot($entity, $plotTo);
