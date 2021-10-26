@@ -41,6 +41,7 @@ use pocketmine\world\biome\Biome;
 use pocketmine\world\biome\BiomeRegistry;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\generator\GeneratorManager;
+use pocketmine\world\generator\GeneratorManagerEntry;
 use pocketmine\world\World;
 use pocketmine\world\Position;
 use pocketmine\math\AxisAlignedBB;
@@ -190,7 +191,8 @@ class MyPlot extends PluginBase{
 		if($ev->isCancelled() or $worldManager->isWorldGenerated($worldName)) {
 			return false;
 		}
-		$generator = GeneratorManager::getInstance()->getGenerator($generator, false);
+        /** @var GeneratorManagerEntry $generatorEntry */
+		$generatorEntry = GeneratorManager::getInstance()->getGenerator($generator);
 		if(count($settings) === 0) {
 			$this->getConfig()->reload();
 			$settings = $this->getConfig()->get("DefaultWorld", []);
@@ -199,7 +201,7 @@ class MyPlot extends PluginBase{
 			return !in_array($key, ["PlotSize", "GroundHeight", "RoadWidth", "RoadBlock", "WallBlock", "PlotFloorBlock", "PlotFillBlock", "BottomBlock"], true);
 		}, ARRAY_FILTER_USE_KEY);
 		new Config($this->getDataFolder() . "worlds" . DIRECTORY_SEPARATOR . $worldName . ".yml", Config::YAML, $default);
-		$options = WorldCreationOptions::create()->setGeneratorClass($generator)->setGeneratorOptions(json_encode($settings));
+		$options = WorldCreationOptions::create()->setGeneratorClass($generatorEntry->getGeneratorClass())->setGeneratorOptions(json_encode($settings));
 		$return = $worldManager->generateWorld($worldName, $options);
 		$world = $worldManager->getWorldByName($worldName);
 		if($world !== null)
