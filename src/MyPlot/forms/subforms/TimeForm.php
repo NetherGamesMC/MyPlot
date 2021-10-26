@@ -59,9 +59,7 @@ class TimeForm extends SimpleMyPlotForm{
 			unset($plugin->stopTime[$index]);
 		}
 
-		$pk = new SetTimePacket();
-		$pk->time = $time;
-		$player->getNetworkSession()->sendDataPacket($pk);
+		$player->getNetworkSession()->sendDataPacket(SetTimePacket::create($time));
 
 		$plugin->stopTime[] = $player->getName();
 	}

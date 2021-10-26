@@ -55,9 +55,7 @@ class TimeSubCommand extends SubCommand{
 			unset($this->getPlugin()->stopTime[$index]);
 		}
 
-		$pk = new SetTimePacket();
-		$pk->time = $time;
-		$player->getNetworkSession()->sendDataPacket($pk);
+		$player->getNetworkSession()->sendDataPacket(SetTimePacket::create($time));
 
 		$this->getPlugin()->stopTime[] = $player->getName();
 	}
