@@ -4,21 +4,501 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9660a663267bc4daa39b5c706fbb10d4",
+    "content-hash": "9e5c5cdc681d7407c6a1d41fa08973f8",
     "packages": [],
     "packages-dev": [
         {
-            "name": "phpstan/phpstan",
-            "version": "0.12.94",
+            "name": "nethergamesmc/libanticheat",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "3d0ba4c198a24e3c3fc489f3ec6ac9612c4be5d6"
+                "url": "git@github.com:NetherGamesMC/libAnticheat.git",
+                "reference": "6f607858ed457f2f63288642bba7b7a768246c07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/3d0ba4c198a24e3c3fc489f3ec6ac9612c4be5d6",
-                "reference": "3d0ba4c198a24e3c3fc489f3ec6ac9612c4be5d6",
+                "url": "https://api.github.com/repos/NetherGamesMC/libAnticheat/zipball/6f607858ed457f2f63288642bba7b7a768246c07",
+                "reference": "6f607858ed457f2f63288642bba7b7a768246c07",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "nethergamesmc/ngessentials": "dev-master",
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libAnticheat\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "An AntiCheat library for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libAnticheat/tree/master",
+                "issues": "https://github.com/NetherGamesMC/libAnticheat/issues"
+            },
+            "time": "2021-12-15T18:29:47+00:00"
+        },
+        {
+            "name": "nethergamesmc/libasyncio",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/libasyncio.git",
+                "reference": "cc6ec69066cc699daf71756b6075f6a2e40f9537"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libasyncio/zipball/cc6ec69066cc699daf71756b6075f6a2e40f9537",
+                "reference": "cc6ec69066cc699daf71756b6075f6a2e40f9537",
+                "shasum": ""
+            },
+            "require": {
+                "ext-igbinary": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "nethergamesmc/ngessentials": "dev-master",
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libasyncio\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "An async library for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libasyncio/tree/master"
+            },
+            "time": "2021-12-08T13:56:37+00:00"
+        },
+        {
+            "name": "nethergamesmc/libasyncurl",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NetherGamesMC/libasynCurl.git",
+                "reference": "acbd280be3b8810c1270e09a8668da51b9570767"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libasynCurl/zipball/acbd280be3b8810c1270e09a8668da51b9570767",
+                "reference": "acbd280be3b8810c1270e09a8668da51b9570767",
+                "shasum": ""
+            },
+            "require": {
+                "ext-igbinary": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libasynCurl\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "An async Curl library for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libasynCurl/tree/master",
+                "issues": "https://github.com/NetherGamesMC/libasynCurl/issues"
+            },
+            "time": "2021-12-08T13:59:58+00:00"
+        },
+        {
+            "name": "nethergamesmc/libdiscord",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/libDiscord.git",
+                "reference": "19f71acc973ce67da830ab84f5222b6e8b943c89"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libDiscord/zipball/19f71acc973ce67da830ab84f5222b6e8b943c89",
+                "reference": "19f71acc973ce67da830ab84f5222b6e8b943c89",
+                "shasum": ""
+            },
+            "require": {
+                "nethergamesmc/libasyncurl": "dev-master",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libDiscord\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "A library for the Discord API",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libDiscord/tree/master",
+                "issues": "https://github.com/NetherGamesMC/libDiscord/issues"
+            },
+            "time": "2021-11-29T03:42:19+00:00"
+        },
+        {
+            "name": "nethergamesmc/libforms",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/libforms.git",
+                "reference": "91aa71fd38362bb82168015579b93c851460d96e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libforms/zipball/91aa71fd38362bb82168015579b93c851460d96e",
+                "reference": "91aa71fd38362bb82168015579b93c851460d96e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "nethergamesmc/ngessentials": "dev-master",
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libforms\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "A forms library for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libforms/tree/master"
+            },
+            "time": "2021-11-28T22:34:00+00:00"
+        },
+        {
+            "name": "nethergamesmc/libminigames",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/libminigames.git",
+                "reference": "92278bf7134ada07afb417d6fdbd3bd3ea21309c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libminigames/zipball/92278bf7134ada07afb417d6fdbd3bd3ea21309c",
+                "reference": "92278bf7134ada07afb417d6fdbd3bd3ea21309c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "nethergamesmc/ngessentials": "dev-master",
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libminigames\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "A Minigame library for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libminigames/tree/master",
+                "issues": "https://github.com/NetherGamesMC/libminigames/issues"
+            },
+            "time": "2021-12-16T17:21:50+00:00"
+        },
+        {
+            "name": "nethergamesmc/libnetsys",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/libnetsys.git",
+                "reference": "86c66a222db2e767af3b53af44992d74469b67c6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libnetsys/zipball/86c66a222db2e767af3b53af44992d74469b67c6",
+                "reference": "86c66a222db2e767af3b53af44992d74469b67c6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pthreads": "*",
+                "ext-sockets": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "nethergamesmc/ngessentials": "dev-master",
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libnetsys\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "A NetSys library for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libnetsys/tree/master",
+                "issues": "https://github.com/NetherGamesMC/libnetsys/issues"
+            },
+            "time": "2021-12-01T13:48:09+00:00"
+        },
+        {
+            "name": "nethergamesmc/libphysx",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/libPhysX.git",
+                "reference": "0ac9a2015867aec4bdcb86b7bf34bd9bbcd4c43a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libPhysX/zipball/0ac9a2015867aec4bdcb86b7bf34bd9bbcd4c43a",
+                "reference": "0ac9a2015867aec4bdcb86b7bf34bd9bbcd4c43a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libPhysX\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "An PhysX library for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libPhysX/tree/master"
+            },
+            "time": "2021-11-28T22:17:28+00:00"
+        },
+        {
+            "name": "nethergamesmc/libproxy",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/libproxy.git",
+                "reference": "aaca2dcf17b6b96d494218bb1e76cecfcd6b5c9c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libproxy/zipball/aaca2dcf17b6b96d494218bb1e76cecfcd6b5c9c",
+                "reference": "aaca2dcf17b6b96d494218bb1e76cecfcd6b5c9c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pthreads": "*",
+                "ext-sockets": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "nethergamesmc/ngessentials": "dev-master",
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libproxy\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "An TCP proxy library for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libproxy/tree/master",
+                "issues": "https://github.com/NetherGamesMC/libproxy/issues"
+            },
+            "time": "2021-12-06T13:16:37+00:00"
+        },
+        {
+            "name": "nethergamesmc/libreplay",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/libReplay.git",
+                "reference": "2c5009f603be5fa4a8462922f5dde1fbb95d08ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libReplay/zipball/2c5009f603be5fa4a8462922f5dde1fbb95d08ad",
+                "reference": "2c5009f603be5fa4a8462922f5dde1fbb95d08ad",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "nethergamesmc/ngessentials": "dev-master",
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libReplay\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "A Replay library for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libReplay/tree/master",
+                "issues": "https://github.com/NetherGamesMC/libReplay/issues"
+            },
+            "time": "2021-11-28T22:40:43+00:00"
+        },
+        {
+            "name": "nethergamesmc/libvanilla",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/libVanilla.git",
+                "reference": "49d7f384a5111ac1ea714d0ff657c0a0c268448c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libVanilla/zipball/49d7f384a5111ac1ea714d0ff657c0a0c268448c",
+                "reference": "49d7f384a5111ac1ea714d0ff657c0a0c268448c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "nethergamesmc/libphysx": "dev-master",
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libVanilla\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "A Vanilla library for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libVanilla/tree/master",
+                "issues": "https://github.com/NetherGamesMC/libVanilla/issues"
+            },
+            "time": "2021-12-14T05:58:27+00:00"
+        },
+        {
+            "name": "nethergamesmc/ngessentials",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/NGEssentials.git",
+                "reference": "3b834a8fe4e64b5224eee6df2b2c4dc60d69277a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/NGEssentials/zipball/3b834a8fe4e64b5224eee6df2b2c4dc60d69277a",
+                "reference": "3b834a8fe4e64b5224eee6df2b2c4dc60d69277a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-gd": "*",
+                "ext-json": "*",
+                "ext-mysqli": "*",
+                "ext-openssl": "*",
+                "ext-pthreads": "*",
+                "ext-yaml": "*",
+                "nethergamesmc/libanticheat": "dev-master",
+                "nethergamesmc/libasyncio": "dev-master",
+                "nethergamesmc/libasyncurl": "dev-master",
+                "nethergamesmc/libdiscord": "dev-master",
+                "nethergamesmc/libforms": "dev-master",
+                "nethergamesmc/libminigames": "dev-master",
+                "nethergamesmc/libnetsys": "dev-master",
+                "nethergamesmc/libphysx": "dev-master",
+                "nethergamesmc/libproxy": "dev-master",
+                "nethergamesmc/libreplay": "dev-master",
+                "nethergamesmc/libvanilla": "dev-master",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "nethergamesmc/skyblock": "dev-master",
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "": [
+                        "src"
+                    ]
+                },
+                "files": [
+                    "src/NetherGames/NGEssentials/CoreConstants.php"
+                ]
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "NGEssentials plugin for PocketMine-MP",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/NGEssentials/tree/master",
+                "issues": "https://github.com/NetherGamesMC/NGEssentials/issues"
+            },
+            "time": "2021-12-16T17:31:47+00:00"
+        },
+        {
+            "name": "phpstan/phpstan",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpstan.git",
+                "reference": "cbe085f9fdead5b6d62e4c022ca52dc9427a10ee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/cbe085f9fdead5b6d62e4c022ca52dc9427a10ee",
+                "reference": "cbe085f9fdead5b6d62e4c022ca52dc9427a10ee",
                 "shasum": ""
             },
             "require": {
@@ -34,7 +514,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.12-dev"
+                    "dev-master": "1.2-dev"
                 }
             },
             "autoload": {
@@ -49,7 +529,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.94"
+                "source": "https://github.com/phpstan/phpstan/tree/1.2.0"
             },
             "funding": [
                 {
@@ -69,16 +549,18 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-30T09:05:27+00:00"
+            "time": "2021-11-18T14:09:01+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "nethergamesmc/ngessentials": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4 || ^8.0"
+        "php": "^8.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"

@@ -1,14 +1,14 @@
 parameters:
     level: 6
     checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
     paths:
         - src
+    bootstrapFiles:
+        - phar://PharBuilder/PocketMine-MP.phar/vendor/autoload.php
     scanDirectories:
-        - src
-        - NGEssentials/src
-        - WorldStyler/src
+        - vendor/nethergamesmc/ngessentials
         - phar://PharBuilder/PocketMine-MP.phar
+        - WorldStyler/src
     excludePaths:
         analyse:
             - src/MyPlot/provider

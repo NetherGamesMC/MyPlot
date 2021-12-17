@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace MyPlot\provider;
 
-use InvalidStateException;
+use LogicException;
 use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\math\Facing;
@@ -34,7 +34,7 @@ class ConfigDataProvider extends DataProvider {
 		try{
 			$this->config->save();
 		}
-		catch(InvalidStateException){
+		catch(LogicException){
 			return false;
 		}
 		return true;
@@ -50,7 +50,7 @@ class ConfigDataProvider extends DataProvider {
 		try{
 			$this->config->save();
 		}
-		catch(InvalidStateException){
+		catch(LogicException){
 			return false;
 		}
 		return true;
@@ -158,7 +158,7 @@ class ConfigDataProvider extends DataProvider {
 		try{
 			$this->config->save();
 		}
-		catch(InvalidStateException){
+		catch(LogicException){
 			return false;
 		}
 		return true;

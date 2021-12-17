@@ -14,8 +14,6 @@ use pocketmine\utils\TextFormat;
 
 class CloneForm extends ComplexMyPlotForm implements PlotAdminForm{
 
-	private Player $player;
-
 	public function __construct(Player $player) {
 		$plugin = MyPlot::getInstance();
 		$plot = $plugin->getPlotByPosition($player->getPosition());
@@ -39,8 +37,8 @@ class CloneForm extends ComplexMyPlotForm implements PlotAdminForm{
 			],
 			function(Player $player, ?array $data = []) use ($plugin) : void {
 				if(is_numeric($data[1]) and is_numeric($data[2]) and is_numeric($data[5]) and is_numeric($data[6])) {
-					$originPlot = MyPlot::getInstance()->getProvider()->getPlot(empty($data[3]) ? $this->player->getWorld()->getFolderName() : $data[3], (int)$data[1], (int)$data[2]);
-					$clonedPlot = MyPlot::getInstance()->getProvider()->getPlot(empty($data[7]) ? $this->player->getWorld()->getFolderName() : $data[7], (int)$data[5], (int)$data[6]);
+					$originPlot = MyPlot::getInstance()->getProvider()->getPlot(empty($data[3]) ? $player->getWorld()->getFolderName() : $data[3], (int)$data[1], (int)$data[2]);
+					$clonedPlot = MyPlot::getInstance()->getProvider()->getPlot(empty($data[7]) ? $player->getWorld()->getFolderName() : $data[7], (int)$data[5], (int)$data[6]);
 				}else{
 					throw new FormValidationException("Unexpected form data returned");
 				}

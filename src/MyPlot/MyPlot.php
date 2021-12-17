@@ -835,7 +835,7 @@ class MyPlot extends PluginBase{
 		$styler->removeSelection(99997);
 		foreach($this->getPlotChunks($plotTo) as $id => $chunk){
 			$coords = explode(';', $id);
-			$level->setChunk((int)$coords[0], (int)$coords[1], $chunk, false);
+			$level->setChunk((int)$coords[0], (int)$coords[1], $chunk);
 		}
 		return true;
 	}
@@ -940,7 +940,7 @@ class MyPlot extends PluginBase{
 			$styler->removeSelection(99998);
 			foreach($this->getPlotChunks($plot) as $id => $chunk){
 				$coords = explode(';', $id);
-				$plotBeginPos->world->setChunk((int)$coords[0], (int)$coords[1], $chunk, false);
+				$plotBeginPos->world->setChunk((int)$coords[0], (int)$coords[1], $chunk);
 			}
 			$this->getScheduler()->scheduleDelayedTask(new ClearBorderTask($this, $plot), 1);
 			return true;
@@ -1034,7 +1034,7 @@ class MyPlot extends PluginBase{
 					}
 				}
 			}
-			$world->setChunk((int)$coords[0], (int)$coords[1], $chunk, false);
+			$world->setChunk((int)$coords[0], (int)$coords[1], $chunk);
 		}
 		return !$failed;
 	}

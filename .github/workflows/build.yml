@@ -30,7 +30,7 @@ jobs:
         run: |
           echo Building...
           chmod +x PharBuilder/BuildScript.php
-          ./bin/php7/bin/php PharBuilder/BuildScript.php --make "" --out PharBuilder/NGPlots.phar
+          ./bin/php7/bin/php -dphar.readonly=0 PharBuilder/BuildScript.php --make "" --out PharBuilder/NGPlots.phar
           echo Build completed!
       - name: Upload
         uses: actions/upload-artifact@v2.3.1
