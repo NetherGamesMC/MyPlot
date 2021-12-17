@@ -9,3 +9,6 @@ parameters:
         - vendor/nethergamesmc/ngessentials
         - phar://PharBuilder/PocketMine-MP.phar
         - WorldStyler/src
+    excludePaths:
+        analyse:
+            - src/MyPlot/provider

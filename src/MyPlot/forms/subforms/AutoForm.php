@@ -11,12 +11,8 @@ use pocketmine\utils\TextFormat;
 
 class AutoForm extends ComplexMyPlotForm implements PlotButtonForm{
 
-	/** @var Player $player */
-	private $player;
-
 	public function __construct(Player $player) {
 		$plugin = MyPlot::getInstance();
-		$this->player = $player;
 
 		parent::__construct(
 			$player,
