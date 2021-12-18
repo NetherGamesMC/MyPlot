@@ -20,6 +20,7 @@ use pocketmine\event\block\SignChangeEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityExplodeEvent;
 use pocketmine\event\entity\EntityMotionEvent;
+use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
@@ -107,6 +108,20 @@ class EventListener implements Listener
 	public function onBlockPlace(BlockPlaceEvent $event) : void {
 		$this->onEventOnBlock($event);
 	}
+
+    /**
+     * @ignoreCancelled false
+     * @priority LOWEST
+     *
+     * @param EntitySpawnEvent $event
+     */
+    public function onEntitySpawn(EntitySpawnEvent $event): void
+    {
+        $entity = $event->getEntity();
+        if (!$entity instanceof Player) {
+            $entity->flagForDespawn();
+        }
+    }
 
 	/**
 	 * @ignoreCancelled false
