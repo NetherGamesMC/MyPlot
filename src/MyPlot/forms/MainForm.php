@@ -66,7 +66,7 @@ class MainForm extends SimpleMyPlotForm {
 		}
 
 		// only add settings form if the player is inside a plot and is the plot owner or has admin perms
-		if($this->plot !== null && ((strtolower($this->plot->owner) === strtolower($player->getName())) || $player->hasPermission('myplot.admin') || $player->hasPermission('nethergames.admin'))) {
+		if($this->plot !== null && ((strtolower($this->plot->owner) === strtolower($player->getName())) || $player->hasPermission('myplot.admin'))) {
 			$elements[] = new Button("Plot Settings", function(Player $player) use ($settingForms, $dangerForms) {
 				$settings = FormManager::createSimpleForm($player);
 				$settings->setTitle("Plot Settings");
@@ -109,7 +109,7 @@ class MainForm extends SimpleMyPlotForm {
 		}
 
 		// only add admin form if the player has admin perms
-		if($player->hasPermission('myplot.admin') || $player->hasPermission('nethergames.admin')) {
+		if($player->hasPermission('myplot.admin')) {
 			$elements[] = new Button("Admin Settings", function(Player $player) use ($adminForms) {
 				$admin = FormManager::createSimpleForm($player);
 				$admin->setTitle("Admin Settings");

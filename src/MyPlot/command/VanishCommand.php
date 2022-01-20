@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MyPlot\command;
 
 use NetherGames\NGEssentials\lang\BaseLang;
+use NetherGames\NGEssentials\player\permissions\Permissions;
 use NetherGames\NGEssentials\player\PlayerData;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
@@ -13,7 +14,7 @@ class VanishCommand extends BaseCommand{
 	public function __construct() {
 		parent::__construct('vanish');
 
-		$this->setPermission('nethergames.vip.legend');
+		$this->setPermission(Permissions::RANK_LEGEND);
 		$this->setPermissionMessage('command.vanish.noperm');
 		$this->setDescription('Command used for making yourself vanish for Legend players');
 	}

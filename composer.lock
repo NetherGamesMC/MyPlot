@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9e5c5cdc681d7407c6a1d41fa08973f8",
+    "content-hash": "a358b4c79ed16c0eb5dc70789baf0b78",
     "packages": [],
     "packages-dev": [
         {
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:NetherGamesMC/libAnticheat.git",
-                "reference": "6f607858ed457f2f63288642bba7b7a768246c07"
+                "reference": "03b29c9138d98160ced2ba2baecab7707e24f56d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/libAnticheat/zipball/6f607858ed457f2f63288642bba7b7a768246c07",
-                "reference": "6f607858ed457f2f63288642bba7b7a768246c07",
+                "url": "https://api.github.com/repos/NetherGamesMC/libAnticheat/zipball/03b29c9138d98160ced2ba2baecab7707e24f56d",
+                "reference": "03b29c9138d98160ced2ba2baecab7707e24f56d",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                 "source": "https://github.com/NetherGamesMC/libAnticheat/tree/master",
                 "issues": "https://github.com/NetherGamesMC/libAnticheat/issues"
             },
-            "time": "2021-12-15T18:29:47+00:00"
+            "time": "2022-01-17T09:42:17+00:00"
         },
         {
             "name": "nethergamesmc/libasyncio",
@@ -89,12 +89,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/NetherGamesMC/libasynCurl.git",
-                "reference": "acbd280be3b8810c1270e09a8668da51b9570767"
+                "reference": "89eced84a22911b7fae30ab584f985416a5e056a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/libasynCurl/zipball/acbd280be3b8810c1270e09a8668da51b9570767",
-                "reference": "acbd280be3b8810c1270e09a8668da51b9570767",
+                "url": "https://api.github.com/repos/NetherGamesMC/libasynCurl/zipball/89eced84a22911b7fae30ab584f985416a5e056a",
+                "reference": "89eced84a22911b7fae30ab584f985416a5e056a",
                 "shasum": ""
             },
             "require": {
@@ -102,7 +102,7 @@
                 "php": "^8.0"
             },
             "require-dev": {
-                "phpstan/phpstan": "1.2.0"
+                "phpstan/phpstan": "1.4.0"
             },
             "default-branch": true,
             "type": "project",
@@ -119,7 +119,7 @@
                 "source": "https://github.com/NetherGamesMC/libasynCurl/tree/master",
                 "issues": "https://github.com/NetherGamesMC/libasynCurl/issues"
             },
-            "time": "2021-12-08T13:59:58+00:00"
+            "time": "2022-01-17T08:53:35+00:00"
         },
         {
             "name": "nethergamesmc/libdiscord",
@@ -127,12 +127,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:NetherGamesMC/libDiscord.git",
-                "reference": "19f71acc973ce67da830ab84f5222b6e8b943c89"
+                "reference": "b582214ee29dbd292969be3f33f169da86ae1cfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/libDiscord/zipball/19f71acc973ce67da830ab84f5222b6e8b943c89",
-                "reference": "19f71acc973ce67da830ab84f5222b6e8b943c89",
+                "url": "https://api.github.com/repos/NetherGamesMC/libDiscord/zipball/b582214ee29dbd292969be3f33f169da86ae1cfe",
+                "reference": "b582214ee29dbd292969be3f33f169da86ae1cfe",
                 "shasum": ""
             },
             "require": {
@@ -140,7 +140,7 @@
                 "php": "^8.0"
             },
             "require-dev": {
-                "phpstan/phpstan": "1.2.0"
+                "phpstan/phpstan": "1.3.0"
             },
             "default-branch": true,
             "type": "project",
@@ -157,7 +157,7 @@
                 "source": "https://github.com/NetherGamesMC/libDiscord/tree/master",
                 "issues": "https://github.com/NetherGamesMC/libDiscord/issues"
             },
-            "time": "2021-11-29T03:42:19+00:00"
+            "time": "2021-12-30T17:02:40+00:00"
         },
         {
             "name": "nethergamesmc/libforms",
@@ -165,12 +165,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:NetherGamesMC/libforms.git",
-                "reference": "91aa71fd38362bb82168015579b93c851460d96e"
+                "reference": "5befb489b77ba2bc6ac02de46751ce903ee6c159"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/libforms/zipball/91aa71fd38362bb82168015579b93c851460d96e",
-                "reference": "91aa71fd38362bb82168015579b93c851460d96e",
+                "url": "https://api.github.com/repos/NetherGamesMC/libforms/zipball/5befb489b77ba2bc6ac02de46751ce903ee6c159",
+                "reference": "5befb489b77ba2bc6ac02de46751ce903ee6c159",
                 "shasum": ""
             },
             "require": {
@@ -194,7 +194,45 @@
             "support": {
                 "source": "https://github.com/NetherGamesMC/libforms/tree/master"
             },
-            "time": "2021-11-28T22:34:00+00:00"
+            "time": "2022-01-14T16:01:03+00:00"
+        },
+        {
+            "name": "nethergamesmc/liblogdna",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:NetherGamesMC/libLogDNA.git",
+                "reference": "8a4e65e415320dce3fda20adcaf5ae600ed6b90c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NetherGamesMC/libLogDNA/zipball/8a4e65e415320dce3fda20adcaf5ae600ed6b90c",
+                "reference": "8a4e65e415320dce3fda20adcaf5ae600ed6b90c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "nethergamesmc/ngessentials": "dev-master",
+                "phpstan/phpstan": "1.2.0"
+            },
+            "default-branch": true,
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "libLogDNA\\": "/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Library for publishing logs to LogDNA",
+            "support": {
+                "source": "https://github.com/NetherGamesMC/libLogDNA/tree/master",
+                "issues": "https://github.com/NetherGamesMC/libLogDNA/issues"
+            },
+            "time": "2022-01-10T04:38:26+00:00"
         },
         {
             "name": "nethergamesmc/libminigames",
@@ -202,12 +240,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:NetherGamesMC/libminigames.git",
-                "reference": "92278bf7134ada07afb417d6fdbd3bd3ea21309c"
+                "reference": "91d60d76868a5e1762a689ac27f1a50065c8d4ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/libminigames/zipball/92278bf7134ada07afb417d6fdbd3bd3ea21309c",
-                "reference": "92278bf7134ada07afb417d6fdbd3bd3ea21309c",
+                "url": "https://api.github.com/repos/NetherGamesMC/libminigames/zipball/91d60d76868a5e1762a689ac27f1a50065c8d4ca",
+                "reference": "91d60d76868a5e1762a689ac27f1a50065c8d4ca",
                 "shasum": ""
             },
             "require": {
@@ -232,7 +270,7 @@
                 "source": "https://github.com/NetherGamesMC/libminigames/tree/master",
                 "issues": "https://github.com/NetherGamesMC/libminigames/issues"
             },
-            "time": "2021-12-16T17:21:50+00:00"
+            "time": "2022-01-15T18:36:47+00:00"
         },
         {
             "name": "nethergamesmc/libnetsys",
@@ -280,19 +318,19 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:NetherGamesMC/libPhysX.git",
-                "reference": "0ac9a2015867aec4bdcb86b7bf34bd9bbcd4c43a"
+                "reference": "3de70b603f259950f8c861275a50e89537c7acee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/libPhysX/zipball/0ac9a2015867aec4bdcb86b7bf34bd9bbcd4c43a",
-                "reference": "0ac9a2015867aec4bdcb86b7bf34bd9bbcd4c43a",
+                "url": "https://api.github.com/repos/NetherGamesMC/libPhysX/zipball/3de70b603f259950f8c861275a50e89537c7acee",
+                "reference": "3de70b603f259950f8c861275a50e89537c7acee",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.0"
             },
             "require-dev": {
-                "phpstan/phpstan": "1.2.0"
+                "phpstan/phpstan": "1.4.0"
             },
             "default-branch": true,
             "type": "project",
@@ -308,7 +346,7 @@
             "support": {
                 "source": "https://github.com/NetherGamesMC/libPhysX/tree/master"
             },
-            "time": "2021-11-28T22:17:28+00:00"
+            "time": "2022-01-17T01:09:19+00:00"
         },
         {
             "name": "nethergamesmc/libproxy",
@@ -356,12 +394,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:NetherGamesMC/libReplay.git",
-                "reference": "2c5009f603be5fa4a8462922f5dde1fbb95d08ad"
+                "reference": "6da3b4f64efc7f81af20c6596e57954746539e42"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/libReplay/zipball/2c5009f603be5fa4a8462922f5dde1fbb95d08ad",
-                "reference": "2c5009f603be5fa4a8462922f5dde1fbb95d08ad",
+                "url": "https://api.github.com/repos/NetherGamesMC/libReplay/zipball/6da3b4f64efc7f81af20c6596e57954746539e42",
+                "reference": "6da3b4f64efc7f81af20c6596e57954746539e42",
                 "shasum": ""
             },
             "require": {
@@ -386,7 +424,7 @@
                 "source": "https://github.com/NetherGamesMC/libReplay/tree/master",
                 "issues": "https://github.com/NetherGamesMC/libReplay/issues"
             },
-            "time": "2021-11-28T22:40:43+00:00"
+            "time": "2022-01-11T15:53:03+00:00"
         },
         {
             "name": "nethergamesmc/libvanilla",
@@ -394,12 +432,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:NetherGamesMC/libVanilla.git",
-                "reference": "49d7f384a5111ac1ea714d0ff657c0a0c268448c"
+                "reference": "aac0e7c50017b3706984f99b797bc578d499af6f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/libVanilla/zipball/49d7f384a5111ac1ea714d0ff657c0a0c268448c",
-                "reference": "49d7f384a5111ac1ea714d0ff657c0a0c268448c",
+                "url": "https://api.github.com/repos/NetherGamesMC/libVanilla/zipball/aac0e7c50017b3706984f99b797bc578d499af6f",
+                "reference": "aac0e7c50017b3706984f99b797bc578d499af6f",
                 "shasum": ""
             },
             "require": {
@@ -424,7 +462,7 @@
                 "source": "https://github.com/NetherGamesMC/libVanilla/tree/master",
                 "issues": "https://github.com/NetherGamesMC/libVanilla/issues"
             },
-            "time": "2021-12-14T05:58:27+00:00"
+            "time": "2022-01-15T15:09:33+00:00"
         },
         {
             "name": "nethergamesmc/ngessentials",
@@ -432,12 +470,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:NetherGamesMC/NGEssentials.git",
-                "reference": "3b834a8fe4e64b5224eee6df2b2c4dc60d69277a"
+                "reference": "d620e2fab32b97988af3187b2d8012a204324eea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/NGEssentials/zipball/3b834a8fe4e64b5224eee6df2b2c4dc60d69277a",
-                "reference": "3b834a8fe4e64b5224eee6df2b2c4dc60d69277a",
+                "url": "https://api.github.com/repos/NetherGamesMC/NGEssentials/zipball/d620e2fab32b97988af3187b2d8012a204324eea",
+                "reference": "d620e2fab32b97988af3187b2d8012a204324eea",
                 "shasum": ""
             },
             "require": {
@@ -453,6 +491,7 @@
                 "nethergamesmc/libasyncurl": "dev-master",
                 "nethergamesmc/libdiscord": "dev-master",
                 "nethergamesmc/libforms": "dev-master",
+                "nethergamesmc/liblogdna": "dev-master",
                 "nethergamesmc/libminigames": "dev-master",
                 "nethergamesmc/libnetsys": "dev-master",
                 "nethergamesmc/libphysx": "dev-master",
@@ -485,7 +524,7 @@
                 "source": "https://github.com/NetherGamesMC/NGEssentials/tree/master",
                 "issues": "https://github.com/NetherGamesMC/NGEssentials/issues"
             },
-            "time": "2021-12-16T17:31:47+00:00"
+            "time": "2022-01-18T15:31:47+00:00"
         },
         {
             "name": "phpstan/phpstan",

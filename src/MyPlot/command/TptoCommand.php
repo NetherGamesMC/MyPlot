@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MyPlot\command;
 
 use NetherGames\NGEssentials\lang\BaseLang;
+use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\command\CommandSender;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\player\Player;
@@ -60,7 +61,7 @@ class TptoCommand extends BaseCommand{
 					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tp.specify'));
 				}
 			}elseif(($player = $this->getPlugin()->getServer()->getPlayerExact($args[0])) instanceof Player){
-				if($sender->hasPermission('nethergames.vip.emerald')) {
+				if($sender->hasPermission(Permissions::RANK_EMERALD)) {
 					$this->requests[$player->getName()][$sender->getName()] = $sender->getName();
 					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tpto.send', array($player->getName())));
 					$player->sendMessage(BaseLang::translateStringPlayer($player, 'command.tpto.receive', array($sender->getName())));

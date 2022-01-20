@@ -5,6 +5,7 @@ namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\TimeForm;
+use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\command\CommandSender;
 use pocketmine\network\mcpe\protocol\SetTimePacket;
 use pocketmine\player\Player;
@@ -18,7 +19,7 @@ class TimeSubCommand extends SubCommand{
 		if(!$sender instanceof Player) {
 			return true;
 		}
-		if($sender->hasPermission('nethergames.vip.legend')) {
+		if($sender->hasPermission(Permissions::RANK_LEGEND)) {
 			if(count($args) !== 1) {
 				return false;
 			}

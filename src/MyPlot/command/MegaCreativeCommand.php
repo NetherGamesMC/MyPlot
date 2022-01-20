@@ -5,6 +5,7 @@ namespace MyPlot\command;
 
 use MyPlot\forms\MainForm;
 use NetherGames\NGEssentials\lang\BaseLang;
+use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 
@@ -18,7 +19,7 @@ class MegaCreativeCommand extends BaseCommand{
 
 	public function execute(CommandSender $sender, string $commandLabel, array $args) : bool {
 		if($sender instanceof Player) {
-			if($sender->hasPermission('nethergames.voter')) {
+			if($sender->hasPermission(Permissions::RANK_VOTER)) {
 				$sender->teleport($this->getPlugin()->getServer()->getWorldManager()->getWorldByName('MEGA')->getSafeSpawn());
 				$form = new MainForm($sender, $this->getPlugin()->getCommands()->getCommands());
 				$form->sendForm();

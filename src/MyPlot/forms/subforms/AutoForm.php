@@ -6,6 +6,7 @@ namespace MyPlot\forms\subforms;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\forms\interfaces\PlotButtonForm;
 use MyPlot\MyPlot;
+use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
@@ -28,7 +29,7 @@ class AutoForm extends ComplexMyPlotForm implements PlotButtonForm{
 	public function onButtonClick(Player $player) : void {
 		$plugin = MyPlot::getInstance();
 
-		if($player->getWorld()->getFolderName() === 'Platinum' && (!$player->hasPermission('nethergames.vip.ultra'))) {
+		if($player->getWorld()->getFolderName() === 'Platinum' && !$player->hasPermission(Permissions::RANK_ULTRA)) {
 			$player->sendMessage('§cThat action is blocked for you in this world.');
 			return;
 		}

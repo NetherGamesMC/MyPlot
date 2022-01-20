@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MyPlot\command;
 
 use MyPlot\task\CleanEntitiesTask;
+use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 
@@ -12,7 +13,7 @@ class ClearEntitiesCommand extends BaseCommand{
 	public function __construct() {
 		parent::__construct('ce');
 
-		$this->setPermission('nethergames.executive');
+		$this->setPermission(Permissions::RANK_DEVELOPER);
 		$this->setPermissionMessage('command.reserved.estaff');
 		$this->setDescription('Command used for clearing unnecessary entities in worlds');
 	}

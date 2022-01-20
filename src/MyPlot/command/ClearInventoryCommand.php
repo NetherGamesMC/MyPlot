@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MyPlot\command;
 
 use NetherGames\NGEssentials\lang\BaseLang;
+use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 
@@ -13,7 +14,7 @@ class ClearInventoryCommand extends BaseCommand{
 		parent::__construct('clearinventory');
 
 		$this->setAliases(['ci']);
-		$this->setPermission('nethergames.vip.legend');
+		$this->setPermission(Permissions::RANK_LEGEND);
 		$this->setPermissionMessage('command.ci.noperm');
 		$this->setDescription('Command used for clearing your inventory for Legend players');
 	}

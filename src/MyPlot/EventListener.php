@@ -8,6 +8,7 @@ use MyPlot\events\MyPlotBorderChangeEvent;
 use MyPlot\events\MyPlotPlayerEnterPlotEvent;
 use MyPlot\events\MyPlotPlayerLeavePlotEvent;
 use MyPlot\events\MyPlotPvpEvent;
+use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\block\Block;
 use pocketmine\block\Sapling;
 use pocketmine\block\utils\TreeType;
@@ -357,11 +358,10 @@ class EventListener implements Listener
 		if($player instanceof Player) {
 			$this->onEventOnMove($player, $event);
 
-			if(!$player->hasPermission('nethergames.voter') && $event->getTo()->getWorld()->getFolderName() === 'MEGA' && $event->getFrom()->getWorld() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()) {
-				$player->sendMessage('§cYou must vote to access Mega Creative.');
-				$event->cancel();
-				return;
-			}
+            if (!$player->hasPermission(Permissions::RANK_VOTER) && $event->getTo()->getWorld()->getFolderName() === 'MEGA') {
+                $player->sendMessage('§cYou must vote to access Mega Creative.');
+                $event->cancel();
+            }
 		}
 	}
 

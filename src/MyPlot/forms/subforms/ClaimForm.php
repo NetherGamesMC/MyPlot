@@ -6,6 +6,7 @@ namespace MyPlot\forms\subforms;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\forms\interfaces\PlotButtonForm;
 use MyPlot\MyPlot;
+use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use function count;
@@ -68,7 +69,7 @@ class ClaimForm extends ComplexMyPlotForm implements PlotButtonForm{
 			}else{
 				$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString('claim.alreadyclaimed', [$plot->owner]));
 			}
-		}else if($player->getWorld()->getFolderName() === 'Platinum' && (!$player->hasPermission('nethergames.vip.ultra'))) {
+		}else if($player->getWorld()->getFolderName() === 'Platinum' && !$player->hasPermission(Permissions::RANK_ULTRA)) {
 			$player->sendMessage('§cThat action is blocked for you in this world.');
 		}else{
 			$maxPlots = $plugin->getMaxPlotsOfPlayer($player);
