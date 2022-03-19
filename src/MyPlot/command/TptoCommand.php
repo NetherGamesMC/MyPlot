@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace MyPlot\command;
 
-use NetherGames\NGEssentials\lang\BaseLang;
 use NetherGames\NGEssentials\player\permissions\Permissions;
+use NetherGames\NGEssentials\player\Translator;
 use pocketmine\command\CommandSender;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\player\Player;
@@ -32,41 +32,41 @@ class TptoCommand extends BaseCommand{
 					if(($player = $this->getPlugin()->getServer()->getPlayerExact($args[1])) instanceof Player) {
 						if(isset($this->requests[$sender->getName()][$player->getName()])) {
 							$player->teleport($sender->getPosition());
-							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tpto.accepted.receiver', array($player->getName())));
-							$player->sendMessage(BaseLang::translateStringPlayer($player, 'command.tpto.accepted.sender', array($sender->getName())));
+                            Translator::sendMessage($sender, "command.tpto.accepted.receiver", Translator::TYPE_SUCCESS, ...["sender" => $player->getName()]);
+                            Translator::sendMessage($sender, "command.tpto.accepted.sender", Translator::TYPE_SUCCESS, ...["receiver" => $sender->getName()]);
 							unset($this->requests[$sender->getName()][$player->getName()]);
 						}else{
-							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tpto.norequest'));
+                            Translator::sendMessage($sender, "command.tpto.norequest", Translator::TYPE_ERROR);
 						}
 					}else{
-						$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'player.offline'));
+                        Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
 					}
 				}else{
-					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tp.specify'));
+                    Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
 				}
 			}elseif($args[0] === 'd' || $args[0] === 'decline'){
 				if(isset($args[1])) {
 					if(($player = $this->getPlugin()->getServer()->getPlayerExact($args[1])) instanceof Player) {
 						if(isset($this->requests[$sender->getName()][$player->getName()])) {
-							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tpto.declined.receiver', array($player->getName())));
-							$player->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tpto.declined.sender', array($sender->getName())));
+                            Translator::sendMessage($sender, "command.tpto.declined.receiver", Translator::TYPE_INFO, ...["sender" => $player->getName()]);
+                            Translator::sendMessage($player, "command.tpto.declined.sender", Translator::TYPE_INFO, ...["receiver" => $sender->getName()]);
 							unset($this->requests[$sender->getName()][$player->getName()]);
 						}else{
-							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tpto.norequest'));
+                            Translator::sendMessage($sender, "command.tpto.norequest", Translator::TYPE_ERROR);
 						}
 					}else{
-						$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'player.offline'));
+                        Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
 					}
 				}else{
-					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tp.specify'));
+                    Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
 				}
 			}elseif(($player = $this->getPlugin()->getServer()->getPlayerExact($args[0])) instanceof Player){
 				if($sender->hasPermission(Permissions::RANK_EMERALD)) {
 					$this->requests[$player->getName()][$sender->getName()] = $sender->getName();
-					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tpto.send', array($player->getName())));
-					$player->sendMessage(BaseLang::translateStringPlayer($player, 'command.tpto.receive', array($sender->getName())));
+                    Translator::sendMessage($sender, "command.tpto.send", Translator::TYPE_SUCCESS, ...["receiver" => $player->getName()]);
+                    Translator::sendMessage($player, "command.tpto.receive", Translator::TYPE_INFO, ...["sender" => $sender->getName()]);
 				}else{
-					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tpto.noperm'));
+                    Translator::sendMessage($sender, "command.tpto.noperm", Translator::TYPE_ERROR);
 				}
 			}else{
 				throw new InvalidCommandSyntaxException();
