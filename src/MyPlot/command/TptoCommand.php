@@ -32,41 +32,41 @@ class TptoCommand extends BaseCommand{
 					if(($player = $this->getPlugin()->getServer()->getPlayerExact($args[1])) instanceof Player) {
 						if(isset($this->requests[$sender->getName()][$player->getName()])) {
 							$player->teleport($sender->getPosition());
-                            Translator::sendMessage($sender, "command.tpto.accepted.receiver", Translator::TYPE_SUCCESS, ...["sender" => $player->getName()]);
-                            Translator::sendMessage($sender, "command.tpto.accepted.sender", Translator::TYPE_SUCCESS, ...["receiver" => $sender->getName()]);
+							Translator::sendMessage($sender, "command.tpto.accepted.receiver", Translator::TYPE_SUCCESS, ...["sender" => $player->getName()]);
+							Translator::sendMessage($sender, "command.tpto.accepted.sender", Translator::TYPE_SUCCESS, ...["receiver" => $sender->getName()]);
 							unset($this->requests[$sender->getName()][$player->getName()]);
 						}else{
-                            Translator::sendMessage($sender, "command.tpto.norequest", Translator::TYPE_ERROR);
+							Translator::sendMessage($sender, "command.tpto.norequest", Translator::TYPE_ERROR);
 						}
 					}else{
-                        Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
+						Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
 					}
 				}else{
-                    Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
+					Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
 				}
 			}elseif($args[0] === 'd' || $args[0] === 'decline'){
 				if(isset($args[1])) {
 					if(($player = $this->getPlugin()->getServer()->getPlayerExact($args[1])) instanceof Player) {
 						if(isset($this->requests[$sender->getName()][$player->getName()])) {
-                            Translator::sendMessage($sender, "command.tpto.declined.receiver", Translator::TYPE_INFO, ...["sender" => $player->getName()]);
-                            Translator::sendMessage($player, "command.tpto.declined.sender", Translator::TYPE_INFO, ...["receiver" => $sender->getName()]);
+							Translator::sendMessage($sender, "command.tpto.declined.receiver", Translator::TYPE_INFO, ...["sender" => $player->getName()]);
+							Translator::sendMessage($player, "command.tpto.declined.sender", Translator::TYPE_INFO, ...["receiver" => $sender->getName()]);
 							unset($this->requests[$sender->getName()][$player->getName()]);
 						}else{
-                            Translator::sendMessage($sender, "command.tpto.norequest", Translator::TYPE_ERROR);
+							Translator::sendMessage($sender, "command.tpto.norequest", Translator::TYPE_ERROR);
 						}
 					}else{
-                        Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
+						Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
 					}
 				}else{
-                    Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
+					Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
 				}
 			}elseif(($player = $this->getPlugin()->getServer()->getPlayerExact($args[0])) instanceof Player){
 				if($sender->hasPermission(Permissions::RANK_EMERALD)) {
 					$this->requests[$player->getName()][$sender->getName()] = $sender->getName();
-                    Translator::sendMessage($sender, "command.tpto.send", Translator::TYPE_SUCCESS, ...["receiver" => $player->getName()]);
-                    Translator::sendMessage($player, "command.tpto.receive", Translator::TYPE_INFO, ...["sender" => $sender->getName()]);
+					Translator::sendMessage($sender, "command.tpto.send", Translator::TYPE_SUCCESS, ...["receiver" => $player->getName()]);
+					Translator::sendMessage($player, "command.tpto.receive", Translator::TYPE_INFO, ...["sender" => $sender->getName()]);
 				}else{
-                    Translator::sendMessage($sender, "command.tpto.noperm", Translator::TYPE_ERROR);
+					Translator::sendMessage($sender, "command.tpto.noperm", Translator::TYPE_ERROR);
 				}
 			}else{
 				throw new InvalidCommandSyntaxException();

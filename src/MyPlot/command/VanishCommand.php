@@ -30,13 +30,13 @@ class VanishCommand extends BaseCommand{
 				foreach($sender->getServer()->getOnlinePlayers() as $player){
 					$player->hidePlayer($sender);
 				}
-                Translator::sendMessage($sender, "command.vanish.enabled", Translator::TYPE_SUCCESS);
+				Translator::sendMessage($sender, "command.vanish.enabled", Translator::TYPE_SUCCESS);
 			}else{
 				$this->getPlugin()->getEssentials()->getPlayerData()->setValue($sender, PlayerData::VANISH, false);
 				foreach($sender->getServer()->getOnlinePlayers() as $player){
 					$player->showPlayer($sender);
 				}
-                Translator::sendMessage($sender, "command.vanish.disabled", Translator::TYPE_SUCCESS);
+				Translator::sendMessage($sender, "command.vanish.disabled", Translator::TYPE_SUCCESS);
 			}
 		}else{
 			$sender->sendMessage($this->getPlugin()->getEssentials()->getPrefix() . '§cThat command can only be run in-game.');

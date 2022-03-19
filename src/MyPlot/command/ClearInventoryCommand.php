@@ -26,7 +26,7 @@ class ClearInventoryCommand extends BaseCommand{
 			}
 
 			$sender->getInventory()->clearAll();
-            Translator::sendMessage($sender, "command.ci.completed", Translator::TYPE_SUCCESS);
+			Translator::sendMessage($sender, "command.ci.completed", Translator::TYPE_SUCCESS);
 		}else{
 			$sender->sendMessage($this->getPlugin()->getEssentials()->getPrefix() . '§cThat command can only be run in-game.');
 		}
