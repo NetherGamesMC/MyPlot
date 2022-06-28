@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace MyPlot\command;
 
-use NetherGames\NGEssentials\lang\BaseLang;
 use NetherGames\NGEssentials\player\permissions\Permissions;
+use NetherGames\NGEssentials\player\Translator;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 
@@ -26,7 +26,7 @@ class ClearInventoryCommand extends BaseCommand{
 			}
 
 			$sender->getInventory()->clearAll();
-			$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.ci.completed'));
+			Translator::sendMessage($sender, "command.ci.completed", Translator::TYPE_SUCCESS);
 		}else{
 			$sender->sendMessage($this->getPlugin()->getEssentials()->getPrefix() . '§cThat command can only be run in-game.');
 		}

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace MyPlot\command;
 
-use NetherGames\NGEssentials\lang\BaseLang;
 use NetherGames\NGEssentials\player\permissions\Permissions;
+use NetherGames\NGEssentials\player\Translator;
 use pocketmine\command\CommandSender;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\player\Player;
@@ -32,41 +32,41 @@ class TphereCommand extends BaseCommand{
 					if(($player = $sender->getServer()->getPlayerExact($args[1])) instanceof Player) {
 						if(isset($this->requests[$sender->getName()][$player->getName()])) {
 							$sender->teleport($player->getPosition());
-							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.accepted.receiver', array($player->getName())));
-							$player->sendMessage(BaseLang::translateStringPlayer($player, 'command.tphere.accepted.sender', array($sender->getName())));
+							Translator::sendMessage($sender, "command.tphere.accepted.receiver", Translator::TYPE_SUCCESS, ...["sender" => $player->getName()]);
+							Translator::sendMessage($player, "command.tphere.accepted.sender", Translator::TYPE_SUCCESS, ...["receiver" => $sender->getName()]);
 							unset($this->requests[$sender->getName()][$player->getName()]);
 						}else{
-							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.norequest'));
+							Translator::sendMessage($sender, "command.tphere.norequest", Translator::TYPE_ERROR);
 						}
 					}else{
-						$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'player.offline'));
+						Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
 					}
 				}else{
-					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tp.specify'));
+					Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
 				}
 			}elseif($args[0] === 'd' || $args[0] === 'decline'){
 				if(isset($args[1])) {
 					if(($player = $sender->getServer()->getPlayerExact($args[1])) instanceof Player) {
 						if(isset($this->requests[$sender->getName()][$player->getName()])) {
-							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.declined.receiver', array($player->getName())));
-							$player->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.declined.sender', array($sender->getName())));
+							Translator::sendMessage($sender, "command.tphere.declined.receiver", Translator::TYPE_INFO, ...["sender" => $player->getName()]);
+							Translator::sendMessage($player, "command.tphere.declined.sender", Translator::TYPE_INFO, ...["receiver" => $sender->getName()]);
 							unset($this->requests[$sender->getName()][$player->getName()]);
 						}else{
-							$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.norequest'));
+							Translator::sendMessage($sender, "command.tphere.norequest", Translator::TYPE_ERROR);
 						}
 					}else{
-						$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'player.offline'));
+						Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
 					}
 				}else{
-					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tp.specify'));
+					Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
 				}
 			}elseif(($player = $sender->getServer()->getPlayerExact($args[0])) instanceof Player){
 				if($sender->hasPermission(Permissions::RANK_EMERALD)) {
 					$this->requests[$player->getName()][$sender->getName()] = $sender->getName();
-					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.send', array($player->getName())));
-					$player->sendMessage(BaseLang::translateStringPlayer($player, 'command.tphere.receive', array($sender->getName())));
+					Translator::sendMessage($sender, "command.tphere.send", Translator::TYPE_SUCCESS, ...["receiver" => $player->getName()]);
+					Translator::sendMessage($player, "command.tphere.receive", Translator::TYPE_INFO, ...["sender" => $sender->getName()]);
 				}else{
-					$sender->sendMessage(BaseLang::translateStringPlayer($sender, 'command.tphere.noperm'));
+					Translator::sendMessage($sender, "command.tphere.noperm", Translator::TYPE_ERROR);
 				}
 			}else{
 				throw new InvalidCommandSyntaxException();
