@@ -7,21 +7,18 @@ use libforms\elements\Dropdown;
 use libforms\elements\Label;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\MyPlot;
+use MyPlot\Plot;
 use MyPlot\subcommand\BiomeSubCommand;
-use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class InfoForm extends ComplexMyPlotForm{
-	public function __construct(Player $player) {
-		$plugin = MyPlot::getInstance();
+class InfoForm extends ComplexMyPlotForm {
 
-		if(!isset($this->plot))
-			$this->plot = $plugin->getPlotByPosition($player->getPosition());
-		if(!isset($this->plot))
-			return;
+	public function __construct(Plot $plot) {
+		$plugin = MyPlot::getInstance();
+		$this->setPlot($plot);
 
 		parent::__construct(
-			$player,
+			null,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("info.form")]),
 			[
 				new Label($plugin->getLanguage()->translateString("info.formcoords", [(string)$this->plot])),

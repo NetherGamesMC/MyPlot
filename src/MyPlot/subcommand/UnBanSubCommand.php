@@ -6,9 +6,7 @@ use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\UnBanPlayerForm;
 use MyPlot\Plot;
 use pocketmine\command\CommandSender;
-use pocketmine\player\OfflinePlayer;
 use pocketmine\player\Player;
-use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
 class UnBanSubCommand extends SubCommand
@@ -28,7 +26,7 @@ class UnBanSubCommand extends SubCommand
 			return false;
 		}
 		$dplayerName = $args[0];
-		$plot = $this->getPlugin()->getPlotByPosition($sender->getPosition());
+		$plot = $this->plugin->getPlotByPosition($sender->getPosition());
 		if($plot === null) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
 			return true;
@@ -37,11 +35,11 @@ class UnBanSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$dplayer = $this->getPlugin()->getServer()->getPlayerByPrefix($dplayerName);
+		$dplayer = $this->plugin->getServer()->getPlayerByPrefix($dplayerName);
 		if($dplayer === null)
-			$dplayer = new OfflinePlayer($dplayerName, Server::getInstance()->getOfflinePlayerData($dplayerName));
-		if($this->getPlugin()->removePlotDenied($plot, $dplayer->getName())) {
-			$sender->sendMessage($this->translateString("unbanplayer.success1", [$dplayer->getName()]));
+			$dplayer = $this->plugin->getServer()->getOfflinePlayer($dplayerName);
+		if($this->plugin->removePlotDenied($plot, $dplayer->getName())) {
+			$sender->sendMessage($this->translateString("undenyplayer.success1", [$dplayer->getName()]));
 			if($dplayer instanceof Player) {
 				$dplayer->sendMessage($this->translateString("unbanplayer.success2", [$plot->X, $plot->Z, $sender->getName()]));
 			}
@@ -52,8 +50,8 @@ class UnBanSubCommand extends SubCommand
 	}
 
 	public function getForm(?Player $player = null) : ?MyPlotForm {
-		if($player !== null and $this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
-			return new UnBanPlayerForm();
+		if($player !== null and ($plot = $this->plugin->getPlotByPosition($player->getPosition())) instanceof Plot)
+			return new UnBanPlayerForm($plot);
 		return null;
 	}
 }

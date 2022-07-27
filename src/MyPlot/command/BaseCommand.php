@@ -5,12 +5,7 @@ declare(strict_types=1);
 namespace MyPlot\command;
 
 use MyPlot\MyPlot;
-use NetherGames\NGEssentials\lang\BaseLang;
 use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\lang\KnownTranslationKeys;
-use pocketmine\player\Player;
-use pocketmine\utils\TextFormat;
 
 abstract class BaseCommand extends Command{
 

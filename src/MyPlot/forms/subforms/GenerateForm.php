@@ -58,28 +58,48 @@ class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm {
 				}
 
 				$teleport = array_pop($data);
-				$data = array_map(
-					function($val) {
-						if(!is_string($val)) {
-							return $val;
-						}
-
-						if(strpos($val, ':') !== false) {
-							$pieces = explode(':', $val);
-							if(defined(BlockLegacyIds::class . "::" . strtoupper(str_replace(' ', '_', $pieces[0])))) {
-								return constant(BlockLegacyIds::class . "::" . strtoupper(str_replace(' ', '_', $val))) . ':' . ($pieces[1] ?? 0);
-							}
-
-							return $val;
-						}elseif(is_numeric($val)){
-							return $val . ':0';
-						}elseif(defined(BlockLegacyIds::class . "::" . strtoupper(str_replace(' ', '_', $val)))){
-							return constant(BlockLegacyIds::class . "::" . strtoupper(str_replace(' ', '_', $val))) . ':0';
-						}
+//<<<<<<< HEAD
+//				$data = array_map(
+//					function($val) {
+//						if(!is_string($val)) {
+//							return $val;
+//						}
+//						if(strpos($val, ':') !== false) {
+//							$pieces = explode(':', $val);
+//							if(defined(BlockLegacyIds::class . "::" . strtoupper(str_replace(' ', '_', $pieces[0])))) {
+//								return constant(BlockLegacyIds::class . "::" . strtoupper(str_replace(' ', '_', $val))) . ':' . ($pieces[1] ?? 0);
+//							}
+//
+//							return $val;
+//						}elseif(is_numeric($val)){
+//							return $val . ':0';
+//						}elseif(defined(BlockLegacyIds::class . "::" . strtoupper(str_replace(' ', '_', $val)))){
+//							return constant(BlockLegacyIds::class . "::" . strtoupper(str_replace(' ', '_', $val))) . ':0';
+//						}
+//						return $val;
+//					},
+//					$data
+//				);
+//=======
+				$blockIds = array_slice($data, -5, 5, true);
+				$blockIds = array_map(function($val) {
+					if(str_contains($val, ':')) {
+						$peices = explode(':', $val);
+						if(defined(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $peices[0]))))
+							return constant(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $val))).':'.($peices[1] ?? 0);
 						return $val;
-					},
-					$data
-				);
+					}elseif(is_numeric($val))
+						return $val.':0';
+					elseif(defined(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $val))))
+						return constant(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $val))).':0';
+					return $val;
+				}, $blockIds);
+
+				foreach($blockIds as $key => $val) {
+                    $data[$key] = $val;
+                }
+
+//>>>>>>> upstream/API4
 
 				if($plugin->generateWorld($worldName, array_shift($data), $data)) {
 					if($teleport) {

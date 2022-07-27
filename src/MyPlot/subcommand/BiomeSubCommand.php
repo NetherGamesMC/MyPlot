@@ -13,7 +13,17 @@ use pocketmine\world\biome\BiomeRegistry;
 
 class BiomeSubCommand extends SubCommand
 {
-	public CONST BIOMES = ["PLAINS" => BiomeIds::PLAINS, "DESERT" => BiomeIds::DESERT, "MOUNTAINS" => BiomeIds::EXTREME_HILLS, "FOREST" => BiomeIds::FOREST, "TAIGA" => BiomeIds::TAIGA, "SWAMP" => BiomeIds::SWAMPLAND, "NETHER" => BiomeIds::HELL, "HELL" => BiomeIds::HELL, "ICE_PLAINS" => BiomeIds::ICE_PLAINS];
+	public CONST BIOMES = [
+        "PLAINS" => BiomeIds::PLAINS,
+        "DESERT" => BiomeIds::DESERT,
+        "MOUNTAINS" => BiomeIds::EXTREME_HILLS,
+        "FOREST" => BiomeIds::FOREST,
+        "TAIGA" => BiomeIds::TAIGA,
+        "SWAMP" => BiomeIds::SWAMPLAND,
+        "NETHER" => BiomeIds::HELL,
+        "HELL" => BiomeIds::HELL,
+        "ICE_PLAINS" => BiomeIds::ICE_PLAINS
+    ];
 
 	public function canUse(CommandSender $sender) : bool {
 		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.biome");
@@ -35,7 +45,7 @@ class BiomeSubCommand extends SubCommand
 		if($player === null)
 			return true;
 		$biome = strtoupper($args[0]);
-		$plot = $this->getPlugin()->getPlotByPosition($player->getPosition());
+		$plot = $this->plugin->getPlotByPosition($player->getPosition());
 		if($plot === null) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
 			return true;
@@ -64,7 +74,7 @@ class BiomeSubCommand extends SubCommand
 			}
 			$biome = BiomeRegistry::getInstance()->getBiome(constant(BiomeIds::class."::".$biome));
 		}
-		if($this->getPlugin()->setPlotBiome($plot, $biome)) {
+		if($this->plugin->setPlotBiome($plot, $biome)) {
 			$sender->sendMessage($this->translateString("biome.success", [$biome->getName()]));
 		}else{
 			$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
@@ -73,7 +83,7 @@ class BiomeSubCommand extends SubCommand
 	}
 
 	public function getForm(?Player $player = null) : ?MyPlotForm {
-		if($player !== null and $this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
+		if($player !== null and $this->plugin->getPlotByPosition($player->getPosition()) instanceof Plot)
 			return new BiomeForm(array_keys(self::BIOMES));
 		return null;
 	}

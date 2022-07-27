@@ -22,7 +22,7 @@ class ClearSubCommand extends SubCommand
 	 * @return bool
 	 */
 	public function execute(CommandSender $sender, array $args) : bool {
-		$plot = $this->getPlugin()->getPlotByPosition($sender->getPosition());
+		$plot = $this->plugin->getPlotByPosition($sender->getPosition());
 		if($plot === null) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
 			return true;
@@ -32,16 +32,16 @@ class ClearSubCommand extends SubCommand
 			return true;
 		}
 		if(isset($args[0]) and $args[0] == $this->translateString("confirm")) {
-			$economy = $this->getPlugin()->getEconomyProvider();
-			$price = $this->getPlugin()->getLevelSettings($plot->levelName)->clearPrice;
+			$economy = $this->plugin->getEconomyProvider();
+			$price = $this->plugin->getLevelSettings($plot->levelName)->clearPrice;
 			if($economy !== null and !$economy->reduceMoney($sender, $price)) {
 				$sender->sendMessage(TextFormat::RED . $this->translateString("clear.nomoney"));
 				return true;
 			}
-			$maxBlocksPerTick = $this->getPlugin()->getConfig()->get("ClearBlocksPerTick", 256);
+			$maxBlocksPerTick = $this->plugin->getConfig()->get("ClearBlocksPerTick", 256);
 			if(!is_int($maxBlocksPerTick))
 				$maxBlocksPerTick = 256;
-			if($this->getPlugin()->clearPlot($plot, $maxBlocksPerTick)) {
+			if($this->plugin->clearPlot($plot, $maxBlocksPerTick)) {
 				$sender->sendMessage($this->translateString("clear.success"));
 			}else{
 				$sender->sendMessage(TextFormat::RED . $this->translateString("error"));

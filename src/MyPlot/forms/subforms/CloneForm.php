@@ -17,10 +17,12 @@ class CloneForm extends ComplexMyPlotForm implements PlotAdminForm{
 	public function __construct(Player $player) {
 		$plugin = MyPlot::getInstance();
 		$plot = $plugin->getPlotByPosition($player->getPosition());
+		$this->setPlot($plot);
 		if($plot === null) {
 			$plot = new \stdClass();
 			$plot->X = "";
 			$plot->Z = "";
+			$plot->levelName = $player->getWorld()->getFolderName();
 		}
 		parent::__construct(
 			$player,

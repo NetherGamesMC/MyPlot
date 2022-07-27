@@ -8,12 +8,11 @@ use MyPlot\subcommand\AddHelperSubCommand;
 use MyPlot\subcommand\ArchiveSubCommand;
 use MyPlot\subcommand\AutoSubCommand;
 use MyPlot\subcommand\BiomeSubCommand;
-use MyPlot\subcommand\BuySubCommand;
 use MyPlot\subcommand\ClaimSubCommand;
 use MyPlot\subcommand\ClearSubCommand;
-use MyPlot\subcommand\CloneSubCommand;
 use MyPlot\subcommand\BanPlayerSubCommand;
 use MyPlot\subcommand\DisposeSubCommand;
+use MyPlot\subcommand\FillSubCommand;
 use MyPlot\subcommand\GenerateSubCommand;
 use MyPlot\subcommand\GiveSubCommand;
 use MyPlot\subcommand\HelpSubCommand;
@@ -22,13 +21,11 @@ use MyPlot\subcommand\HomeSubCommand;
 use MyPlot\subcommand\InfoSubCommand;
 use MyPlot\subcommand\KickSubCommand;
 use MyPlot\subcommand\ListSubCommand;
-use MyPlot\subcommand\MergeSubCommand;
 use MyPlot\subcommand\MiddleSubCommand;
 use MyPlot\subcommand\NameSubCommand;
 use MyPlot\subcommand\PvpSubCommand;
 use MyPlot\subcommand\RemoveHelperSubCommand;
 use MyPlot\subcommand\ResetSubCommand;
-use MyPlot\subcommand\SellSubCommand;
 use MyPlot\subcommand\SetOwnerSubCommand;
 use MyPlot\subcommand\SubCommand;
 use MyPlot\subcommand\TimeSubCommand;
@@ -39,11 +36,13 @@ use pocketmine\command\CommandSender;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
 use pocketmine\player\Player;
-use pocketmine\Server;
+use pocketmine\plugin\PluginOwnedTrait;
 use pocketmine\utils\TextFormat;
 
 class Commands extends Command implements PluginOwned
 {
+	use PluginOwnedTrait;
+
 	/** @var SubCommand[] $subCommands */
 	private array $subCommands = [];
 	/** @var SubCommand[] $aliasSubCommands */
@@ -55,13 +54,12 @@ class Commands extends Command implements PluginOwned
 	 * @param MyPlot $plugin
 	 */
 	public function __construct(MyPlot $plugin) {
-		parent::__construct($plugin->getLanguage()->get("command.name"),
-			$plugin->getLanguage()->get("command.desc"),
-			$plugin->getLanguage()->get("command.usage"),
-			[$plugin->getLanguage()->get("command.alias")]
-		);
+		parent::__construct($plugin->getLanguage()->get("command.name"), $plugin->getLanguage()->get("command.desc"), $plugin->getLanguage()->get("command.usage"), [$plugin->getLanguage()->get("command.alias")]);
 		$this->setPermission("myplot.command");
-		$this->loadSubCommand(new WarpSubCommand($plugin, "warp"));
+		$this->owningPlugin = $plugin;
+
+        /*
+        $this->loadSubCommand(new WarpSubCommand($plugin, "warp"));
 		$this->loadSubCommand(new HelpSubCommand($plugin, "help", $this));
 		$this->loadSubCommand(new ClaimSubCommand($plugin, "claim"));
 		$this->loadSubCommand(new AutoSubCommand($plugin, "auto"));
@@ -86,7 +84,36 @@ class Commands extends Command implements PluginOwned
 		$this->loadSubCommand(new ListSubCommand($plugin, "list"));
 		$this->loadSubCommand(new PvpSubCommand($plugin, "pvp"));
 		$this->loadSubCommand(new KickSubCommand($plugin, "kick"));
-		//$this->loadSubCommand(new MergeSubCommand($plugin, "merge")); // dries didnt want these :(
+         */
+
+        $this->loadSubCommand(new HelpSubCommand($plugin, "help", $this));
+        $this->loadSubCommand(new WarpSubCommand($plugin, "warp"));
+        $this->loadSubCommand(new ClaimSubCommand($plugin, "claim"));
+		$this->loadSubCommand(new AutoSubCommand($plugin, "auto"));
+		$this->loadSubCommand(new TimeSubCommand($plugin, "time"));
+		$this->loadSubCommand(new GenerateSubCommand($plugin, "generate"));
+		$this->loadSubCommand(new InfoSubCommand($plugin, "info"));
+		$this->loadSubCommand(new NameSubCommand($plugin, "name"));
+		$this->loadSubCommand(new BiomeSubCommand($plugin, "biome"));
+		$this->loadSubCommand(new MiddleSubCommand($plugin, "middle"));
+		$this->loadSubCommand(new AddHelperSubCommand($plugin, "addhelper"));
+		$this->loadSubCommand(new RemoveHelperSubCommand($plugin, "removehelper"));
+        $this->loadSubCommand(new HomeSubCommand($plugin, "home"));
+        $this->loadSubCommand(new HomesSubCommand($plugin, "homes"));
+        $this->loadSubCommand(new ArchiveSubCommand($plugin, "archive"));
+        $this->loadSubCommand(new DisposeSubCommand($plugin, "dispose"));
+        $this->loadSubCommand(new GiveSubCommand($plugin, "give"));
+        $this->loadSubCommand(new ClearSubCommand($plugin, "clear"));
+        $this->loadSubCommand(new ResetSubCommand($plugin, "reset"));
+        $this->loadSubCommand(new BanPlayerSubCommand($plugin, "banplayer"));
+        $this->loadSubCommand(new UnBanSubCommand($plugin, "unbanplayer"));
+        $this->loadSubCommand(new SetOwnerSubCommand($plugin, "setowner"));
+        $this->loadSubCommand(new ListSubCommand($plugin, "list"));
+        $this->loadSubCommand(new PvpSubCommand($plugin, "pvp"));
+        $this->loadSubCommand(new KickSubCommand($plugin, "kick"));
+        $this->loadSubCommand(new FillSubCommand($plugin, "fill"));
+
+		//$this->loadSubCommand(new MergeSubCommand($plugin, "merge")); // dries didnt want these
 		//if($plugin->getEconomyProvider() !== null) {
 		//	$this->loadSubCommand(new SellSubCommand($plugin, "sell"));
 		//	$this->loadSubCommand(new BuySubCommand($plugin, "buy"));
@@ -95,6 +122,7 @@ class Commands extends Command implements PluginOwned
 		//if($styler !== null) {
 		//	$this->loadSubCommand(new CloneSubCommand($plugin, "clone"));
 		//}
+
 		$plugin->getLogger()->debug("Commands Registered to MyPlot");
 	}
 

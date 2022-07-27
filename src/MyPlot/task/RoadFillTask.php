@@ -9,17 +9,16 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use pocketmine\scheduler\CancelTaskException;
 use pocketmine\scheduler\Task;
-use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class RoadFillTask extends Task{
 	protected MyPlot $plugin;
 	protected Plot $start;
 	protected Plot $end;
-	protected World $world;
+	protected World $level;
 	protected int $height;
-	/** @var Position|Vector3|null $plotBeginPos */
 	protected ?Vector3 $plotBeginPos;
 	protected int $xMax;
 	protected int $zMax;
@@ -42,7 +41,7 @@ class RoadFillTask extends Task{
 		$this->cornerDirection = $cornerDirection === -1 ? -1 : Facing::opposite($cornerDirection);
 
 		$this->plotBeginPos = $plugin->getPlotPosition($start, false);
-		$this->world = $this->plotBeginPos->getWorld();
+		$this->level = $this->plotBeginPos->getWorld();
 
 		$plotLevel = $plugin->getLevelSettings($start->levelName);
 		$plotSize = $plotLevel->plotSize;
@@ -73,13 +72,13 @@ class RoadFillTask extends Task{
 		$this->maxBlocksPerTick = $maxBlocksPerTick;
 		$this->pos = new Vector3($this->plotBeginPos->x, 0, $this->plotBeginPos->z);
 
-		$plugin->getLogger()->debug("Road Clear Task started between plots {$start->X};{$start->Z} and {$end->X};{$end->Z}");
+		$plugin->getLogger()->debug("Road Clear Task started between plots $start->X;$start->Z and $end->X;$end->Z");
 	}
 
 	public function onRun() : void {
-		foreach($this->world->getEntities() as $entity) {
-			if($entity->getLocation()->x > $this->pos->x - 1 and $entity->getLocation()->x < $this->xMax + 1) {
-				if($entity->getLocation()->z > $this->pos->z - 1 and $entity->getLocation()->z < $this->zMax + 1) {
+		foreach($this->level->getEntities() as $entity) {
+			if($entity->getPosition()->x > $this->pos->x - 1 and $entity->getPosition()->x < $this->xMax + 1) {
+				if($entity->getPosition()->z > $this->pos->z - 1 and $entity->getPosition()->z < $this->zMax + 1) {
 					if(!$entity instanceof Player){
 						$entity->flagForDespawn();
 					}else{
@@ -91,7 +90,7 @@ class RoadFillTask extends Task{
 		$blocks = 0;
 		while($this->pos->x < $this->xMax) {
 			while($this->pos->z < $this->zMax) {
-				while($this->pos->y < $this->world->getMaxY()) {
+				while($this->pos->y < $this->level->getMaxY()) {
 					if($this->pos->y === 0)
 						$block = $this->bottomBlock;
 					elseif($this->pos->y < $this->height)
@@ -101,14 +100,14 @@ class RoadFillTask extends Task{
 					else
 						$block = VanillaBlocks::AIR();
 
-					$this->world->setBlock($this->pos, $block, false);
-					$this->pos->y++;
 
+					$this->level->setBlock($this->pos, $block, false);
+					$this->pos->y++;
 					$blocks++;
 					if($blocks >= $this->maxBlocksPerTick) {
 						$this->setHandler(null);
 						$this->plugin->getScheduler()->scheduleDelayedTask($this, 1);
-						return;
+						throw new CancelTaskException();
 					}
 				}
 				$this->pos->y = 0;
@@ -117,8 +116,8 @@ class RoadFillTask extends Task{
 			$this->pos->z = $this->plotBeginPos->z;
 			$this->pos->x++;
 		}
-		$this->plugin->getLogger()->debug("Plot Road Clear task completed at {$this->start->X};{$this->start->Z}");
 
+		$this->plugin->getLogger()->debug("Plot Road Clear task completed at {$this->start->X};{$this->start->Z}");
 		$this->plugin->getScheduler()->scheduleTask(new BorderCorrectionTask($this->plugin, $this->start, $this->end, $this->fillCorner, $this->cornerDirection));
 	}
 }

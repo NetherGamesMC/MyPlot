@@ -10,7 +10,7 @@
 #########################################
 
 # The language that should be used in MyPlot
-# Available languages: eng, nld, vie, spa, chs, zho, deu, cze, tur, kor, fre, tgl, pol, swe
+# Available languages: eng, nld, vie, spa, chs, zho, deu, cze, tha, tur, kor, fre, tgl, pol, swe
 #
 # English language pack by Wiez, Exxarion, and jasonwynn10
 # Dutch language pack by Wiez
@@ -20,6 +20,7 @@
 # Chinese ( PRC ) pack by jerryzooyoyo
 # German language pack by DerDevHD, SalmonDE, morpheus132 and Wertzui123
 # Czech language pack by GamakCZ and PikyCZ
+# Thai language pack by KohakuChanX
 # Turkish language pack by Eren5960
 # Korean language pack by Johnmacrocraft
 # French language pack by Ad5001 and LeoBdt
@@ -64,6 +65,9 @@ ShowPlotPopup: true
 # If WorldStyler is installed, MyPlot will use that to clear the entire plot at once
 FastClearing: false
 
+# If WorldStyler is installed, MyPlot will use that to fill the entire plot at once
+FastFilling: false
+
 # Amount of blocks to reset per tick. This only applies if FastClearing is disabled
 # Increasing this number will speed up '/p clear' and '/p reset' but also increases lag
 ClearBlocksPerTick: 256
@@ -74,6 +78,10 @@ PlotChat: false
 
 enable:
   clone: false
+
+# Amount of blocks to fill per tick. This only applies if FastFilling is disabled
+# Increasing this number will speed up '/p fill' but also increases lag
+FillBlocksPerTick: 256
 
 # These settings will be used when creating a new world with the default generator.
 DefaultWorld:

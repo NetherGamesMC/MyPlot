@@ -7,6 +7,7 @@ use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\forms\interfaces\PlotButtonForm;
 use MyPlot\MyPlot;
 use NetherGames\NGEssentials\player\permissions\Permissions;
+use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use function count;
@@ -14,10 +15,10 @@ use function strtolower;
 
 class ClaimForm extends ComplexMyPlotForm implements PlotButtonForm{
 
-	public function __construct(Player $player) {
+	public function __construct(Player $player, Plot $plot) {
 		$plugin = MyPlot::getInstance();
 		$this->setPlayer($player);
-
+		$this->setPlot($plot);
 		parent::__construct(
 			$player,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("claim.form")]),

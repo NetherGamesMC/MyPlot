@@ -7,19 +7,22 @@ use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
+use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class RemoveHelperForm extends ComplexMyPlotForm implements PlotSettingsForm{
-	public function __construct() {
+class RemoveHelperForm extends ComplexMyPlotForm implements PlotSettingsForm {
+
+	public function __construct(Plot $plot) {
 		$plugin = MyPlot::getInstance();
+		$this->setPlot($plot);
 		parent::__construct(
 			null,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("removehelper.form")]),
 			[
 				new Dropdown(
 					$plugin->getLanguage()->get("removehelper.dropdown"),
-					empty($this->plot->helpers) ? [TextFormat::DARK_BLUE . $plugin->getLanguage()->get("removehelper.formnohelpers")] : array_map(function(string $text) {
+					count($this->plot->helpers) < 1 ? [TextFormat::DARK_BLUE . $plugin->getLanguage()->get("removehelper.formnohelpers")] : array_map(function(string $text) {
 						return TextFormat::DARK_BLUE . $text;
 					}, $this->plot->helpers),
 					-1,

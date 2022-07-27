@@ -15,7 +15,7 @@ class ClearBorderTask extends Task {
 
 	protected MyPlot $plugin;
 	protected Plot $plot;
-	protected World $world;
+	protected World $level;
 	protected int $height;
 	protected Block $plotWallBlock;
 	protected Vector3 $plotBeginPos;
@@ -53,18 +53,18 @@ class ClearBorderTask extends Task {
 
         --$this->plotBeginPos->x;
         --$this->plotBeginPos->z;
-        $this->world = $this->plotBeginPos->getWorld();
+        $this->level = $this->plotBeginPos->getWorld();
 		$this->height = $plotLevel->groundHeight;
 		$this->plotWallBlock = $plotLevel->wallBlock;
 		$this->roadBlock = $plotLevel->roadBlock;
 		$this->groundBlock = $plotLevel->plotFillBlock;
 		$this->bottomBlock = $plotLevel->bottomBlock;
-		$plugin->getLogger()->debug("Border Clear Task started at plot {$plot->X};{$plot->Z}");
+		$plugin->getLogger()->debug("Border Clear Task started at plot $plot->X;$plot->Z");
 	}
 
 	public function onRun() : void {
 		for($x = $this->plotBeginPos->x; $x <= $this->xMax; $x++) {
-			for($y = 0; $y < $this->world->getMaxY(); ++$y) {
+			for($y = 0; $y < $this->level->getMaxY(); ++$y) {
 				if($y > $this->height + 1)
 					$block = VanillaBlocks::AIR();
 				elseif($y === $this->height + 1)
@@ -75,12 +75,12 @@ class ClearBorderTask extends Task {
 					$block = $this->bottomBlock;
 				else//if($y < $this->height)
 					$block = $this->groundBlock;
-				$this->world->setBlock(new Vector3($x, $y, $this->plotBeginPos->z), $block, false);
-				$this->world->setBlock(new Vector3($x, $y, $this->zMax), $block, false);
+				$this->level->setBlock(new Vector3($x, $y, $this->plotBeginPos->z), $block, false);
+				$this->level->setBlock(new Vector3($x, $y, $this->zMax), $block, false);
 			}
 		}
 		for($z = $this->plotBeginPos->z; $z <= $this->zMax; $z++) {
-			for($y = 0; $y < $this->world->getMaxY(); ++$y) {
+			for($y = 0; $y < $this->level->getMaxY(); ++$y) {
 				if($y > $this->height+1)
 					$block = VanillaBlocks::AIR();
 				elseif($y === $this->height + 1)
@@ -91,8 +91,8 @@ class ClearBorderTask extends Task {
 					$block = $this->bottomBlock;
 				else//if($y < $this->height)
 					$block = $this->groundBlock;
-				$this->world->setBlock(new Vector3($this->plotBeginPos->x, $y, $z), $block, false);
-				$this->world->setBlock(new Vector3($this->xMax, $y, $z), $block, false);
+				$this->level->setBlock(new Vector3($this->plotBeginPos->x, $y, $z), $block, false);
+				$this->level->setBlock(new Vector3($this->xMax, $y, $z), $block, false);
 			}
 		}
 		$this->plugin->getLogger()->debug("Border Clear Task completed");

@@ -10,18 +10,17 @@ use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\scheduler\Task;
-use pocketmine\world\Position;
+use pocketmine\scheduler\CancelTaskException;
 use pocketmine\world\World;
 
 class CornerCorrectionTask extends Task{
 
 	protected MyPlot $plugin;
 	protected Plot $start;
-	protected ?World $world;
+	protected ?World $level;
 	protected int $height;
 	protected Block $plotWallBlock;
 	protected int $maxBlocksPerTick;
-	/** @var Position|Vector3|null $plotBeginPos */
 	protected ?Vector3 $plotBeginPos;
 	protected int $xMax;
 	protected int $zMax;
@@ -35,7 +34,7 @@ class CornerCorrectionTask extends Task{
 		$this->plugin = $plugin;
 		$this->start = $start;
 		$this->plotBeginPos = $plugin->getPlotPosition($start, false);
-		$this->world = $this->plotBeginPos->getWorld();
+		$this->level = $this->plotBeginPos->getWorld();
 		$this->maxBlocksPerTick = $maxBlocksPerTick;
 
 		$plotLevel = $plugin->getLevelSettings($start->levelName);
@@ -80,13 +79,13 @@ class CornerCorrectionTask extends Task{
 		$this->xMax = (int) ($this->plotBeginPos->x + $roadWidth);
 		$this->zMax = (int) ($this->plotBeginPos->z + $roadWidth);
 		$this->pos = new Vector3($this->plotBeginPos->x, 0, $this->plotBeginPos->z);
-		$plugin->getLogger()->debug("Corner Correction Task started between plots {$start->X};{$start->Z} and {$end->X};{$end->Z}");
+		$plugin->getLogger()->debug("Corner Correction Task started between plots $start->X;$start->Z and $end->X;$end->Z");
 	}
 
 	public function onRun() : void {
-		foreach($this->world->getEntities() as $entity) {
-			if($entity->getLocation()->x > $this->pos->x - 1 and $entity->getLocation()->x < $this->xMax + 1) {
-				if($entity->getLocation()->z > $this->pos->z - 1 and $entity->getLocation()->z < $this->zMax + 1) {
+		foreach($this->level->getEntities() as $entity) {
+			if($entity->getPosition()->x > $this->pos->x - 1 and $entity->getPosition()->x < $this->xMax + 1) {
+				if($entity->getPosition()->z > $this->pos->z - 1 and $entity->getPosition()->z < $this->zMax + 1) {
 					if(!$entity instanceof Player) {
 						$entity->flagForDespawn();
 					}else{
@@ -98,7 +97,7 @@ class CornerCorrectionTask extends Task{
 		$blocks = 0;
 		while($this->pos->x < $this->xMax) {
 			while($this->pos->z < $this->zMax) {
-				while($this->pos->y < $this->world->getMaxY()) {
+				while($this->pos->y < $this->level->getMaxY()) {
 					if($this->pos->y === 0)
 						$block = $this->bottomBlock;
 					elseif($this->pos->y < $this->height)
@@ -108,14 +107,14 @@ class CornerCorrectionTask extends Task{
 					else
 						$block = VanillaBlocks::AIR();
 
-					$this->world->setBlock($this->pos, $block, false);
+					$this->level->setBlock($this->pos, $block, false);
 					$this->pos->y++;
 
 					$blocks++;
 					if($blocks >= $this->maxBlocksPerTick) {
 						$this->setHandler(null);
 						$this->plugin->getScheduler()->scheduleDelayedTask($this, 1);
-						return;
+						throw new CancelTaskException();
 					}
 				}
 				$this->pos->y = 0;

@@ -7,14 +7,11 @@ use pocketmine\block\Block;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\world\ChunkManager;
-use pocketmine\world\format\BiomeArray;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\generator\Generator;
 
 class MyPlotGenerator extends Generator {
 
-	/** @var string[] $settings */
-	private array $settings;
 	protected Block $roadBlock;
 	protected Block $bottomBlock;
 	protected Block $plotFillBlock;
@@ -32,26 +29,23 @@ class MyPlotGenerator extends Generator {
 	/**
 	 * MyPlotGenerator constructor.
 	 *
-	 * @param int $seed
+	 * @param int    $seed
 	 * @param string $preset
 	 */
 	public function __construct(int $seed, string $preset) {
-		parent::__construct($seed, $preset);
-		try{
-			$options = json_decode($preset, true, 512, JSON_THROW_ON_ERROR);
-		}catch(\JsonException) {
-			$options = [];
+		$settings = json_decode($preset, true);
+		if($settings === false or is_null($settings)) {
+			$settings = [];
 		}
-		$this->roadBlock = PlotLevelSettings::parseBlock($options, "RoadBlock", VanillaBlocks::OAK_PLANKS());
-		$this->wallBlock = PlotLevelSettings::parseBlock($options, "WallBlock", VanillaBlocks::STONE_SLAB());
-		$this->plotFloorBlock = PlotLevelSettings::parseBlock($options, "PlotFloorBlock", VanillaBlocks::GRASS());
-		$this->plotFillBlock = PlotLevelSettings::parseBlock($options, "PlotFillBlock", VanillaBlocks::DIRT());
-		$this->bottomBlock = PlotLevelSettings::parseBlock($options, "BottomBlock", VanillaBlocks::BEDROCK());
-		$this->roadWidth = PlotLevelSettings::parseNumber($options, "RoadWidth", 7);
-		$this->plotSize = PlotLevelSettings::parseNumber($options, "PlotSize", 32);
-		$this->groundHeight = PlotLevelSettings::parseNumber($options, "GroundHeight", 64);
-		$this->settings = [];
-		$this->settings["preset"] = (string)json_encode([
+		$this->roadBlock = PlotLevelSettings::parseBlock($settings, "RoadBlock", VanillaBlocks::OAK_PLANKS());
+		$this->wallBlock = PlotLevelSettings::parseBlock($settings, "WallBlock", VanillaBlocks::STONE_SLAB());
+		$this->plotFloorBlock = PlotLevelSettings::parseBlock($settings, "PlotFloorBlock", VanillaBlocks::GRASS());
+		$this->plotFillBlock = PlotLevelSettings::parseBlock($settings, "PlotFillBlock", VanillaBlocks::DIRT());
+		$this->bottomBlock = PlotLevelSettings::parseBlock($settings, "BottomBlock", VanillaBlocks::BEDROCK());
+		$this->roadWidth = PlotLevelSettings::parseNumber($settings, "RoadWidth", 7);
+		$this->plotSize = PlotLevelSettings::parseNumber($settings, "PlotSize", 32);
+		$this->groundHeight = PlotLevelSettings::parseNumber($settings, "GroundHeight", 64);
+		parent::__construct($seed, json_encode([
 			"RoadBlock" => $this->roadBlock->getId() . (($meta = $this->roadBlock->getMeta()) === 0 ? '' : ':' . $meta),
 			"WallBlock" => $this->wallBlock->getId() . (($meta = $this->wallBlock->getMeta()) === 0 ? '' : ':' . $meta),
 			"PlotFloorBlock" => $this->plotFloorBlock->getId() . (($meta = $this->plotFloorBlock->getMeta()) === 0 ? '' : ':' . $meta),
@@ -60,24 +54,12 @@ class MyPlotGenerator extends Generator {
 			"RoadWidth" => $this->roadWidth,
 			"PlotSize" => $this->plotSize,
 			"GroundHeight" => $this->groundHeight
-		]);
-	}
-
-	public function getName() : string {
-		return self::NAME;
-	}
-
-	/**
-	 * @return string[]
-	 * @phpstan-return array<string, mixed>
-	 */
-	public function getSettings() : array {
-		return $this->settings;
+		]));
 	}
 
 	public function generateChunk(ChunkManager $world, int $chunkX, int $chunkZ) : void {
 		$shape = $this->getShape($chunkX << 4, $chunkZ << 4);
-		$chunk = $world->getChunk($chunkX, $chunkZ) ?? new Chunk([], BiomeArray::fill(BiomeIds::PLAINS), false);
+		$chunk = $world->getChunk($chunkX, $chunkZ);
 		$bottomBlockId = $this->bottomBlock->getFullId();
 		$plotFillBlockId = $this->plotFillBlock->getFullId();
 		$plotFloorBlockId = $this->plotFloorBlock->getFullId();
@@ -87,7 +69,6 @@ class MyPlotGenerator extends Generator {
 		for($Z = 0; $Z < 16; ++$Z) {
 			for($X = 0; $X < 16; ++$X) {
 				$chunk->setBiomeId($X, $Z, BiomeIds::PLAINS);
-				$chunk->setFullBlock($X, 0, $Z, $bottomBlockId);
 				$chunk->setFullBlock($X, 0, $Z, $bottomBlockId);
 				for($y = 1; $y < $groundHeight; ++$y) {
 					$chunk->setFullBlock($X, $y, $Z, $plotFillBlockId);
@@ -103,6 +84,9 @@ class MyPlotGenerator extends Generator {
 				}
 			}
 		}
+		$chunk->setTerrainDirtyFlag(Chunk::DIRTY_FLAG_BLOCKS, true);
+		$chunk->setTerrainDirtyFlag(Chunk::DIRTY_FLAG_BIOMES, true);
+		$world->setChunk($chunkX, $chunkZ, $chunk);
 	}
 
 	/**

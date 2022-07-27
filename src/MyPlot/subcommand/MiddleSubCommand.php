@@ -25,7 +25,7 @@ class MiddleSubCommand extends SubCommand
 		if(count($args) != 0) {
 			return false;
 		}
-		$plot = $this->getPlugin()->getPlotByPosition($sender->getPosition());
+		$plot = $this->plugin->getPlotByPosition($sender->getPosition());
 		if($plot === null) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
 			return true;
@@ -34,7 +34,7 @@ class MiddleSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$this->getPlugin()->teleportPlayerToPlot($sender, $plot, true, function() use ($sender) : void {
+		$this->plugin->teleportPlayerToPlot($sender, $plot, true, function() use ($sender) : void {
 			$sender->sendMessage(TextFormat::GREEN . $this->translateString("middle.success"));
 		});
 		return true;

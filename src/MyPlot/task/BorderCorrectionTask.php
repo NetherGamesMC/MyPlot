@@ -5,23 +5,20 @@ namespace MyPlot\task;
 use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\block\Block;
-use pocketmine\block\BlockFactory;
-use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
+use pocketmine\scheduler\CancelTaskException;
 use pocketmine\scheduler\Task;
-use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class BorderCorrectionTask extends Task{
 
 	protected MyPlot $plugin;
 	protected Plot $start;
-	protected World $world;
+	protected World $level;
 	protected int $height;
 	protected Block $plotWallBlock;
-	/** @var Position|Vector3 $plotBeginPos */
 	protected Vector3 $plotBeginPos;
 	protected int $xMax;
 	protected int $zMax;
@@ -44,7 +41,7 @@ class BorderCorrectionTask extends Task{
 		$this->maxBlocksPerTick = $maxBlocksPerTick;
 
 		$this->plotBeginPos = $plugin->getPlotPosition($start, false);
-		$this->world = $this->plotBeginPos->getWorld();
+		$this->level = $this->plotBeginPos->getWorld();
 
 		$plotLevel = $plugin->getLevelSettings($start->levelName);
 		$plotSize = $plotLevel->plotSize;
@@ -81,16 +78,16 @@ class BorderCorrectionTask extends Task{
 
 		$this->pos = new Vector3($this->plotBeginPos->x, 0, $this->plotBeginPos->z);
 
-		$plugin->getLogger()->debug("Border Correction Task started between plots {$start->X};{$start->Z} and {$end->X};{$end->Z}");
+		$plugin->getLogger()->debug("Border Correction Task started between plots $start->X;$start->Z and $end->X;$end->Z");
 	}
 
 	public function onRun() : void {
 		$blocks = 0;
 		if($this->direction === Facing::NORTH or $this->direction === Facing::SOUTH) {
 			while($this->pos->z < $this->zMax) {
-				while($this->pos->y < $this->world->getMaxY()) {
+				while($this->pos->y < $this->level->getMaxY()) {
 					if($this->pos->y > $this->height + 1)
-						$block = BlockFactory::getInstance()->get(BlockLegacyIds::AIR, 0);
+						$block = VanillaBlocks::AIR();
 					elseif($this->pos->y === $this->height + 1){
 						// TODO: change by x/z coord
 						$block = $this->plotWallBlock;
@@ -101,15 +98,15 @@ class BorderCorrectionTask extends Task{
 					else//if($y < $this->height)
 						$block = $this->groundBlock;
 
-					$this->world->setBlock(new Vector3($this->pos->x - 1, $this->pos->y, $this->pos->z), $block, false);
-					$this->world->setBlock(new Vector3($this->xMax, $this->pos->y, $this->pos->z), $block, false);
+					$this->level->setBlock(new Vector3($this->pos->x - 1, $this->pos->y, $this->pos->z), $block, false);
+					$this->level->setBlock(new Vector3($this->xMax, $this->pos->y, $this->pos->z), $block, false);
 					$this->pos->y++;
 
 					$blocks += 2;
 					if($blocks >= $this->maxBlocksPerTick) {
 						$this->setHandler(null);
 						$this->plugin->getScheduler()->scheduleDelayedTask($this, 1);
-						return;
+						throw new CancelTaskException();
 					}
 				}
 				$this->pos->y = 0;
@@ -117,7 +114,7 @@ class BorderCorrectionTask extends Task{
 			}
 		}else{
 			while($this->pos->x < $this->xMax) {
-				while($this->pos->y < $this->world->getMaxY()) {
+				while($this->pos->y < $this->level->getMaxY()) {
 					if($this->pos->y > $this->height + 1)
 						$block = VanillaBlocks::AIR();
 					elseif($this->pos->y === $this->height + 1)
@@ -128,14 +125,15 @@ class BorderCorrectionTask extends Task{
 						$block = $this->bottomBlock;
 					else//if($y < $this->height)
 						$block = $this->groundBlock;
-					$this->world->setBlock(new Vector3($this->pos->x, $this->pos->y, $this->pos->z - 1), $block, false);
-					$this->world->setBlock(new Vector3($this->pos->x, $this->pos->y, $this->zMax), $block, false);
+
+					$this->level->setBlock(new Vector3($this->pos->x, $this->pos->y, $this->pos->z - 1), $block, false);
+					$this->level->setBlock(new Vector3($this->pos->x, $this->pos->y, $this->zMax), $block, false);
 					$this->pos->y++;
 					$blocks += 2;
 					if($blocks >= $this->maxBlocksPerTick) {
 						$this->setHandler(null);
 						$this->plugin->getScheduler()->scheduleDelayedTask($this, 1);
-						return;
+						throw new CancelTaskException();
 					}
 				}
 				$this->pos->y = 0;
@@ -145,6 +143,5 @@ class BorderCorrectionTask extends Task{
 
 		$this->plugin->getLogger()->debug("Border Correction Task completed");
 		if($this->fillCorner) $this->plugin->getScheduler()->scheduleDelayedTask(new CornerCorrectionTask($this->plugin, $this->start, $this->end, $this->cornerDirection, $this->maxBlocksPerTick), 10);
-
 	}
 }

@@ -7,6 +7,7 @@ use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
+use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
@@ -14,8 +15,9 @@ class KickForm extends ComplexMyPlotForm implements PlotSettingsForm{
 	/** @var string[] $players */
 	private array $players = [];
 
-	public function __construct() {
+	public function __construct(Plot $plot) {
 		$plugin = MyPlot::getInstance();
+		$this->setPlot($plot);
 		$players = [];
 
 		foreach($plugin->getServer()->getOnlinePlayers() as $player) {

@@ -28,7 +28,7 @@ class RemoveHelperSubCommand extends SubCommand
 			return false;
 		}
 		$helperName = $args[0];
-		$plot = $this->getPlugin()->getPlotByPosition($sender->getPosition());
+		$plot = $this->plugin->getPlotByPosition($sender->getPosition());
 		if($plot === null) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
 			return true;
@@ -37,10 +37,10 @@ class RemoveHelperSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$helper = $this->getPlugin()->getServer()->getPlayerByPrefix($helperName);
+		$helper = $this->plugin->getServer()->getPlayerByPrefix($helperName);
 		if($helper === null)
-			$helper = new OfflinePlayer($helperName, Server::getInstance()->getOfflinePlayerData($helperName));
-		if($this->getPlugin()->removePlotHelper($plot, $helper->getName())) {
+			$helper = $this->plugin->getServer()->getOfflinePlayer($helperName);
+		if($this->plugin->removePlotHelper($plot, $helper->getName())) {
 			$sender->sendMessage($this->translateString("removehelper.success", [$helper->getName()]));
 		}else{
 			$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
@@ -49,8 +49,8 @@ class RemoveHelperSubCommand extends SubCommand
 	}
 
 	public function getForm(?Player $player = null) : ?MyPlotForm {
-		if($player !== null and $this->getPlugin()->getPlotByPosition($player->getPosition()) instanceof Plot)
-			return new RemoveHelperForm();
+		if($player !== null and ($plot = $this->plugin->getPlotByPosition($player->getPosition())) instanceof Plot)
+			return new RemoveHelperForm($plot);
 		return null;
 	}
 }

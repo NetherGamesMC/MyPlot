@@ -1,6 +1,6 @@
 name: MyPlot
 main: MyPlot\MyPlot
-version: 2.2.0_NG
+version: 2.2.1_NG
 api: 4.0.0
 authors:
 - Wiez
@@ -17,7 +17,7 @@ softdepend:
 - NGEssentials
 permissions:
   myplot.command:
-    default: op
+    default: true
   myplot.command.help:
     default: true
   myplot.command.claim:
@@ -38,6 +38,8 @@ permissions:
     default: true
   myplot.command.clear:
     default: true
+  myplot.command.fill:
+    default: op
   myplot.command.dispose:
     default: true
   myplot.command.reset:
@@ -60,6 +62,8 @@ permissions:
     default: true
   myplot.command.middle:
     default: true
+  myplot.command.merge:
+    default: true
   myplot.command.list:
     default: true
   myplot.command.pvp:
@@ -71,8 +75,6 @@ permissions:
   myplot.claimplots.unlimited:
     default: op
   myplot.command.archive:
-    default: op
-  myplot.command.merge:
     default: op
   myplot.command.sell:
     default: op
@@ -123,4 +125,16 @@ permissions:
   myplot.admin.clone:
     default: op
   myplot.admin.merge:
+    default: true
+  myplot.admin.fill:
+    default: op
+  myplot.admin.denyplayer:
+    default: op
+  myplot.admin.denyplayer.bypass:
+    default: op
+  myplot.admin.undenyplayer:
+    default: op
+  myplot.admin.sell:
+    default: op
+  myplot.admin.buy:
     default: op

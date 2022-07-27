@@ -7,16 +7,15 @@ use libforms\elements\Input;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
+use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class NameForm extends ComplexMyPlotForm implements PlotSettingsForm{
-	public function __construct(Player $player) {
+class NameForm extends ComplexMyPlotForm implements PlotSettingsForm {
+
+	public function __construct(Player $player, Plot $plot) {
 		$plugin = MyPlot::getInstance();
-
-		if(!isset($this->plot))
-			$this->plot = $plugin->getPlotByPosition($player->getPosition());
-
+		$this->setPlot($plot);
 		parent::__construct(
 			$player,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("name.form")]),

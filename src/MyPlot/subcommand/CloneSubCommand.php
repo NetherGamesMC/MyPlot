@@ -31,8 +31,8 @@ class CloneSubCommand extends SubCommand
 			return true;
 		}
 		$levelName = $args[1] ?? $sender->getWorld()->getFolderName();
-		$selectedPlot = $this->getPlugin()->getProvider()->getPlot($levelName, (int) $plotIdArray[0], (int) $plotIdArray[1]);
-		$standingPlot = $this->getPlugin()->getPlotByPosition($sender->getPosition());
+		$selectedPlot = $this->plugin->getProvider()->getPlot($levelName, (int) $plotIdArray[0], (int) $plotIdArray[1]);
+		$standingPlot = $this->plugin->getPlotByPosition($sender->getPosition());
 		if($standingPlot === null) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
 			return true;
@@ -45,13 +45,13 @@ class CloneSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$plotLevel = $this->getPlugin()->getLevelSettings($standingPlot->levelName);
-		$economy = $this->getPlugin()->getEconomyProvider();
+		$plotLevel = $this->plugin->getLevelSettings($standingPlot->levelName);
+		$economy = $this->plugin->getEconomyProvider();
 		if($economy !== null and !$economy->reduceMoney($sender, $plotLevel->clonePrice)) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("clone.nomoney"));
 			return true;
 		}
-		if($this->getPlugin()->clonePlot($selectedPlot, $standingPlot)) {
+		if($this->plugin->clonePlot($selectedPlot, $standingPlot)) {
 			$sender->sendMessage($this->translateString("clone.success", [$selectedPlot->__toString(), $standingPlot->__toString()]));
 		}else{
 			$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
@@ -60,6 +60,6 @@ class CloneSubCommand extends SubCommand
 	}
 
 	public function getForm(?Player $player = null) : ?MyPlotForm {
-			return $player !== null ? new CloneForm($player) : null;
+        return $player !== null ? new CloneForm($player) : null;
 	}
 }

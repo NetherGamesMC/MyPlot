@@ -25,15 +25,12 @@ class WarpForm extends ComplexMyPlotForm {
 			}
 		}
 		ksort($plotNames);
-
 		$elements[] = new Dropdown("Select your plots:", $plotNames, -1, static function(Player $player, int $data) use ($plots, $plugin): void {
 			$plot = $plots[$data];
 			$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("warp.name") . " " . ($plot->X) . ";" . ($plot->Z) . ' "' . ($player->getWorld()->getFolderName()) . '"', true);
 		});
-
 		$elements[] = new Input($plugin->getLanguage()->get("warp.formxcoord"), "0");
 		$elements[] = new Input($plugin->getLanguage()->get("warp.formzcoord"), "0");
-
 		parent::__construct(
 			$player,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("warp.form")]),
@@ -43,13 +40,11 @@ class WarpForm extends ComplexMyPlotForm {
 					$player->sendMessage(TextFormat::RED . "Please verify that both the input boxes are filled.");
 					return;
 				}
-
 				$datum = [
 					(int)$data[1],
 					(int)$data[2],
 					$player->getWorld()->getFolderName()
 				];
-
 				$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("warp.name") . " " . ((int)$datum[0]) . ";" . ((int)$datum[1]) . ' "' . ($datum[2]) . '"', true);
 			}
 		);

@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace MyPlot\provider;
 
-use LogicException;
 use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\math\Facing;
@@ -13,7 +12,7 @@ class ConfigDataProvider extends DataProvider {
 	private Config $config;
 
 	/**
-	 * JSONDataProvider constructor.
+	 * ConfigDataProvider constructor.
 	 *
 	 * @param MyPlot $plugin
 	 * @param int $cacheSize
@@ -31,12 +30,7 @@ class ConfigDataProvider extends DataProvider {
 		$plots[$plotId] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->banned, "biome" => $plot->biome, "pvp" => $plot->pvp, "price" => $plot->price];
 		$this->config->set("plots", $plots);
 		$this->cachePlot($plot);
-		try{
-			$this->config->save();
-		}
-		catch(LogicException){
-			return false;
-		}
+		$this->config->save();
 		return true;
 	}
 
@@ -47,12 +41,7 @@ class ConfigDataProvider extends DataProvider {
 		$this->config->set("plots", $plots);
 		$plot = new Plot($plot->levelName, $plot->X, $plot->Z);
 		$this->cachePlot($plot);
-		try{
-			$this->config->save();
-		}
-		catch(LogicException){
-			return false;
-		}
+		$this->config->save();
 		return true;
 	}
 
@@ -87,7 +76,7 @@ class ConfigDataProvider extends DataProvider {
 		/** @var string[] $ownerKeys */
 		$ownerKeys = array_keys($plots, ["owner" => $owner], true);
 		foreach($ownerKeys as $ownerKey) {
-			if($levelName === "" or strpos($ownerKey, $levelName) !== false) {
+			if($levelName === "" or str_contains($ownerKey, $levelName)) {
 				$X = $plots[$ownerKey]["x"];
 				$Z = $plots[$ownerKey]["z"];
 				$plotName = $plots[$ownerKey]["name"] == "" ? "" : $plots[$ownerKey]["name"];
@@ -155,12 +144,7 @@ class ConfigDataProvider extends DataProvider {
 		}, $plots));
 		$mergedIds = array_unique($mergedIds, SORT_NUMERIC);
 		$this->config->setNested("merges.$originId", $mergedIds);
-		try{
-			$this->config->save();
-		}
-		catch(LogicException){
-			return false;
-		}
+		$this->config->save();
 		return true;
 	}
 

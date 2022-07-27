@@ -21,7 +21,11 @@ class HomesSubCommand extends SubCommand
 	 */
 	public function execute(CommandSender $sender, array $args) : bool {
 		$levelName = $args[0] ?? $sender->getWorld()->getFolderName();
-		$plots = $this->getPlugin()->getPlotsOfPlayer($sender->getName(), $levelName);
+		if(!$this->plugin->isLevelLoaded($levelName)) {
+			$sender->sendMessage(TextFormat::RED . $this->translateString("error", [$levelName]));
+			return true;
+		}
+		$plots = $this->plugin->getPlotsOfPlayer($sender->getName(), $levelName);
 		if(count($plots) === 0) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("homes.noplots"));
 			return true;

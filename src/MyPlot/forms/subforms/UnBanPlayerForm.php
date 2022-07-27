@@ -7,12 +7,14 @@ use libforms\elements\Dropdown;
 use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\forms\interfaces\PlotSettingsForm;
 use MyPlot\MyPlot;
+use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class UnBanPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
-	public function __construct() {
+	public function __construct(Plot $plot) {
 		$plugin = MyPlot::getInstance();
+        $this->setPlot($plot);
 		parent::__construct(
 			null,
 			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("unbanplayer.form")]),
@@ -27,7 +29,6 @@ class UnBanPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
 						if(empty($this->plot->banned)) {
 							return;
 						}
-
 						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("unbanplayer.name") . ' "' . $this->plot->banned[$data] . '"', true);
 					}
 				)

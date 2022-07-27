@@ -66,7 +66,7 @@ class PlotLevelSettings
 	 *
 	 * @return Block
 	 */
-	public static function parseBlock(array &$array, $key, Block $default) : Block {
+	public static function parseBlock(array $array, string|int $key, Block $default) : Block {
 		if(isset($array[$key])) {
 			$id = $array[$key];
 			if(is_numeric($id)) {
@@ -92,7 +92,7 @@ class PlotLevelSettings
 	 *
 	 * @return int
 	 */
-	public static function parseNumber(array &$array, $key, int $default) : int {
+	public static function parseNumber(array $array, string|int $key, int $default) : int {
 		if(isset($array[$key]) and is_numeric($array[$key])) {
 			return (int) $array[$key];
 		}else{
@@ -107,7 +107,7 @@ class PlotLevelSettings
 	 *
 	 * @return bool
 	 */
-	public static function parseBool(array &$array, $key, bool $default) : bool {
+	public static function parseBool(array $array, string|int $key, bool $default) : bool {
 		if(isset($array[$key]) and is_bool($array[$key])) {
 			return $array[$key];
 		}else{

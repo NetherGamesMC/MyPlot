@@ -9,6 +9,7 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use pocketmine\scheduler\CancelTaskException;
 use pocketmine\scheduler\Task;
 use pocketmine\world\Position;
 use pocketmine\world\World;
@@ -17,7 +18,7 @@ class ClearPlotTask extends Task {
 
 	protected MyPlot $plugin;
 	protected Plot $plot;
-	protected World $world;
+	protected World $level;
 	protected int $height;
 	protected Block $bottomBlock;
 	protected Block $plotFillBlock;
@@ -48,7 +49,6 @@ class ClearPlotTask extends Task {
 		$this->plotFillBlock = $plotLevel->plotFillBlock;
 		$this->plotFloorBlock = $plotLevel->plotFloorBlock;
 		$this->maxBlocksPerTick = $maxBlocksPerTick;
-		$this->plugin = $plugin;
 
         $this->plotBeginPos = $plugin->getPlotPosition($plot, false);
         $this->xMax = (int)($this->plotBeginPos->x + $plotSize);
@@ -63,14 +63,14 @@ class ClearPlotTask extends Task {
 		    if($this->xMax < $xMaxPlot) $this->xMax = $xMaxPlot;
 		    if($this->zMax < $zMaxPlot) $this->zMax = $zMaxPlot;
         }
-        $this->world = $this->plotBeginPos->getWorld();
+        $this->level = $this->plotBeginPos->getWorld();
         $this->pos = new Vector3($this->plotBeginPos->x, 0, $this->plotBeginPos->z);
         $this->plotBB = $this->plugin->getPlotBB($plot);
-		$plugin->getLogger()->debug("Plot Clear Task started at plot {$plot->X};{$plot->Z}");
+		$plugin->getLogger()->debug("Plot Clear Task started at plot $plot->X;$plot->Z");
 	}
 
 	public function onRun() : void {
-		foreach($this->world->getEntities() as $entity) {
+		foreach($this->level->getEntities() as $entity) {
 			if($this->plotBB->isVectorInXZ($entity->getPosition())) {
 				if(!$entity instanceof Player) {
 					$entity->flagForDespawn();
@@ -82,7 +82,7 @@ class ClearPlotTask extends Task {
 		$blocks = 0;
 		while($this->pos->x < $this->xMax) {
 			while($this->pos->z < $this->zMax) {
-				while($this->pos->y < $this->world->getMaxY()) {
+				while($this->pos->y < $this->level->getMaxY()) {
 					if($this->pos->y === 0) {
 						$block = $this->bottomBlock;
 					}elseif($this->pos->y < $this->height) {
@@ -92,12 +92,12 @@ class ClearPlotTask extends Task {
 					}else{
 						$block = VanillaBlocks::AIR();
 					}
-					$this->world->setBlock($this->pos, $block, false);
+					$this->level->setBlock($this->pos, $block, false);
 					$blocks++;
 					if($blocks >= $this->maxBlocksPerTick) {
 						$this->setHandler(null);
 						$this->plugin->getScheduler()->scheduleDelayedTask($this, 1);
-						return;
+						throw new CancelTaskException();
 					}
 					$this->pos->y++;
 				}
@@ -107,13 +107,12 @@ class ClearPlotTask extends Task {
 			$this->pos->z = $this->plotBeginPos->z;
 			$this->pos->x++;
 		}
-		foreach($this->plugin->getPlotChunks($this->plot) as $chunk) {
+
+		foreach($this->plugin->getPlotChunks($this->plot) as [$chunkX, $chunkZ, $chunk]) {
+			if($chunk === null)
+				continue;
 			foreach($chunk->getTiles() as $tile) {
-				if(($plot = $this->plugin->getPlotByPosition($tile->getPosition())) != null) {
-					if($this->plot->isSame($plot)) {
-						$tile->close();
-					}
-				}
+				$tile->close();
 			}
 		}
 		$this->plugin->getScheduler()->scheduleDelayedTask(new ClearBorderTask($this->plugin, $this->plot), 1);
