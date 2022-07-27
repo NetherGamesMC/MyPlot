@@ -990,7 +990,7 @@ class MyPlot extends PluginBase{
 			});
 			$styler->removeSelection(99998);
 			foreach($this->getPlotChunks($plot) as [$chunkX, $chunkZ, $chunk]) {
-				$plotBeginPos->getWorld()?->setChunk($chunkX, $chunkZ, $chunk);
+				$plotBeginPos->getWorld()->setChunk($chunkX, $chunkZ, $chunk);
 			}
 			return true;
 		}

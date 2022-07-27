@@ -57,7 +57,7 @@ class BiomeSubCommand extends SubCommand
 		}
 		if(is_numeric($biome)) {
 			$biome = (int) $biome;
-			if($biome > 27 or $biome < 0) {
+			if($biome > 27 or $biome < 0) { // @phpstan-ignore-line
 				$sender->sendMessage(TextFormat::RED . $this->translateString("biome.invalid"));
 				$biomes = implode(", ", array_keys(self::BIOMES));
 				$sender->sendMessage(TextFormat::RED . $this->translateString("biome.possible", [$biomes]));
@@ -65,8 +65,8 @@ class BiomeSubCommand extends SubCommand
 			}
 			$biome = BiomeRegistry::getInstance()->getBiome($biome);
 		}else{
-			$biome = ($biome === "NETHER" ? "HELL" : $biome);
-			$biome = ($biome === "ICE PLAINS" ? "ICE_PLAINS" : $biome);
+			$biome = ($biome === "NETHER" ? "HELL" : $biome); // @phpstan-ignore-line
+			$biome = ($biome === "ICE PLAINS" ? "ICE_PLAINS" : $biome); // @phpstan-ignore-line
 			if(!defined(BiomeIds::class."::".$biome) or !is_int(constant(BiomeIds::class."::".$biome))) {
 				$sender->sendMessage(TextFormat::RED . $this->translateString("biome.invalid"));
 				$biomes = implode(", ", array_keys(self::BIOMES));

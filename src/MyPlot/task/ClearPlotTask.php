@@ -41,7 +41,7 @@ class ClearPlotTask extends Task {
 		$this->plugin = $plugin;
 		$this->plot = $plot;
 		$this->plotBeginPos = $plugin->getPlotPosition($plot);
-		$this->world = $this->plotBeginPos->getWorld();
+		$this->level = $this->plotBeginPos->getWorld();
 		$plotLevel = $plugin->getLevelSettings($plot->levelName);
 		$plotSize = $plotLevel->plotSize;
 		$this->height = $plotLevel->groundHeight;
@@ -63,7 +63,6 @@ class ClearPlotTask extends Task {
 		    if($this->xMax < $xMaxPlot) $this->xMax = $xMaxPlot;
 		    if($this->zMax < $zMaxPlot) $this->zMax = $zMaxPlot;
         }
-        $this->level = $this->plotBeginPos->getWorld();
         $this->pos = new Vector3($this->plotBeginPos->x, 0, $this->plotBeginPos->z);
         $this->plotBB = $this->plugin->getPlotBB($plot);
 		$plugin->getLogger()->debug("Plot Clear Task started at plot $plot->X;$plot->Z");
@@ -109,7 +108,7 @@ class ClearPlotTask extends Task {
 		}
 
 		foreach($this->plugin->getPlotChunks($this->plot) as [$chunkX, $chunkZ, $chunk]) {
-			if($chunk === null)
+			if($chunk === null) // @phpstan-ignore-line
 				continue;
 			foreach($chunk->getTiles() as $tile) {
 				$tile->close();

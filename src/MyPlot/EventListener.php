@@ -168,7 +168,7 @@ class EventListener implements Listener
 	 * @param BlockPlaceEvent|BlockBreakEvent|PlayerInteractEvent|SignChangeEvent $event
 	 */
 	private function onEventOnBlock(BlockPlaceEvent|SignChangeEvent|PlayerInteractEvent|BlockBreakEvent $event) : void {
-		$levelName = $event->getBlock()->getPosition()->getWorld()?->getFolderName();
+		$levelName = $event->getBlock()->getPosition()->getWorld()->getFolderName();
 		if(!$levelName or !$this->plugin->isLevelLoaded($levelName)) {
 			return;
 		}
