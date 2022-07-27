@@ -43,6 +43,6 @@ class GenerateSubCommand extends SubCommand
 	}
 
 	public function getForm(?Player $player = null) : ?MyPlotForm {
-		return $player != null ? new GenerateForm() : null;
+		return $player !== null ? new GenerateForm() : null;
 	}
 }

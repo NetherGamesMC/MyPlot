@@ -22,7 +22,7 @@ class FillForm extends ComplexMyPlotForm implements PlotSettingsForm
             TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("fill.form")]),
             [
                 new Input(
-                    $plugin->getLanguage()->get("fill.formtitle"),
+                    $plugin->getLanguage()->get("fill.form"),
                     "0",
                     "1:0",
                     function (Player $player, string $input) use ($plugin): void {
