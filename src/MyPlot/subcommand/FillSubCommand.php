@@ -41,8 +41,7 @@ class FillSubCommand extends SubCommand {
 			$sender->sendMessage(TextFormat::RED.$this->translateString("notowner"));
 			return true;
 		}
-
-		if(($item = StringToItemParser::getInstance()->parse($args[0])) instanceof Item and $item->getBlock() instanceof Air) {
+		if(($item = StringToItemParser::getInstance()->parse($args[0])) instanceof Item and !$item->getBlock() instanceof Air) {
 			$maxBlocksPerTick = (int)$this->plugin->getConfig()->get("FillBlocksPerTick", 256);
 			if($this->plugin->fillPlot($plot, $item->getBlock(), $maxBlocksPerTick)) {
 				$sender->sendMessage($this->translateString("fill.success", [$item->getBlock()->getName()]));
