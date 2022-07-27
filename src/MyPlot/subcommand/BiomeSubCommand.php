@@ -45,6 +45,7 @@ class BiomeSubCommand extends SubCommand
 		if($player === null)
 			return true;
 		$biome = strtoupper($args[0]);
+        $biome = self::BIOMES[$biome] ?? "";
 		$plot = $this->plugin->getPlotByPosition($player->getPosition());
 		if($plot === null) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
