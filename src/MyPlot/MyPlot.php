@@ -367,8 +367,8 @@ class MyPlot extends PluginBase{
 			return false;
 		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
 			$pos = $position->getSide($i);
-			$x = floor($pos->x);
-			$z = floor($pos->z);
+			$x = $pos->getFloorX();
+			$z = $pos->getFloorZ();
 			$levelName = $pos->getWorld()->getFolderName();
 
 			if(!$this->isLevelLoaded($levelName))
@@ -398,8 +398,8 @@ class MyPlot extends PluginBase{
 				if($i === $n or Facing::opposite($i) === $n)
 					continue;
 				$pos = $position->getSide($i)->getSide($n);
-				$x = floor($pos->x);
-				$z = floor($pos->z);
+				$x = $pos->getFloorX();
+				$z = $pos->getFloorZ();
 				$levelName = $pos->getWorld()->getFolderName();
 
 				$plotLevel = $this->getLevelSettings($levelName);
@@ -439,8 +439,8 @@ class MyPlot extends PluginBase{
 			return null;
 		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
 			$pos = $position->getSide($i);
-			$x = floor($pos->x);
-			$z = floor($pos->z);
+			$x = $pos->getFloorX();
+			$z = $pos->getFloorZ();
 			$levelName = $pos->getWorld()->getFolderName();
 
 			if(!$this->isLevelLoaded($levelName))
@@ -1367,7 +1367,7 @@ class MyPlot extends PluginBase{
 	 */
 	private function teleport(Player $player, Position $pos, Closure $onSuccess = null, Closure $onFailure = null) : void {
 		$world = $pos->getWorld();
-		$world->orderChunkPopulation($pos->x >> 4, $pos->z >> 4, null)->onCompletion(
+		$world->orderChunkPopulation($pos->getFloorX() >> 4, $pos->getFloorZ() >> 4, null)->onCompletion(
 			function() use ($player, $pos, $onSuccess, $onFailure) : void {
 				if($player->teleport($pos)) {
 					if($onSuccess !== null) $onSuccess();
