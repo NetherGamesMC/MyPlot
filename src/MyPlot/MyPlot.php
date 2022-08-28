@@ -306,17 +306,17 @@ class MyPlot extends PluginBase{
 
 		$totalSize = $plotSize + $roadWidth;
 		if($x >= 0) {
-			$difX = $x % $totalSize;
+			$difX = floor($x) % $totalSize;
 			$x = (int) floor($x / $totalSize);
 		}else{
-			$difX = abs(($x - $plotSize + 1) % $totalSize);
+			$difX = abs((floor($x) - $plotSize + 1) % $totalSize);
 			$x = (int) ceil(($x - $plotSize + 1) / $totalSize);
 		}
 		if($z >= 0) {
-			$difZ = $z % $totalSize;
+			$difZ = floor($z) % $totalSize;
 			$z = (int) floor($z / $totalSize);
 		}else{
-			$difZ = abs(($z - $plotSize + 1) % $totalSize);
+			$difZ = abs((floor($z) - $plotSize + 1) % $totalSize);
 			$z = (int) ceil(($z - $plotSize + 1) / $totalSize);
 		}
 
@@ -367,8 +367,8 @@ class MyPlot extends PluginBase{
 			return false;
 		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
 			$pos = $position->getSide($i);
-			$x = $pos->x;
-			$z = $pos->z;
+			$x = floor($pos->x);
+			$z = floor($pos->z);
 			$levelName = $pos->getWorld()->getFolderName();
 
 			if(!$this->isLevelLoaded($levelName))
@@ -398,8 +398,8 @@ class MyPlot extends PluginBase{
 				if($i === $n or Facing::opposite($i) === $n)
 					continue;
 				$pos = $position->getSide($i)->getSide($n);
-				$x = $pos->x;
-				$z = $pos->z;
+				$x = floor($pos->x);
+				$z = floor($pos->z);
 				$levelName = $pos->getWorld()->getFolderName();
 
 				$plotLevel = $this->getLevelSettings($levelName);
@@ -439,8 +439,8 @@ class MyPlot extends PluginBase{
 			return null;
 		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
 			$pos = $position->getSide($i);
-			$x = $pos->x;
-			$z = $pos->z;
+			$x = floor($pos->x);
+			$z = floor($pos->z);
 			$levelName = $pos->getWorld()->getFolderName();
 
 			if(!$this->isLevelLoaded($levelName))
