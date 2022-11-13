@@ -46,18 +46,19 @@ use MyPlot\task\FillPlotTask;
 use pocketmine\block\Block;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
-use pocketmine\permission\DefaultPermissions;
-use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionAttachmentInfo;
-use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\world\WorldCreationOptions;
 use function abs;
+use function array_filter;
 use function count;
+use function is_numeric;
+use function str_starts_with;
 use function strlen;
+use function substr;
 use const PHP_INT_MAX;
 
 class MyPlot extends PluginBase{
@@ -1257,31 +1258,22 @@ class MyPlot extends PluginBase{
 		$levelName = $player->getWorld()->getFolderName();
 		$length = strlen($levelName);
 
-		if($player->hasPermission("myplot.claimplots.$levelName.unlimited"))
+		if($player->hasPermission("myplot.claimplots.$levelName.unlimited")){
             return PHP_INT_MAX;
+        }
 
-		$perms = array_map(fn(PermissionAttachmentInfo $attachment) => [$attachment->getPermission(), $attachment->getValue()], $player->getEffectivePermissions());
-		$perms = array_merge(PermissionManager::getInstance()->getPermission(DefaultPermissions::ROOT_USER)->getChildren(), $perms);
-		$perms = array_filter($perms, function(string $name) use ($levelName) : bool {
-			return (str_starts_with($name, "myplot.claimplots.$levelName."));
-		}, ARRAY_FILTER_USE_KEY);
-
-		if(count($perms) === 0) {
+        $playerPermissions = array_filter($player->getEffectivePermissions(), static fn(PermissionAttachmentInfo $attachment) => $attachment->getValue() && str_starts_with($attachment->getPermission(), "myplot.claimplots.$levelName."));
+		$perms = array_map(static fn(PermissionAttachmentInfo $attachment) => $attachment->getPermission(), $playerPermissions);
+        if(count($perms) === 0) {
 			return 0;
 		}
 
-		krsort($perms, SORT_FLAG_CASE | SORT_NATURAL);
+		rsort($perms, SORT_FLAG_CASE | SORT_NATURAL);
 
-		/**
-		 * @var string $name
-		 * @var Permission $perm
-		 */
-		foreach($perms as $name => $perm){
-			$maxPlots = substr($name, 19 + $length);
-			if(is_numeric($maxPlots)) {
-				return (int)$maxPlots;
-			}
-		}
+        $maxPlots = substr($perms[0], 19 + $length);
+        if(is_numeric($maxPlots)) {
+            return (int)$maxPlots;
+        }
 
 		return 0;
 	}
