@@ -36,7 +36,7 @@ class KickSubCommand extends SubCommand
 		}
 		$ess = $this->plugin->getEssentials();
 		$target = $ess->getPlayerManager()->getBestMatchingPlayer($args[0]);
-		if ($target instanceof OfflinePlayer) {
+		if (!($target instanceof Player)) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("kick.noPlayer"));
 			return true;
 		}
