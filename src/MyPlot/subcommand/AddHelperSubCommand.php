@@ -35,7 +35,8 @@ class AddHelperSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$helper = $this->plugin->getServer()->getPlayerByPrefix($helperName);
+		$ess = $this->plugin->getEssentials();
+		$helper = $ess->getPlayerManager()->getBestMatchingPlayer($helperName);
 		if($helper === null)
 			$helper = $this->plugin->getServer()->getOfflinePlayer($helperName);
 		if($this->plugin->addPlotHelper($plot, $helper->getName())) {

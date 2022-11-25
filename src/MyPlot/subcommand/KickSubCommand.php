@@ -33,7 +33,8 @@ class KickSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$target = $this->plugin->getServer()->getPlayerByPrefix($args[0]);
+		$ess = $this->plugin->getEssentials();
+		$target = $ess->getPlayerManager()->getBestMatchingPlayer($args[0]);
 		if ($target === null) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("kick.noPlayer"));
 			return true;

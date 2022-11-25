@@ -61,7 +61,8 @@ class BanPlayerSubCommand extends SubCommand{
 			}
 			return true;
 		}
-		$dplayer = $this->getPlugin()->getServer()->getPlayerByPrefix($dplayer);
+		$ess = $this->plugin->getEssentials();
+		$dplayer = $ess->getPlayerManager()->getBestMatchingPlayer($dplayer);
 		if(!$dplayer instanceof Player) {
 			$sender->sendMessage($this->translateString("banplayer.notaplayer"));
 			return true;

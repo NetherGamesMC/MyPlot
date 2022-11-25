@@ -35,7 +35,8 @@ class UnBanSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$dplayer = $this->plugin->getServer()->getPlayerByPrefix($dplayerName);
+		$ess = $this->plugin->getEssentials();
+		$dplayer = $ess->getPlayerManager()->getBestMatchingPlayer($dplayerName);
 		if($dplayer === null)
 			$dplayer = $this->plugin->getServer()->getOfflinePlayer($dplayerName);
 		if($this->plugin->removePlotDenied($plot, $dplayer->getName())) {
