@@ -39,8 +39,6 @@ class RemoveHelperSubCommand extends SubCommand
 		}
 		$ess = $this->plugin->getEssentials();
 		$helper = $ess->getPlayerManager()->getBestMatchingPlayer($helperName);
-		if($helper === null)
-			$helper = $this->plugin->getServer()->getOfflinePlayer($helperName);
 		if($this->plugin->removePlotHelper($plot, $helper->getName())) {
 			$sender->sendMessage($this->translateString("removehelper.success", [$helper->getName()]));
 		}else{

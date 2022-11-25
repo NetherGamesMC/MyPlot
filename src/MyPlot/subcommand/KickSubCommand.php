@@ -7,6 +7,7 @@ use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\KickForm;
 use MyPlot\Plot;
 use pocketmine\command\CommandSender;
+use pocketmine\player\OfflinePlayer;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
@@ -35,7 +36,7 @@ class KickSubCommand extends SubCommand
 		}
 		$ess = $this->plugin->getEssentials();
 		$target = $ess->getPlayerManager()->getBestMatchingPlayer($args[0]);
-		if ($target === null) {
+		if ($target instanceof OfflinePlayer) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("kick.noPlayer"));
 			return true;
 		}

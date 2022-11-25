@@ -37,8 +37,6 @@ class AddHelperSubCommand extends SubCommand
 		}
 		$ess = $this->plugin->getEssentials();
 		$helper = $ess->getPlayerManager()->getBestMatchingPlayer($helperName);
-		if($helper === null)
-			$helper = $this->plugin->getServer()->getOfflinePlayer($helperName);
 		if($this->plugin->addPlotHelper($plot, $helper->getName())) {
 			$sender->sendMessage($this->translateString("addhelper.success", [$helper->getName()]));
 		}else{

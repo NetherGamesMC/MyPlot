@@ -37,8 +37,6 @@ class UnBanSubCommand extends SubCommand
 		}
 		$ess = $this->plugin->getEssentials();
 		$dplayer = $ess->getPlayerManager()->getBestMatchingPlayer($dplayerName);
-		if($dplayer === null)
-			$dplayer = $this->plugin->getServer()->getOfflinePlayer($dplayerName);
 		if($this->plugin->removePlotDenied($plot, $dplayer->getName())) {
 			$sender->sendMessage($this->translateString("undenyplayer.success1", [$dplayer->getName()]));
 			if($dplayer instanceof Player) {
