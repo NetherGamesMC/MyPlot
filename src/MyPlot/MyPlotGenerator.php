@@ -46,11 +46,11 @@ class MyPlotGenerator extends Generator {
 		$this->plotSize = PlotLevelSettings::parseNumber($settings, "PlotSize", 32);
 		$this->groundHeight = PlotLevelSettings::parseNumber($settings, "GroundHeight", 64);
 		parent::__construct($seed, json_encode([
-			"RoadBlock" => $this->roadBlock->getId() . (($meta = $this->roadBlock->getMeta()) === 0 ? '' : ':' . $meta),
-			"WallBlock" => $this->wallBlock->getId() . (($meta = $this->wallBlock->getMeta()) === 0 ? '' : ':' . $meta),
-			"PlotFloorBlock" => $this->plotFloorBlock->getId() . (($meta = $this->plotFloorBlock->getMeta()) === 0 ? '' : ':' . $meta),
-			"PlotFillBlock" => $this->plotFillBlock->getId() . (($meta = $this->plotFillBlock->getMeta()) === 0 ? '' : ':' . $meta),
-			"BottomBlock" => $this->bottomBlock->getId() . (($meta = $this->bottomBlock->getMeta()) === 0 ? '' : ':' . $meta),
+			"RoadBlock" => $this->roadBlock->getStateId(),
+			"WallBlock" => $this->wallBlock->getStateId(),
+			"PlotFloorBlock" => $this->plotFloorBlock->getStateId(),
+			"PlotFillBlock" => $this->plotFillBlock->getStateId(),
+			"BottomBlock" => $this->bottomBlock->getStateId(),
 			"RoadWidth" => $this->roadWidth,
 			"PlotSize" => $this->plotSize,
 			"GroundHeight" => $this->groundHeight
@@ -60,15 +60,15 @@ class MyPlotGenerator extends Generator {
 	public function generateChunk(ChunkManager $world, int $chunkX, int $chunkZ) : void {
 		$shape = $this->getShape($chunkX << 4, $chunkZ << 4);
 		$chunk = $world->getChunk($chunkX, $chunkZ);
-		$bottomBlockId = $this->bottomBlock->getFullId();
-		$plotFillBlockId = $this->plotFillBlock->getFullId();
-		$plotFloorBlockId = $this->plotFloorBlock->getFullId();
-		$roadBlockId = $this->roadBlock->getFullId();
-		$wallBlockId = $this->wallBlock->getFullId();
+		$bottomBlockId = $this->bottomBlock->getStateId();
+		$plotFillBlockId = $this->plotFillBlock->getStateId();
+		$plotFloorBlockId = $this->plotFloorBlock->getStateId();
+		$roadBlockId = $this->roadBlock->getStateId();
+		$wallBlockId = $this->wallBlock->getStateId();
 		$groundHeight = $this->groundHeight;
 		for($Z = 0; $Z < 16; ++$Z) {
 			for($X = 0; $X < 16; ++$X) {
-				$chunk->setBiomeId($X, $Z, BiomeIds::PLAINS);
+				$chunk->setBiomeId($X, 0, $Z, BiomeIds::PLAINS); // TODO: verify y coord
 				$chunk->setFullBlock($X, 0, $Z, $bottomBlockId);
 				for($y = 1; $y < $groundHeight; ++$y) {
 					$chunk->setFullBlock($X, $y, $Z, $plotFillBlockId);
