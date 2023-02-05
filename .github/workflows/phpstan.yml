@@ -26,6 +26,7 @@ jobs:
           repository: NetherGamesMC/PharBuilder
           token: ${{ secrets.ng_token }}
           path: PharBuilder
+          ref: pm5
       - name: Checkout WorldStyler
         uses: actions/checkout@v3
         with:
