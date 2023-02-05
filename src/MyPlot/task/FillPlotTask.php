@@ -14,28 +14,17 @@ use pocketmine\world\Position;
 use pocketmine\world\World;
 
 class FillPlotTask extends Task {
-	/** @var MyPlot $plugin */
-	protected $plugin;
-	/** @var Plot $plot */
-	protected $plot;
-	/** @var World|null $level */
-	protected $level;
-	/** @var int $height */
-	protected $height;
-	/** @var Block $fillBlock */
-	protected $fillBlock;
-	/** @var Block $bottomBlock */
-	protected $bottomBlock;
-	/** @var Position|null $plotBeginPos */
-	protected $plotBeginPos;
-	/** @var int $xMax */
-	protected $xMax;
-	/** @var int $zMax */
-	protected $zMax;
-	/** @var int $maxBlocksPerTick */
-	protected $maxBlocksPerTick;
-	/** @var Vector3 $pos */
-	protected $pos;
+	protected MyPlot $plugin;
+	protected Plot $plot;
+	protected ?World $level;
+	protected int $height;
+	protected Block $fillBlock;
+	protected Block $bottomBlock;
+	protected ?Position $plotBeginPos;
+	protected int $xMax;
+	protected int $zMax;
+	protected int $maxBlocksPerTick;
+	protected Vector3 $pos;
 
 	/**
 	 * FillPlotTask constructor.

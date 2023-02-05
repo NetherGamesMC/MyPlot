@@ -126,7 +126,6 @@ class Commands extends Command implements PluginOwned
 	 * @param string[] $args
 	 *
 	 * @return bool
-	 * @throws \ReflectionException
 	 */
 	public function execute(CommandSender $sender, string $alias, array $args) : bool {
 		/** @var MyPlot $plugin */

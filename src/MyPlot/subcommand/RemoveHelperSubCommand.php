@@ -6,9 +6,7 @@ use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\RemoveHelperForm;
 use MyPlot\Plot;
 use pocketmine\command\CommandSender;
-use pocketmine\player\OfflinePlayer;
 use pocketmine\player\Player;
-use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
 class RemoveHelperSubCommand extends SubCommand

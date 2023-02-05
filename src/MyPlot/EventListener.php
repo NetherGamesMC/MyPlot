@@ -11,7 +11,6 @@ use MyPlot\events\MyPlotPvpEvent;
 use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\block\Block;
 use pocketmine\block\Sapling;
-use pocketmine\block\utils\TreeType;
 use pocketmine\block\Liquid;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\block\BlockBreakEvent;
@@ -25,11 +24,11 @@ use pocketmine\event\entity\EntitySpawnEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
-use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemConsumeEvent;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\server\CommandEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\world\WorldLoadEvent;
 use pocketmine\event\world\WorldUnloadEvent;
@@ -86,7 +85,7 @@ class EventListener implements Listener
 				$prop = $ref->getProperty('randomTickBlocks');
 				$prop->setAccessible(true);
 				$randomTickBlocks = $prop->getValue($event->getWorld());
-				unset($randomTickBlocks[VanillaBlocks::FIRE()->getFullId()]);
+				unset($randomTickBlocks[VanillaBlocks::FIRE()->getStateId()]);
 				$prop->setValue($event->getWorld(), $randomTickBlocks);
 			}
 		}
@@ -174,7 +173,7 @@ class EventListener implements Listener
 		}
 		$plot = $this->plugin->getPlotByPosition($event->getBlock()->getPosition());
 		if($plot !== null) {
-			if(!$event instanceof SignChangeEvent && in_array($event->getItem()->getId(), $this->plugin->bannedItems, true)) {
+			if(!$event instanceof SignChangeEvent && in_array($event->getItem()->getTypeId(), $this->plugin->bannedItems, true)) {
 				$event->cancel();
 				return;
 			}
@@ -188,6 +187,7 @@ class EventListener implements Listener
 			if($plot->owner == $username or $plot->isHelper($username) or $plot->isHelper("*") or $event->getPlayer()->hasPermission("myplot.admin.build.plot")) {
 				if(!($event instanceof PlayerInteractEvent and $event->getBlock() instanceof Sapling))
 					return;
+
 				/*
 				 * Prevent growing a tree near the edge of a plot
 				 * so the leaves won't go outside the plot
@@ -195,7 +195,7 @@ class EventListener implements Listener
 
 				/** @var Sapling $block */
 				$block = $event->getBlock();
-				$maxLengthLeaves = $block->getIdInfo()->getVariant() === TreeType::SPRUCE()->getMagicNumber() ? 3 : 2;
+				$maxLengthLeaves = 2; // TODO: this is hardcoded for now, didnt want to do reflection hacks
 				$beginPos = $this->plugin->getPlotPosition($plot);
 				$endPos = clone $beginPos;
 				$beginPos->x += $maxLengthLeaves;
@@ -488,21 +488,21 @@ class EventListener implements Listener
 	}
 
 	/**
-	 * @param PlayerCommandPreprocessEvent $event
+	 * @param CommandEvent $event
 	 *
 	 * @priority LOW
 	 *
 	 * @ignoreCancelled
 	 */
-	public function onPlayerCommandPreprocess(PlayerCommandPreprocessEvent $event) : void {
-		$player = $event->getPlayer();
-		$command = explode(' ', strtolower($event->getMessage()));
+	public function onPlayerCommandPreprocess(CommandEvent $event) : void {
+		$player = $event->getSender();
+		$command = explode(' ', strtolower($event->getCommand()));
 
 		if($player->hasPermission("myplot.admin")) {
 			return;
 		}
 
-		if(($command[0] === '/p' || $command[0] === '/plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
+		if(($command[0] === 'p' || $command[0] === 'plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
 			$player->sendMessage('§cThat command is blocked in this world.');
 			$event->cancel();
 		}
@@ -523,7 +523,7 @@ class EventListener implements Listener
 	}
 
 	public function onEat(PlayerItemConsumeEvent $event) : void {
-		$item = $event->getItem()->getId();
+		$item = $event->getItem()->getTypeId();
 		if(in_array($item, $this->plugin->bannedItems, true)) {
 			$event->cancel();
 		}
