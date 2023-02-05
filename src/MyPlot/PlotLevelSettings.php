@@ -6,7 +6,6 @@ use Exception;
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\Server;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
 
 class PlotLevelSettings
@@ -90,8 +89,7 @@ class PlotLevelSettings
             } else {
                 $block = $default;
             }
-        } catch (Exception $ex) {
-            Server::getInstance()->getLogger()->logException($ex);
+        } catch (Exception) {
             $block = $default;
         }
 
