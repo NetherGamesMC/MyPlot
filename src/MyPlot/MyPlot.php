@@ -24,14 +24,13 @@ use MyPlot\provider\EconomyProvider;
 use MyPlot\provider\MySQLProvider;
 use MyPlot\provider\SQLiteDataProvider;
 use MyPlot\task\CleanEntitiesTask;
-use MyPlot\task\ClearBorderTask;
 use MyPlot\task\ClearPlotTask;
 use NetherGames\NGEssentials\NGEssentials;
 use MyPlot\task\RoadFillTask;
-use pocketmine\block\VanillaBlocks;
+use pocketmine\block\BlockTypeIds;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\event\world\WorldLoadEvent;
-use pocketmine\item\ItemIds;
+use pocketmine\item\ItemTypeIds;
 use pocketmine\lang\Language;
 use pocketmine\math\Facing;
 use pocketmine\player\Player;
@@ -40,7 +39,6 @@ use pocketmine\world\biome\Biome;
 use pocketmine\world\biome\BiomeRegistry;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\generator\GeneratorManager;
-use pocketmine\world\World;
 use pocketmine\world\Position;
 use MyPlot\task\FillPlotTask;
 use pocketmine\block\Block;
@@ -72,12 +70,16 @@ class MyPlot extends PluginBase{
 
 	private Commands $commands;
 	public array $stopTime = [];
+
+    // in PM5, item ID for a block is negative
 	public array $bannedItems = [
-		ItemIds::TNT,
-		ItemIds::SPAWN_EGG,
-		ItemIds::POTION,
-		ItemIds::LINGERING_POTION,
-		ItemIds::SPLASH_POTION,
+        -BlockTypeIds::TNT,
+        ItemTypeIds::SQUID_SPAWN_EGG,
+        ItemTypeIds::VILLAGER_SPAWN_EGG,
+        ItemTypeIds::ZOMBIE_SPAWN_EGG,
+        ItemTypeIds::POTION,
+        ItemTypeIds::LINGERING_POTION,
+        ItemTypeIds::SPLASH_POTION,
 	];
 
 	public static function getInstance() : self {
@@ -854,6 +856,8 @@ class MyPlot extends PluginBase{
 				}
 			}
 		}
+        // TODO: either remove completely or integrate this properly
+        /*
 		if($this->getConfig()->get("FastClearing", false) === true) {
 			$styler = $this->getServer()->getPluginManager()->getPlugin("WorldStyler");
 			if(!$styler instanceof WorldStyler) {
@@ -924,6 +928,7 @@ class MyPlot extends PluginBase{
 			$this->getScheduler()->scheduleDelayedTask(new ClearBorderTask($this, $plot), 1);
 			return true;
 		}
+        */
 		$this->getScheduler()->scheduleTask(new ClearPlotTask($this, $plot, $maxBlocksPerTick));
 		return true;
 	}
@@ -959,6 +964,8 @@ class MyPlot extends PluginBase{
 				}
 			}
 		}
+        // TODO: either remove completely or integrate this properly
+        /*
 		if($this->getConfig()->get("FastFilling", false) === true) {
 			$styler = $this->getServer()->getPluginManager()->getPlugin("WorldStyler");
 			if(!$styler instanceof WorldStyler) {
@@ -994,6 +1001,7 @@ class MyPlot extends PluginBase{
 			}
 			return true;
 		}
+        */
 		$this->getScheduler()->scheduleTask(new FillPlotTask($this, $plot, $plotFillBlock, $maxBlocksPerTick));
 		return true;
 	}
@@ -1079,7 +1087,7 @@ class MyPlot extends PluginBase{
 				for($z = 0; $z < 16; ++$z) {
 					$chunkPlot = $this->getPlotByPosition(new Position(($chunkX << 4) + $x, $plotLevel->groundHeight, ($chunkZ << 4) + $z, $level));
 					if($chunkPlot instanceof Plot and $chunkPlot->isSame($plot)) {
-						$chunk->setBiomeId($x, $z, $biome->getId());
+						$chunk->setBiomeId($x, 0, $z, $biome->getId()); // TODO: verify y coord
 					}
 				}
 			}
