@@ -2,9 +2,12 @@
 declare(strict_types=1);
 namespace MyPlot;
 
+use Exception;
 use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\VanillaBlocks;
+use pocketmine\Server;
+use pocketmine\world\format\io\GlobalBlockStateHandlers;
 
 class PlotLevelSettings
 {
@@ -67,21 +70,31 @@ class PlotLevelSettings
 	 * @return Block
 	 */
 	public static function parseBlock(array $array, string|int $key, Block $default) : Block {
-		if(isset($array[$key])) {
-			$id = $array[$key];
-			if(is_numeric($id)) {
-				$block = BlockFactory::getInstance()->get((int) $id, 0);
-			}else{
-				$split = explode(":", $id);
-				if(count($split) === 2 and is_numeric($split[0]) and is_numeric($split[1])) {
-					$block = BlockFactory::getInstance()->get((int) $split[0], (int) $split[1]);
-				}else{
-					$block = $default;
-				}
-			}
-		}else{
-			$block = $default;
-		}
+        try {
+            if (isset($array[$key])) {
+                $id = $array[$key];
+                if (is_numeric($id)) {
+                    $blockState = GlobalBlockStateHandlers::getUpgrader()->upgradeIntIdMeta((int)$id, 0);
+                    $blockStateId = GlobalBlockStateHandlers::getDeserializer()->deserialize($blockState);
+                    $block = BlockFactory::getInstance()->fromStateId($blockStateId);
+                } else {
+                    $split = explode(":", $id);
+                    if (count($split) === 2 and is_numeric($split[0]) and is_numeric($split[1])) {
+                        $blockState = GlobalBlockStateHandlers::getUpgrader()->upgradeIntIdMeta((int)$split[0], (int)$split[1]);
+                        $blockStateId = GlobalBlockStateHandlers::getDeserializer()->deserialize($blockState);
+                        $block = BlockFactory::getInstance()->fromStateId($blockStateId);
+                    } else {
+                        $block = $default;
+                    }
+                }
+            } else {
+                $block = $default;
+            }
+        } catch (Exception $ex) {
+            Server::getInstance()->getLogger()->logException($ex);
+            $block = $default;
+        }
+
 		return $block;
 	}
 
