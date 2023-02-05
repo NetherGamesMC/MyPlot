@@ -502,10 +502,12 @@ class EventListener implements Listener
 			return;
 		}
 
-		if(($command[0] === 'p' || $command[0] === 'plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
-			$player->sendMessage('§cThat command is blocked in this world.');
-			$event->cancel();
-		}
+        if ($player instanceof Player) {
+            if (($command[0] === 'p' || $command[0] === 'plot') && ($player->getWorld()->getFolderName() === $this->plugin->getServer()->getWorldManager()->getDefaultWorld()->getFolderName())) {
+                $player->sendMessage('§cThat command is blocked in this world.');
+                $event->cancel();
+            }
+        }
 	}
 
 	public function onDataPacketSendEvent(DataPacketSendEvent $event) : void {
