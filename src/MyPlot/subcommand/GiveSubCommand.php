@@ -4,6 +4,7 @@ namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\GiveForm;
+use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
@@ -35,8 +36,12 @@ class GiveSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$ess = $this->plugin->getEssentials();
-		$newOwner = $ess->getPlayerManager()->getBestMatchingPlayer($newOwner);
+        if(MyPlot::essentialsExists()) {
+            $ess = $this->plugin->getEssentials();
+            $newOwner = $ess->getPlayerManager()->getBestMatchingPlayer($newOwner);
+        }else{
+            $newOwner = $this->plugin->getServer()->getPlayerByPrefix($newOwner);
+        }
 		if(!$newOwner instanceof Player) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("give.notonline"));
 			return true;

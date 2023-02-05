@@ -53,7 +53,7 @@ class ResetSubCommand extends SubCommand
 	}
 
 	public function getForm(?Player $player = null) : ?MyPlotForm {
-        if(($plot = $this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot){
+        if(($this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot){
             return new ResetForm();
         }
 

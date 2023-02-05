@@ -44,7 +44,7 @@ class TimeForm extends SimpleMyPlotForm{
 	}
 
 	public function preHandle(Player $player) : bool {
-		if(!$player->hasPermission(Permissions::RANK_LEGEND)) {
+		if(MyPlot::essentialsExists() && !$player->hasPermission(Permissions::RANK_LEGEND)) {
 			$player->sendMessage("§cYou don't have permission to change the time for your plot. Buy the §l§bLEGEND §r§crank at §bngmc.co/store §cto change it!");
 			return false;
 		}

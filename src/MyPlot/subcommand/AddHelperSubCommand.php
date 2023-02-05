@@ -4,6 +4,7 @@ namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\AddHelperForm;
+use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
@@ -35,8 +36,12 @@ class AddHelperSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$ess = $this->plugin->getEssentials();
-		$helper = $ess->getPlayerManager()->getBestMatchingPlayer($helperName);
+        if(MyPlot::essentialsExists()) {
+            $ess = $this->plugin->getEssentials();
+            $helper = $ess->getPlayerManager()->getBestMatchingPlayer($helperName);
+        }else{
+            $helper = $this->plugin->getServer()->getPlayerByPrefix($helperName);
+        }
 		if($this->plugin->addPlotHelper($plot, $helper->getName())) {
 			$sender->sendMessage($this->translateString("addhelper.success", [$helper->getName()]));
 		}else{

@@ -339,7 +339,7 @@ class EventListener implements Listener
 		if($player instanceof Player) {
 			$this->onEventOnMove($player, $event);
 
-            if (!$player->hasPermission(Permissions::RANK_VOTER) && $event->getTo()->getWorld()->getFolderName() === 'MEGA') {
+            if (MyPlot::essentialsExists() && !$player->hasPermission(Permissions::RANK_VOTER) && $event->getTo()->getWorld()->getFolderName() === 'MEGA') {
                 $player->sendMessage('§cYou must vote to access Mega Creative.');
                 $event->cancel();
             }

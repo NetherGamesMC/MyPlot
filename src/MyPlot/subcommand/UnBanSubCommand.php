@@ -4,6 +4,7 @@ namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\UnBanPlayerForm;
+use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
@@ -35,8 +36,12 @@ class UnBanSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$ess = $this->plugin->getEssentials();
-		$dplayer = $ess->getPlayerManager()->getBestMatchingPlayer($dplayerName);
+        if(MyPlot::essentialsExists()) {
+            $ess = $this->plugin->getEssentials();
+            $dplayer = $ess->getPlayerManager()->getBestMatchingPlayer($dplayerName);
+        }else{
+            $dplayer = $this->plugin->getServer()->getPlayerByPrefix($dplayerName);
+        }
 		if($this->plugin->removePlotDenied($plot, $dplayer->getName())) {
 			$sender->sendMessage($this->translateString("undenyplayer.success1", [$dplayer->getName()]));
 			if($dplayer instanceof Player) {

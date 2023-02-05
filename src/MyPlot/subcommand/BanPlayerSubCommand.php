@@ -5,6 +5,7 @@ namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
 use MyPlot\forms\subforms\BanPlayerForm;
+use MyPlot\MyPlot;
 use MyPlot\Plot;
 use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\command\CommandSender;
@@ -18,7 +19,11 @@ class BanPlayerSubCommand extends SubCommand{
 	 * @return bool
 	 */
 	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.banplayer") and $sender->hasPermission(Permissions::RANK_LEGEND);
+        if (MyPlot::essentialsExists()) {
+            return ($sender instanceof Player) and $sender->hasPermission("myplot.command.banplayer") and $sender->hasPermission(Permissions::RANK_LEGEND);
+        } else {
+            return ($sender instanceof Player) and $sender->hasPermission("myplot.command.banplayer");
+        }
 	}
 
 	/**
@@ -31,7 +36,7 @@ class BanPlayerSubCommand extends SubCommand{
 		if(empty($args)) {
 			return false;
 		}
-		if(!$sender->hasPermission(Permissions::RANK_LEGEND)) {
+		if(MyPlot::essentialsExists() && !$sender->hasPermission(Permissions::RANK_LEGEND)) {
 			$sender->sendMessage("§cYou don't have permission to ban other players from accessing your plot. Buy the §l§bLEGEND §r§crank at §bngmc.co/store §cto ban them!");
 			return true;
 		}
