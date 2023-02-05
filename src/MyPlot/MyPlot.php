@@ -47,6 +47,7 @@ use pocketmine\utils\TextFormat as TF;
 use pocketmine\world\WorldCreationOptions;
 use function abs;
 use function array_filter;
+use function class_exists;
 use function count;
 use function is_numeric;
 use function str_starts_with;
@@ -81,6 +82,10 @@ class MyPlot extends PluginBase{
 	public static function getInstance() : self {
 		return self::$instance;
 	}
+
+    public static function essentialsExists() : bool {
+        return class_exists("NetherGames\NGEssentials\NGEssentials");
+    }
 
 	/**
 	 * Returns the Multi-lang management class
@@ -1466,7 +1471,8 @@ class MyPlot extends PluginBase{
 	}
 
 	protected function onEnable() : void {
-		$ess = $this->getServer()->getPluginManager()->getPlugin('NGEssentials');
+		/*
+        $ess = $this->getServer()->getPluginManager()->getPlugin('NGEssentials');
 		if(!$ess instanceof NGEssentials) {
 			$this->getServer()->getPluginManager()->disablePlugin($this);
 			$this->getServer()->shutdown();
@@ -1479,6 +1485,7 @@ class MyPlot extends PluginBase{
 		}
 
 		$this->ess = $ess;
+		*/
 
 		foreach(["Creative", "MEGA", "Platinum"] as $world){
 			$this->getServer()->getWorldManager()->loadWorld($world, true);
@@ -1489,7 +1496,10 @@ class MyPlot extends PluginBase{
 		$this->getLogger()->debug(TF::BOLD . "Loading MyPlot Commands");
 		$this->commands = new Commands($this);
 		$this->getServer()->getCommandMap()->register("myplot", $this->commands);
-		BaseCommand::registerCommands($this);
+
+		if (self::essentialsExists()) {
+            BaseCommand::registerCommands($this);
+        }
 
         /* no need for economy on NG Creative
 		$this->getLogger()->debug(TF::BOLD . "Loading economy settings");
