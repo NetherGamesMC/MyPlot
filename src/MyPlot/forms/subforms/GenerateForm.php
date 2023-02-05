@@ -10,7 +10,6 @@ use MyPlot\forms\ComplexMyPlotForm;
 use MyPlot\forms\interfaces\PlotAdminForm;
 use MyPlot\MyPlot;
 use MyPlot\Plot;
-use pocketmine\block\BlockLegacyIds;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
@@ -58,25 +57,26 @@ class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm {
 				}
 
 				$teleport = array_pop($data);
-				$blockIds = array_slice($data, -5, 5, true);
-				$blockIds = array_map(function($val) {
-					if(str_contains($val, ':')) {
-						$peices = explode(':', $val);
-						if(defined(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $peices[0]))))
-							return constant(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $val))).':'.($peices[1] ?? 0);
-						return $val;
-					}elseif(is_numeric($val))
-						return $val.':0';
-					elseif(defined(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $val))))
-						return constant(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $val))).':0';
-					return $val;
-				}, $blockIds);
+                // TODO: fix.. maybe?
+//				$blockIds = array_slice($data, -5, 5, true);
+//				$blockIds = array_map(function($val) {
+//					if(str_contains($val, ':')) {
+//						$peices = explode(':', $val);
+//						if(defined(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $peices[0]))))
+//							return constant(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $val))).':'.($peices[1] ?? 0);
+//						return $val;
+//					}elseif(is_numeric($val))
+//						return $val.':0';
+//					elseif(defined(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $val))))
+//						return constant(BlockLegacyIds::class."::".strtoupper(str_replace(' ', '_', $val))).':0';
+//					return $val;
+//				}, $blockIds);
+//
+//				foreach($blockIds as $key => $val) {
+//                    $data[$key] = $val;
+//                }
 
-				foreach($blockIds as $key => $val) {
-                    $data[$key] = $val;
-                }
-
-				if($plugin->generateWorld($worldName, array_shift($data), $data)) {
+				if($plugin->generateWorld($worldName, array_shift($data), [])) {
 					if($teleport) {
 						$plugin->teleportPlayerToPlot($player, new Plot($worldName, 0, 0));
 					}
