@@ -44,18 +44,19 @@ use MyPlot\task\FillPlotTask;
 use pocketmine\block\Block;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
-use pocketmine\permission\DefaultPermissions;
-use pocketmine\permission\Permission;
 use pocketmine\permission\PermissionAttachmentInfo;
-use pocketmine\permission\PermissionManager;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\world\WorldCreationOptions;
 use function abs;
+use function array_filter;
 use function count;
+use function is_numeric;
+use function str_starts_with;
 use function strlen;
+use function substr;
 use const PHP_INT_MAX;
 
 class MyPlot extends PluginBase{
@@ -308,17 +309,17 @@ class MyPlot extends PluginBase{
 
 		$totalSize = $plotSize + $roadWidth;
 		if($x >= 0) {
-			$difX = $x % $totalSize;
+			$difX = floor($x) % $totalSize;
 			$x = (int) floor($x / $totalSize);
 		}else{
-			$difX = abs(($x - $plotSize + 1) % $totalSize);
+			$difX = abs((floor($x) - $plotSize + 1) % $totalSize);
 			$x = (int) ceil(($x - $plotSize + 1) / $totalSize);
 		}
 		if($z >= 0) {
-			$difZ = $z % $totalSize;
+			$difZ = floor($z) % $totalSize;
 			$z = (int) floor($z / $totalSize);
 		}else{
-			$difZ = abs(($z - $plotSize + 1) % $totalSize);
+			$difZ = abs((floor($z) - $plotSize + 1) % $totalSize);
 			$z = (int) ceil(($z - $plotSize + 1) / $totalSize);
 		}
 
@@ -369,8 +370,8 @@ class MyPlot extends PluginBase{
 			return false;
 		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
 			$pos = $position->getSide($i);
-			$x = $pos->x;
-			$z = $pos->z;
+			$x = $pos->getFloorX();
+			$z = $pos->getFloorZ();
 			$levelName = $pos->getWorld()->getFolderName();
 
 			if(!$this->isLevelLoaded($levelName))
@@ -400,8 +401,8 @@ class MyPlot extends PluginBase{
 				if($i === $n or Facing::opposite($i) === $n)
 					continue;
 				$pos = $position->getSide($i)->getSide($n);
-				$x = $pos->x;
-				$z = $pos->z;
+				$x = $pos->getFloorX();
+				$z = $pos->getFloorZ();
 				$levelName = $pos->getWorld()->getFolderName();
 
 				$plotLevel = $this->getLevelSettings($levelName);
@@ -441,8 +442,8 @@ class MyPlot extends PluginBase{
 			return null;
 		for($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
 			$pos = $position->getSide($i);
-			$x = $pos->x;
-			$z = $pos->z;
+			$x = $pos->getFloorX();
+			$z = $pos->getFloorZ();
 			$levelName = $pos->getWorld()->getFolderName();
 
 			if(!$this->isLevelLoaded($levelName))
@@ -1265,31 +1266,22 @@ class MyPlot extends PluginBase{
 		$levelName = $player->getWorld()->getFolderName();
 		$length = strlen($levelName);
 
-		if($player->hasPermission("myplot.claimplots.$levelName.unlimited"))
+		if($player->hasPermission("myplot.claimplots.$levelName.unlimited")){
             return PHP_INT_MAX;
+        }
 
-		$perms = array_map(fn(PermissionAttachmentInfo $attachment) => [$attachment->getPermission(), $attachment->getValue()], $player->getEffectivePermissions());
-		$perms = array_merge(PermissionManager::getInstance()->getPermission(DefaultPermissions::ROOT_USER)->getChildren(), $perms);
-		$perms = array_filter($perms, function(string $name) use ($levelName) : bool {
-			return (str_starts_with($name, "myplot.claimplots.$levelName."));
-		}, ARRAY_FILTER_USE_KEY);
-
-		if(count($perms) === 0) {
+        $playerPermissions = array_filter($player->getEffectivePermissions(), static fn(PermissionAttachmentInfo $attachment) => $attachment->getValue() && str_starts_with($attachment->getPermission(), "myplot.claimplots.$levelName."));
+		$perms = array_map(static fn(PermissionAttachmentInfo $attachment) => $attachment->getPermission(), $playerPermissions);
+        if(count($perms) === 0) {
 			return 0;
 		}
 
-		krsort($perms, SORT_FLAG_CASE | SORT_NATURAL);
+		rsort($perms, SORT_FLAG_CASE | SORT_NATURAL);
 
-		/**
-		 * @var string $name
-		 * @var Permission $perm
-		 */
-		foreach($perms as $name => $perm){
-			$maxPlots = substr($name, 19 + $length);
-			if(is_numeric($maxPlots)) {
-				return (int)$maxPlots;
-			}
-		}
+        $maxPlots = substr($perms[0], 19 + $length);
+        if(is_numeric($maxPlots)) {
+            return (int)$maxPlots;
+        }
 
 		return 0;
 	}
@@ -1375,7 +1367,7 @@ class MyPlot extends PluginBase{
 	 */
 	private function teleport(Player $player, Position $pos, Closure $onSuccess = null, Closure $onFailure = null) : void {
 		$world = $pos->getWorld();
-		$world->orderChunkPopulation($pos->x >> 4, $pos->z >> 4, null)->onCompletion(
+		$world->orderChunkPopulation($pos->getFloorX() >> 4, $pos->getFloorZ() >> 4, null)->onCompletion(
 			function() use ($player, $pos, $onSuccess, $onFailure) : void {
 				if($player->teleport($pos)) {
 					if($onSuccess !== null) $onSuccess();

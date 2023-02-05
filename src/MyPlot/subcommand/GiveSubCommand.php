@@ -35,7 +35,8 @@ class GiveSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
 			return true;
 		}
-		$newOwner = $this->plugin->getServer()->getPlayerByPrefix($newOwner);
+		$ess = $this->plugin->getEssentials();
+		$newOwner = $ess->getPlayerManager()->getBestMatchingPlayer($newOwner);
 		if(!$newOwner instanceof Player) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("give.notonline"));
 			return true;
