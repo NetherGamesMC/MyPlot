@@ -44,6 +44,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
+use pocketmine\world\World;
 use pocketmine\world\WorldCreationOptions;
 use function abs;
 use function array_filter;
@@ -1091,7 +1092,9 @@ class MyPlot extends PluginBase{
 				for($z = 0; $z < 16; ++$z) {
 					$chunkPlot = $this->getPlotByPosition(new Position(($chunkX << 4) + $x, $plotLevel->groundHeight, ($chunkZ << 4) + $z, $level));
 					if($chunkPlot instanceof Plot and $chunkPlot->isSame($plot)) {
-						$chunk->setBiomeId($x, 0, $z, $biome->getId()); // TODO: verify y coord
+                        for($y = World::Y_MIN; $y < World::Y_MAX; $y++) {
+                            $chunk->setBiomeId($x, $y, $z, $biome->getId());
+                        }
 					}
 				}
 			}
