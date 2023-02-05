@@ -4,13 +4,8 @@ declare(strict_types=1);
 namespace MyPlot;
 
 use Closure;
-use muqsit\worldstyler\Selection;
-use muqsit\worldstyler\shapes\CommonShape;
-use muqsit\worldstyler\shapes\Cuboid;
-use muqsit\worldstyler\WorldStyler;
 use MyPlot\command\BaseCommand;
 use MyPlot\events\MyPlotClearEvent;
-use MyPlot\events\MyPlotCloneEvent;
 use MyPlot\events\MyPlotDisposeEvent;
 use MyPlot\events\MyPlotFillEvent;
 use MyPlot\events\MyPlotGenerationEvent;
@@ -739,6 +734,8 @@ class MyPlot extends PluginBase{
 	 * @return bool
 	 */
 	public function clonePlot(Plot $plotFrom, Plot $plotTo) : bool {
+        // TODO: fix.. maybe?
+        /*
 		$styler = $this->getServer()->getPluginManager()->getPlugin("WorldStyler");
 		if(!$styler instanceof WorldStyler) {
 			return false;
@@ -821,7 +818,8 @@ class MyPlot extends PluginBase{
 		foreach($this->getPlotChunks($plotTo) as [$chunkX, $chunkZ, $chunk]) {
 			$level->setChunk($chunkX, $chunkZ, $chunk);
 		}
-		return true;
+        */
+		return false;
 	}
 
 	/**
