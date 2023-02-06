@@ -5,6 +5,7 @@ namespace MyPlot;
 
 use Closure;
 use MyPlot\command\BaseCommand;
+use MyPlot\database\MyPlotDatabase;
 use MyPlot\events\MyPlotClearEvent;
 use MyPlot\events\MyPlotDisposeEvent;
 use MyPlot\events\MyPlotFillEvent;
@@ -77,6 +78,8 @@ class MyPlot extends PluginBase
     // in PM5, item ID for a block is negative
     /** @var PlotLevelSettings[] $worlds */
     private array $worlds = [];
+
+    private MyPlotDatabase $database;
 
     /**
      * Returns the Multi-lang management class
@@ -270,7 +273,7 @@ class MyPlot extends PluginBase
     public function getLevelSettings(string $worldName): PlotLevelSettings
     {
         if (!isset($this->worlds[$worldName]))
-            throw new AssumptionFailedError("Provided level name is not a MyPlot level");
+            throw new AssumptionFailedError("Provided level name is not a MyPlot level or is not loaded");
         return $this->worlds[$worldName];
     }
 
@@ -1119,12 +1122,15 @@ class MyPlot extends PluginBase
         return 0;
     }
 
+    public function getDatabase(): MyPlotDatabase
+    {
+        return $this->database;
+    }
+
     public function getEssentials(): NGEssentials
     {
         return $this->ess;
     }
-
-    /* -------------------------- Non-API part -------------------------- */
 
     public function getCommands(): Commands
     {
@@ -1185,9 +1191,11 @@ class MyPlot extends PluginBase
         /** @var int $cacheSize */
         $cacheSize = $this->getConfig()->get("PlotCacheSize", 256);
         $dataProvider = $this->getConfig()->get("DataProvider", "sqlite3");
-        if (!is_string($dataProvider))
+        if (!is_string($dataProvider)) {
             $this->dataProvider = new ConfigDataProvider($this, $cacheSize);
+        }
         else
+        {
             try {
                 switch (strtolower($dataProvider)) {
                     case "mysqli":
@@ -1226,6 +1234,10 @@ class MyPlot extends PluginBase
                 $this->getLogger()->error("The selected data provider crashed. JSON will be used instead.");
                 $this->dataProvider = new ConfigDataProvider($this, $cacheSize);
             }
+        }
+
+        $this->database = new MyPlotDatabase($this, $cacheSize);
+        $this->database->init();
     }
 
     protected function onEnable(): void
@@ -1246,7 +1258,7 @@ class MyPlot extends PluginBase
         $this->ess = $ess;
         */
 
-        foreach (["Creative", "MEGA", "Platinum"] as $world) {
+        foreach (["Creative", "MEGA", "Platinum", "p1"] as $world) {
             $this->getServer()->getWorldManager()->loadWorld($world, true);
         }
 
@@ -1269,6 +1281,7 @@ class MyPlot extends PluginBase
             $eventListener->onLevelLoad(new WorldLoadEvent($level));
         }
 
+        $this->database->postInit();
         $this->getLogger()->debug(TF::BOLD . TF::GREEN . "Enabled!");
     }
 
