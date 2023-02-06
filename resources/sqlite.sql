@@ -44,14 +44,14 @@ WHERE (
 -- #        :level string
 -- #        :mergedX int
 -- #        :mergedZ int
-SELECT plotsV2.level, X, Z, name, owner, helpers, denied, biome, pvp, price FROM plotsV2 LEFT JOIN mergedPlotsV2 ON mergedPlotsV2.level = plotsV2.level WHERE mergedPlotsV2.level = :level AND mergedX = :mergedX AND mergedZ = :mergedZ;
+SELECT plotsV2.level, X, Z, name, owner, helpers, denied, biome, pvp FROM plotsV2 LEFT JOIN mergedPlotsV2 ON mergedPlotsV2.level = plotsV2.level WHERE mergedPlotsV2.level = :level AND mergedX = :mergedX AND mergedZ = :mergedZ;
 -- #    }
 
 -- #    { get_merged_plots
 -- #        :level string
 -- #        :originX int
 -- #        :originZ int
-SELECT plotsV2.level, X, Z, name, owner, helpers, denied, biome, pvp, price FROM plotsV2 LEFT JOIN mergedPlotsV2 ON mergedPlotsV2.level = plotsV2.level AND mergedPlotsV2.mergedX = plotsV2.X AND mergedPlotsV2.mergedZ = plotsV2.Z WHERE mergedPlotsV2.level = :level AND originX = :originX AND originZ = :originZ;
+SELECT plotsV2.level, X, Z, name, owner, helpers, denied, biome, pvp FROM plotsV2 LEFT JOIN mergedPlotsV2 ON mergedPlotsV2.level = plotsV2.level AND mergedPlotsV2.mergedX = plotsV2.X AND mergedPlotsV2.mergedZ = plotsV2.Z WHERE mergedPlotsV2.level = :level AND originX = :originX AND originZ = :originZ;
 -- #    }
 
 -- #    { save_plot
