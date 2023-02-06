@@ -86,14 +86,6 @@ class Commands extends Command implements PluginOwned
         $this->loadSubCommand(new FillSubCommand($plugin, "fill"));
 
 		//$this->loadSubCommand(new MergeSubCommand($plugin, "merge")); // dries didnt want these
-		//if($plugin->getEconomyProvider() !== null) {
-		//	$this->loadSubCommand(new SellSubCommand($plugin, "sell"));
-		//	$this->loadSubCommand(new BuySubCommand($plugin, "buy"));
-		//}
-		//$styler = Server::getInstance()->getPluginManager()->getPlugin("WorldStyler");
-		//if($styler !== null) {
-		//	$this->loadSubCommand(new CloneSubCommand($plugin, "clone"));
-		//}
 
 		$plugin->getLogger()->debug("Commands Registered to MyPlot");
 	}

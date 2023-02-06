@@ -62,12 +62,6 @@ PlotCacheSize: 256
 # When a player enters a plot, a popup with basic info will be shown
 ShowPlotPopup: true
 
-# If WorldStyler is installed, MyPlot will use that to clear the entire plot at once
-FastClearing: false
-
-# If WorldStyler is installed, MyPlot will use that to fill the entire plot at once
-FastFilling: false
-
 # Amount of blocks to reset per tick. This only applies if FastClearing is disabled
 # Increasing this number will speed up '/p clear' and '/p reset' but also increases lag
 ClearBlocksPerTick: 256
@@ -109,17 +103,6 @@ DefaultWorld:
   # Edit Border Blocks (Any block immediately adjacent to a plot space)
   # This will allow players to break and place their own border blocks
   EditBorderBlocks: true
-
-  # How much it costs to claim a plot (Economy must be set to 'true')
-  ClaimPrice: 0
-  # How much it costs to clear a plot (Economy must be set to 'true')
-  ClearPrice: 0
-  # How much it costs to dispose a plot (Economy must be set to 'true')
-  DisposePrice: 0
-  # How much it costs to reset a plot (Economy must be set to 'true')
-  ResetPrice: 0
-  # How much it costs to clone a plot (Economy must be set to 'true')
-  ClonePrice: 0
 
   # The size of a plot
   PlotSize: 32
