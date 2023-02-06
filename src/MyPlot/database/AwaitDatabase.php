@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace MyPlot\database;
 
 use Generator;
+use poggit\libasynql\result\SqlChangeResult;
+use poggit\libasynql\result\SqlInsertResult;
 use poggit\libasynql\result\SqlSelectResult;
 use poggit\libasynql\SqlThread;
 use SOFe\AwaitGenerator\Await;
@@ -31,31 +33,38 @@ abstract class AwaitDatabase extends BaseDatabase
 
     public function asyncRawChange(string $queryName, array $args = []): Generator
     {
-        $this->connector->executeImplRaw([$queryName], [$args], [SqlThread::MODE_CHANGE], yield, yield Await::REJECT);
+        $resolve = yield;
+        $this->connector->executeImplRaw([$queryName], [$args], [SqlThread::MODE_CHANGE], static function (array $results) use ($resolve): void {
+            /** @var SqlChangeResult $result */
+            $result = $results[0];
+            $resolve($result->getAffectedRows());
+        },
+            yield Await::REJECT
+        );
         return yield Await::ONCE;
     }
 
     public function asyncInsert(string $queryName, array $args = []): Generator
     {
         $resolve = yield;
-        $this->connector->executeInsert($queryName, $args, static function (int $insertId, int $affectedRows) use ($resolve): void {
-            $resolve($insertId, $affectedRows);
+        $this->connector->executeInsert($queryName, $args, static function (SqlInsertResult $result) use ($resolve): void {
+            $resolve($result->getInsertId(), $result->getAffectedRows());
         },
             yield Await::REJECT
         );
-
         return yield Await::ONCE;
     }
 
     public function asyncRawInsert(string $queryName, array $args = []): Generator
     {
         $resolve = yield;
-        $this->connector->executeImplRaw([$queryName], [$args], [SqlThread::MODE_INSERT], static function (int $insertId, int $affectedRows) use ($resolve): void {
-            $resolve($insertId, $affectedRows);
+        $this->connector->executeImplRaw([$queryName], [$args], [SqlThread::MODE_INSERT], static function (array $results) use ($resolve): void {
+            /** @var SqlInsertResult $result */
+            $result = $results[0];
+            $resolve($result->getInsertId(), $result->getAffectedRows());
         },
             yield Await::REJECT
         );
-
         return yield Await::ONCE;
     }
 
