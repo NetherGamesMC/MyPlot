@@ -12,7 +12,6 @@ use SOFe\AwaitGenerator\Await;
 
 abstract class AwaitDatabase extends BaseDatabase
 {
-
     public function asyncGeneric(string $queryName, array $args = []): Generator
     {
         $this->connector->executeGeneric($queryName, $args, yield, yield Await::REJECT);

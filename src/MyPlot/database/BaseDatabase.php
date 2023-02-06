@@ -35,10 +35,15 @@ abstract class BaseDatabase
         return $this->connector;
     }
 
+    public abstract function init(): void;
+
+    public abstract function postInit(): void;
+
     public function close(): void
     {
         $this->connector->close();
         $this->connector->waitAll();
+        $this->plugin->getLogger()->debug("Database closed");
     }
 
     protected final function cachePlot(Plot $plot): void
