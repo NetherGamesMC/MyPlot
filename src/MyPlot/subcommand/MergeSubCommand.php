@@ -35,7 +35,7 @@ class MergeSubCommand extends SubCommand
 			$sender->sendMessage($this->translateString("merge.confirmface", [$plotId]));
 			return true;
 		}elseif($args[0] === $this->translateString("confirm")) {
-			$rotation = ($sender->getLocation()->getYaw() - 180) % 360;
+			$rotation = (((int)$sender->getLocation()->getYaw()) - 180) % 360;
 			if($rotation < 0) {
 				$rotation += 360.0;
 			}

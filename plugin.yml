@@ -76,10 +76,6 @@ permissions:
     default: op
   myplot.command.archive:
     default: op
-  myplot.command.sell:
-    default: op
-  myplot.command.buy:
-    default: op
   myplot.admin:
     default: op
   myplot.admin.clear:
@@ -122,8 +118,6 @@ permissions:
     default: op
   myplot.admin.pvp.bypass:
     default: op
-  myplot.admin.clone:
-    default: op
   myplot.admin.merge:
     default: true
   myplot.admin.fill:
@@ -133,10 +127,6 @@ permissions:
   myplot.admin.denyplayer.bypass:
     default: op
   myplot.admin.undenyplayer:
-    default: op
-  myplot.admin.sell:
-    default: op
-  myplot.admin.buy:
     default: op
   myplot.admin.setowner:
     default: op
