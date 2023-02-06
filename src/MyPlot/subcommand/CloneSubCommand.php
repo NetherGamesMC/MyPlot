@@ -24,7 +24,6 @@ class CloneSubCommand extends SubCommand
 		if(count($args) === 0) {
 			return false;
 		}
-		/** @var string[] $plotIdArray */
 		$plotIdArray = explode(";", $args[0]);
 		if(count($plotIdArray) != 2 or !is_numeric($plotIdArray[0]) or !is_numeric($plotIdArray[1])) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("clone.wrongid"));
@@ -43,12 +42,6 @@ class CloneSubCommand extends SubCommand
 		}
 		if($selectedPlot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.clone")) {
 			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
-			return true;
-		}
-		$plotLevel = $this->plugin->getLevelSettings($standingPlot->levelName);
-		$economy = $this->plugin->getEconomyProvider();
-		if($economy !== null and !$economy->reduceMoney($sender, $plotLevel->clonePrice)) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("clone.nomoney"));
 			return true;
 		}
 		if($this->plugin->clonePlot($selectedPlot, $standingPlot)) {

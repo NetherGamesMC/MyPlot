@@ -17,9 +17,8 @@ class Plot
 	public array $banned = [];
 	public string $biome = "PLAINS";
 	public bool $pvp = true;
-	public float $price = 0.0;
 
-	public function __construct(string $levelName, int $X, int $Z, string $name = "", string $owner = "", array $helpers = [], array $banned = [], string $biome = "PLAINS", ?bool $pvp = null, float $price = -1) {
+	public function __construct(string $levelName, int $X, int $Z, string $name = "", string $owner = "", array $helpers = [], array $banned = [], string $biome = "PLAINS", ?bool $pvp = null) {
 		$this->levelName = $levelName;
 		$this->X = $X;
 		$this->Z = $Z;
@@ -34,10 +33,6 @@ class Plot
 		}else{
 			$this->pvp = $pvp;
 		}
-		if(MyPlot::getInstance()->getConfig()->get('UseEconomy', false) === true)
-			$this->price = $price < 0 ? $settings->claimPrice : $price;
-		else
-			$this->price = 0;
 	}
 
 	/**

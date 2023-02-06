@@ -32,12 +32,6 @@ class ResetSubCommand extends SubCommand
 			return true;
 		}
 		if(isset($args[0]) and $args[0] == $this->translateString("confirm")) {
-			$economy = $this->plugin->getEconomyProvider();
-			$price = $this->plugin->getLevelSettings($plot->levelName)->resetPrice;
-			if($economy !== null and !$economy->reduceMoney($sender, $price)) {
-				$sender->sendMessage(TextFormat::RED . $this->translateString("reset.nomoney"));
-				return true;
-			}
 			/** @var int $maxBlocksPerTick */
 			$maxBlocksPerTick = $this->plugin->getConfig()->get("ClearBlocksPerTick", 256);
 			if($this->plugin->resetPlot($plot, $maxBlocksPerTick)) {

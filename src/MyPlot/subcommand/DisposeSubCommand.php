@@ -33,12 +33,6 @@ class DisposeSubCommand extends SubCommand
 			return true;
 		}
 		if(isset($args[0]) and $args[0] == $this->translateString("confirm")) {
-			$economy = $this->plugin->getEconomyProvider();
-			$price = $this->plugin->getLevelSettings($plot->levelName)->disposePrice;
-			if($economy !== null and !$economy->reduceMoney($sender, $price)) {
-				$sender->sendMessage(TextFormat::RED . $this->translateString("dispose.nomoney"));
-				return true;
-			}
 			if($this->plugin->disposePlot($plot)) {
 				$sender->sendMessage($this->translateString("dispose.success"));
 			}else{

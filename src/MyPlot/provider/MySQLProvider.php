@@ -63,7 +63,8 @@ class MySQLProvider extends DataProvider {
 		$helpers = implode(',', $plot->helpers);
 		$denied = implode(',', $plot->banned);
 		$stmt = $this->sqlSavePlot;
-		$stmt->bind_param('siisssssid', $plot->levelName, $plot->X, $plot->Z, $plot->name, $plot->owner, $helpers, $denied, $plot->biome, $plot->pvp, $plot->price);
+        $plotPrice = 0.0; // TODO: remove
+		$stmt->bind_param('siisssssid', $plot->levelName, $plot->X, $plot->Z, $plot->name, $plot->owner, $helpers, $denied, $plot->biome, $plot->pvp, $plotPrice);
 		$result = $stmt->execute();
 		if($result === false) {
 			$this->plugin->getLogger()->error($stmt->error);
@@ -134,7 +135,7 @@ class MySQLProvider extends DataProvider {
 				$denied = explode(",", (string) $val["denied"]);
 			}
 			$pvp = is_numeric($val["pvp"]) ? (bool)$val["pvp"] : null;
-			$plot = new Plot($levelName, $X, $Z, (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp, (float) $val["price"]);
+			$plot = new Plot($levelName, $X, $Z, (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp);
 		}else{
 			$plot = new Plot($levelName, $X, $Z);
 		}
@@ -169,7 +170,7 @@ class MySQLProvider extends DataProvider {
 			$helpers = explode(",", (string) $val["helpers"]);
 			$denied = explode(",", (string) $val["denied"]);
 			$pvp = is_numeric($val["pvp"]) ? (bool)$val["pvp"] : null;
-			$plots[] = new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp, (float) $val["price"]);
+			$plots[] = new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp);
 		}
 		// Remove unloaded plots
 		$plots = array_filter($plots, function(Plot $plot) : bool {
@@ -258,7 +259,7 @@ class MySQLProvider extends DataProvider {
             $helpers = explode(",", (string) $val["helpers"]);
             $denied = explode(",", (string) $val["denied"]);
             $pvp = is_numeric($val["pvp"]) ? (bool)$val["pvp"] : null;
-            $plots[] = new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp, (float) $val["price"]);
+            $plots[] = new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp);
         }
         if($adjacent)
             $plots = array_filter($plots, function(Plot $val) use ($plot) : bool {
@@ -284,7 +285,7 @@ class MySQLProvider extends DataProvider {
             $helpers = explode(",", (string) $val["helpers"]);
             $denied = explode(",", (string) $val["denied"]);
             $pvp = is_numeric($val["pvp"]) ? (bool)$val["pvp"] : null;
-            return new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp, (float) $val["price"]);
+            return new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp);
         }
         return $plot;
 	}

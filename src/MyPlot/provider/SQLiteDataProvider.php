@@ -47,6 +47,7 @@ class SQLiteDataProvider extends DataProvider
 		$helpers = implode(",", $plot->helpers);
 		$denied = implode(",", $plot->banned);
 		$stmt = $this->sqlSavePlot;
+        $plotPrice = 0.0; // TODO: remove
 		$stmt->bindValue(":level", $plot->levelName, SQLITE3_TEXT);
 		$stmt->bindValue(":X", $plot->X, SQLITE3_INTEGER);
 		$stmt->bindValue(":Z", $plot->Z, SQLITE3_INTEGER);
@@ -56,7 +57,7 @@ class SQLiteDataProvider extends DataProvider
 		$stmt->bindValue(":denied", $denied, SQLITE3_TEXT);
 		$stmt->bindValue(":biome", $plot->biome, SQLITE3_TEXT);
 		$stmt->bindValue(":pvp", $plot->pvp, SQLITE3_INTEGER);
-		$stmt->bindValue(":price", $plot->price, SQLITE3_FLOAT);
+		$stmt->bindValue(":price", $plotPrice, SQLITE3_FLOAT);
 		$stmt->reset();
 		$result = $stmt->execute();
 		if(!$result instanceof \SQLite3Result) {
@@ -109,7 +110,7 @@ class SQLiteDataProvider extends DataProvider
 				$denied = explode(",", (string) $val["denied"]);
 			}
 			$pvp = is_numeric($val["pvp"]) ? (bool)$val["pvp"] : null;
-			$plot = new Plot($levelName, $X, $Z, (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp, (float) $val["price"]);
+			$plot = new Plot($levelName, $X, $Z, (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp);
 		}else{
 			$plot = new Plot($levelName, $X, $Z);
 		}
@@ -138,7 +139,7 @@ class SQLiteDataProvider extends DataProvider
 			$helpers = explode(",", (string) $val["helpers"]);
 			$denied = explode(",", (string) $val["denied"]);
 			$pvp = is_numeric($val["pvp"]) ? (bool)$val["pvp"] : null;
-			$plots[] = new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp, (float) $val["price"]);
+			$plots[] = new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp);
 		}
 		// Remove unloaded plots
 		$plots = array_filter($plots, function(Plot $plot) : bool {
@@ -232,7 +233,7 @@ class SQLiteDataProvider extends DataProvider
 			$helpers = explode(",", (string) $val["helpers"]);
 			$denied = explode(",", (string) $val["denied"]);
 			$pvp = is_numeric($val["pvp"]) ? (bool)$val["pvp"] : null;
-			$plots[] = new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp, (float) $val["price"]);
+			$plots[] = new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp);
 		}
 		if($adjacent)
 			$plots = array_filter($plots, function(Plot $val) use ($plot) : bool {
@@ -259,7 +260,7 @@ class SQLiteDataProvider extends DataProvider
 			$helpers = explode(",", (string) $val["helpers"]);
 			$denied = explode(",", (string) $val["denied"]);
 			$pvp = is_numeric($val["pvp"]) ? (bool)$val["pvp"] : null;
-			return new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp, (float) $val["price"]);
+			return new Plot((string) $val["level"], (int) $val["X"], (int) $val["Z"], (string) $val["name"], (string) $val["owner"], $helpers, $denied, (string) $val["biome"], $pvp);
 		}
 		return $plot;
 	}

@@ -378,16 +378,10 @@ class EventListener implements Listener
 			if(!(bool) $this->plugin->getConfig()->get("ShowPlotPopup", true))
 				return;
 			$popup = $this->plugin->getLanguage()->translateString("popup", [TextFormat::GREEN . $plot]);
-			$price = TextFormat::GREEN . $plot->price;
 			if($plot->owner !== "") {
-				$owner = TextFormat::GREEN . $plot->owner;
-				if($plot->price > 0 and $plot->owner !== $player->getName()) {
-					$ownerPopup = $this->plugin->getLanguage()->translateString("popup.forsale", [$owner.TextFormat::WHITE, $price.TextFormat::WHITE]);
-				}else{
-					$ownerPopup = $this->plugin->getLanguage()->translateString("popup.owner", [$owner.TextFormat::WHITE]);
-				}
+                $ownerPopup = $this->plugin->getLanguage()->translateString("popup.owner", [TextFormat::GREEN . $plot->owner . TextFormat::WHITE]);
 			}else{
-				$ownerPopup = $this->plugin->getLanguage()->translateString("popup.available", [$price.TextFormat::WHITE]);
+				$ownerPopup = $this->plugin->getLanguage()->translateString("popup.available");
 			}
 			$paddingSize = (int)floor((strlen($popup) - strlen($ownerPopup)) / 2);
 			$paddingPopup = str_repeat(" ", max(0, -$paddingSize));

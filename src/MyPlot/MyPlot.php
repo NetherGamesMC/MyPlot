@@ -15,7 +15,6 @@ use MyPlot\events\MyPlotSettingEvent;
 use MyPlot\events\MyPlotTeleportEvent;
 use MyPlot\provider\ConfigDataProvider;
 use MyPlot\provider\DataProvider;
-use MyPlot\provider\EconomyProvider;
 use MyPlot\provider\MySQLProvider;
 use MyPlot\provider\SQLiteDataProvider;
 use MyPlot\task\CleanEntitiesTask;
@@ -59,14 +58,14 @@ use const PHP_INT_MAX;
 class MyPlot extends PluginBase{
 
 	private static ?MyPlot $instance;
-	private NGEssentials $ess;
-	/** @var PlotLevelSettings[] $worlds */
-	private array $worlds = [];
-	private DataProvider $dataProvider;
-	private ?EconomyProvider $economyProvider = null;
-    private Language $Language;
 
+	private NGEssentials $ess;
+	private DataProvider $dataProvider;
+    private Language $Language;
 	private Commands $commands;
+
+    /** @var PlotLevelSettings[] $worlds */
+    private array $worlds = [];
 	public array $stopTime = [];
 
     // in PM5, item ID for a block is negative
@@ -119,35 +118,6 @@ class MyPlot extends PluginBase{
 	 */
 	public function getProvider() : DataProvider {
 		return $this->dataProvider;
-	}
-
-	/**
-	 * Returns the EconomyProvider that is being used
-	 *
-	 * @api
-	 *
-	 * @return EconomyProvider|null
-	 */
-	public function getEconomyProvider() : ?EconomyProvider {
-		return $this->economyProvider;
-	}
-
-	/**
-	 * Allows setting the economy provider to a custom provider or to null to disable economy mode
-	 *
-	 * @api
-	 *
-	 * @param EconomyProvider|null $provider
-	 */
-	public function setEconomyProvider(?EconomyProvider $provider) : void {
-		if($provider === null) {
-			$this->getConfig()->set("UseEconomy", false);
-			$this->getLogger()->info("Economy mode disabled!");
-		}else{
-			$this->getLogger()->info("A custom economy provider has been registered. Economy mode now enabled!");
-			$this->getConfig()->set("UseEconomy", true);
-			$this->economyProvider = $provider;
-		}
 	}
 
 	/**
@@ -688,7 +658,6 @@ class MyPlot extends PluginBase{
 	public function claimPlot(Plot $plot, string $claimer, string $plotName = "") : bool {
 		$newPlot = clone $plot;
 		$newPlot->owner = $claimer;
-		$newPlot->price = 0.0;
 		$ev = new MyPlotSettingEvent($plot, $newPlot);
 		$ev->call();
 		if($ev->isCancelled()) {
@@ -701,7 +670,6 @@ class MyPlot extends PluginBase{
 				$this->renamePlot($merged, $plotName);
 			}
 			$merged->owner = $claimer;
-			$merged->price = 0.0;
 			if(!$this->savePlot($merged))
 				$failed = true;
 		}
@@ -1159,63 +1127,6 @@ class MyPlot extends PluginBase{
 	}
 
 	/**
-	 * Assigns a price to a plot
-	 *
-	 * @api
-	 *
-	 * @param Plot $plot
-	 * @param float $price
-	 *
-	 * @return bool
-	 */
-	public function sellPlot(Plot $plot, float $price) : bool {
-		if($this->getEconomyProvider() === null or $price < 0)
-			return false;
-
-		$newPlot = clone $plot;
-		$newPlot->price = $price;
-		$ev = new MyPlotSettingEvent($plot, $newPlot);
-		$ev->call();
-		if($ev->isCancelled()) {
-			return false;
-		}
-		$plot = $ev->getPlot();
-		return $this->savePlot($plot);
-	}
-
-	/**
-	 * Resets the price, adds the money to the player's account and claims a plot in a players name
-	 *
-	 * @api
-	 *
-	 * @param Plot $plot
-	 * @param Player $player
-	 *
-	 * @return bool
-	 */
-	public function buyPlot(Plot $plot, Player $player) : bool {
-		if($this->getEconomyProvider() === null or !$this->getEconomyProvider()->reduceMoney($player, $plot->price) or !$this->getEconomyProvider()->addMoney($this->getServer()->getOfflinePlayer($plot->owner), $plot->price))
-			return false;
-		$failed = false;
-		foreach ($this->dataProvider->getMergedPlots($plot) as $mergedPlot) {
-			$newPlot = clone $mergedPlot;
-			$newPlot->owner = $player->getName();
-			$newPlot->helpers = [];
-			$newPlot->banned = [];
-			$newPlot->price = 0.0;
-			$ev = new MyPlotSettingEvent($mergedPlot, $newPlot);
-			$ev->call();
-			if ($ev->isCancelled()) {
-				return false;
-			}
-			$mergedPlot = $ev->getPlot();
-			if($this->savePlot($mergedPlot))
-				$failed = true;
-		}
-		return !$failed;
-	}
-
-	/**
 	 * Returns the PlotLevelSettings of all the loaded worlds
 	 *
 	 * @api
@@ -1503,25 +1414,6 @@ class MyPlot extends PluginBase{
 		if (self::essentialsExists()) {
             BaseCommand::registerCommands($this);
         }
-
-        /* no need for economy on NG Creative
-		$this->getLogger()->debug(TF::BOLD . "Loading economy settings");
-		if($this->getConfig()->get("UseEconomy", false) === true) {
-			if(($plugin = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI")) !== null) {
-				if($plugin instanceof EconomyAPI) {
-					$this->economyProvider = new EconomySProvider($plugin);
-					$this->getLogger()->debug("Eco set to EconomySProvider");
-				}else{
-					$this->getLogger()->debug("Eco not instance of EconomyAPI");
-				}
-			}
-			if(!isset($this->economyProvider)) {
-				$this->getLogger()->info("No supported economy plugin found!");
-				$this->getConfig()->set("UseEconomy", false);
-				//$this->getConfig()->save();
-			}
-		}
-        */
 
 		$this->getLogger()->debug(TF::BOLD . "Loading Events");
 		$eventListener = new EventListener($this);

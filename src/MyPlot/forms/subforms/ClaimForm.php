@@ -45,13 +45,7 @@ class ClaimForm extends ComplexMyPlotForm implements PlotButtonForm{
 			if($plotsOfPlayer >= $maxPlots) {
 				$name = "§6Claim: §cReached your max plots";
 			}else{
-				$plotLevel = $plugin->getLevelSettings($plot->levelName);
-				$economy = $plugin->getEconomyProvider();
-				if($economy !== null && !$economy->reduceMoney($player, $plotLevel->claimPrice)) {
-					$name = "§6Claim: §cNot enough money";
-				}else{
-					$name = "§6Claim: §aAvailable";
-				}
+                $name = "§6Claim: §aAvailable";
 			}
 		}
 
@@ -78,17 +72,11 @@ class ClaimForm extends ComplexMyPlotForm implements PlotButtonForm{
 			if($plotsOfPlayer >= $maxPlots) {
 				$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString('claim.maxplots', [$maxPlots]));
 			}else{
-				$plotLevel = $plugin->getLevelSettings($plot->levelName);
-				$economy = $plugin->getEconomyProvider();
-				if($economy !== null && !$economy->reduceMoney($player, $plotLevel->claimPrice)) {
-					$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString('claim.nomoney'));
-				}else{
-					if($plugin->claimPlot($plot, $player->getName())) {
-						$player->sendMessage($plugin->getLanguage()->translateString("claim.success"));
-					}else{
-						$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("error"));
-					}
-				}
+                if($plugin->claimPlot($plot, $player->getName())) {
+                    $player->sendMessage($plugin->getLanguage()->translateString("claim.success"));
+                }else{
+                    $player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("error"));
+                }
 			}
 		}
 	}

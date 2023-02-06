@@ -20,10 +20,6 @@ class PlotLevelSettings
 	public int $plotSize = 32;
 	public int $groundHeight = 64;
 	public int $claimPrice = 0;
-	public int $clearPrice = 0;
-	public int $disposePrice = 0;
-	public int $resetPrice = 0;
-	public int $clonePrice = 0;
 	public bool $restrictEntityMovement = true;
 	public bool $restrictPVP = false;
 	public bool $updatePlotLiquids = false;
@@ -48,11 +44,6 @@ class PlotLevelSettings
 			$this->roadWidth = self::parseNumber($settings, "RoadWidth", 7);
 			$this->plotSize = self::parseNumber($settings, "PlotSize", 32);
 			$this->groundHeight = self::parseNumber($settings, "GroundHeight", 64);
-			$this->claimPrice = self::parseNumber($settings, "ClaimPrice", 0);
-			$this->clearPrice = self::parseNumber($settings, "ClearPrice", 0);
-			$this->disposePrice = self::parseNumber($settings, "DisposePrice", 0);
-			$this->resetPrice = self::parseNumber($settings, "ResetPrice", 0);
-			$this->clonePrice = self::parseNumber($settings, "ClonePrice", 0);
 			$this->restrictEntityMovement = self::parseBool($settings, "RestrictEntityMovement", true);
 			$this->restrictPVP = self::parseBool($settings, "RestrictPVP", false);
 			$this->updatePlotLiquids = self::parseBool($settings, "UpdatePlotLiquids", false);

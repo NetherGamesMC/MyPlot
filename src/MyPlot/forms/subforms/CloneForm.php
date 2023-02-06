@@ -54,12 +54,6 @@ class CloneForm extends ComplexMyPlotForm implements PlotAdminForm{
 				}
 				if(!$plugin->isLevelLoaded($originPlot->levelName))
 					throw new FormValidationException("Invalid world given");
-				$plotLevel = $plugin->getLevelSettings($originPlot->levelName);
-				$economy = $plugin->getEconomyProvider();
-				if($economy !== null and !$economy->reduceMoney($player, $plotLevel->clonePrice)) {
-					$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("clone.nomoney"));
-					return;
-				}
 				if($plugin->clonePlot($originPlot, $clonedPlot)) {
 					$player->sendMessage($plugin->getLanguage()->translateString("clone.success", [$clonedPlot->__toString(), $originPlot->__toString()]));
 				}else{

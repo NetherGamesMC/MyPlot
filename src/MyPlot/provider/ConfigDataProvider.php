@@ -27,7 +27,7 @@ class ConfigDataProvider extends DataProvider {
 	public function savePlot(Plot $plot) : bool {
 		$plotId = $plot->levelName.';'.$plot->X.';'.$plot->Z;
 		$plots = $this->config->get("plots", []);
-		$plots[$plotId] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->banned, "biome" => $plot->biome, "pvp" => $plot->pvp, "price" => $plot->price];
+		$plots[$plotId] = ["level" => $plot->levelName, "x" => $plot->X, "z" => $plot->Z, "name" => $plot->name, "owner" => $plot->owner, "helpers" => $plot->helpers, "denied" => $plot->banned, "biome" => $plot->biome, "pvp" => $plot->pvp];
 		$this->config->set("plots", $plots);
 		$this->cachePlot($plot);
 		$this->config->save();
@@ -58,8 +58,7 @@ class ConfigDataProvider extends DataProvider {
 			$denied = (array)$plots[$key]["denied"];
 			$biome = strtoupper($plots[$key]["biome"]);
 			$pvp = (bool)$plots[$key]["pvp"];
-			$price = (float)$plots[$key]["price"];
-			return new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $price);
+			return new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp);
 		}
 		return new Plot($levelName, $X, $Z);
 	}
@@ -85,8 +84,7 @@ class ConfigDataProvider extends DataProvider {
 				$denied = $plots[$ownerKey]["denied"] == [] ? [] : $plots[$ownerKey]["denied"];
 				$biome = strtoupper($plots[$ownerKey]["biome"]) == "PLAINS" ? "PLAINS" : strtoupper($plots[$ownerKey]["biome"]);
 				$pvp = $plots[$ownerKey]["pvp"] == null ? false : $plots[$ownerKey]["pvp"];
-				$price = $plots[$ownerKey]["price"] == null ? 0 : $plots[$ownerKey]["price"];
-				$ownerPlots[] = new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $price);
+				$ownerPlots[] = new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp);
 			}
 		}
 		return $ownerPlots;
@@ -165,8 +163,7 @@ class ConfigDataProvider extends DataProvider {
 			$denied = $plotDatums[$mergedId]["denied"] == [] ? [] : $plotDatums[$mergedId]["denied"];
 			$biome = strtoupper($plotDatums[$mergedId]["biome"]) == "PLAINS" ? "PLAINS" : strtoupper($plotDatums[$mergedId]["biome"]);
 			$pvp = $plotDatums[$mergedId]["pvp"] == null ? false : $plotDatums[$mergedId]["pvp"];
-			$price = $plotDatums[$mergedId]["price"] == null ? 0 : $plotDatums[$mergedId]["price"];
-			$plots[] = new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $price);
+			$plots[] = new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp);
 		}
 		if($adjacent)
 			$plots = array_filter($plots, function(Plot $val) use ($plot) {
@@ -196,8 +193,7 @@ class ConfigDataProvider extends DataProvider {
 			$denied = $plotDatums[$originId]["denied"] == [] ? [] : $plotDatums[$originId]["denied"];
 			$biome = strtoupper($plotDatums[$originId]["biome"]) == "PLAINS" ? "PLAINS" : strtoupper($plotDatums[$originId]["biome"]);
 			$pvp = $plotDatums[$originId]["pvp"] == null ? false : $plotDatums[$originId]["pvp"];
-			$price = $plotDatums[$originId]["price"] == null ? 0 : $plotDatums[$originId]["price"];
-			return new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp, $price);
+			return new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp);
 		}
 		return $plot;
 	}

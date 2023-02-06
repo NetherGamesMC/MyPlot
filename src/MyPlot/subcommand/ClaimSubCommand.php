@@ -50,11 +50,6 @@ class ClaimSubCommand extends SubCommand
 			$sender->sendMessage(TextFormat::RED . $this->translateString("claim.maxplots", [$maxPlots]));
 			return true;
 		}
-		$economy = $this->plugin->getEconomyProvider();
-		if($economy !== null and !$economy->reduceMoney($sender, $plot->price)) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("claim.nomoney"));
-			return true;
-		}
 		if($this->plugin->claimPlot($plot, $sender->getName(), $name)) {
 			$sender->sendMessage($this->translateString("claim.success"));
 		}else{
