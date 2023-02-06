@@ -11,36 +11,39 @@ use pocketmine\utils\TextFormat;
 
 class MiddleSubCommand extends SubCommand
 {
-	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and ($sender->hasPermission("myplot.command.middle"));
-	}
+    public function canUse(CommandSender $sender): bool
+    {
+        return ($sender instanceof Player) and ($sender->hasPermission("myplot.command.middle"));
+    }
 
-	/**
-	 * @param Player $sender
-	 * @param string[] $args
-	 *
-	 * @return bool
-	 */
-	public function execute(CommandSender $sender, array $args) : bool {
-		if(count($args) != 0) {
-			return false;
-		}
-		$plot = $this->plugin->getPlotByPosition($sender->getPosition());
-		if($plot === null) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
-			return true;
-		}
-		if($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.middle")) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
-			return true;
-		}
-		$this->plugin->teleportPlayerToPlot($sender, $plot, true, function() use ($sender) : void {
-			$sender->sendMessage(TextFormat::GREEN . $this->translateString("middle.success"));
-		});
-		return true;
-	}
+    /**
+     * @param Player $sender
+     * @param string[] $args
+     *
+     * @return bool
+     */
+    public function execute(CommandSender $sender, array $args): bool
+    {
+        if (count($args) != 0) {
+            return false;
+        }
+        $plot = $this->plugin->getPlotByPosition($sender->getPosition());
+        if ($plot === null) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
+            return true;
+        }
+        if ($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.middle")) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
+            return true;
+        }
+        $this->plugin->teleportPlayerToPlot($sender, $plot, true, function () use ($sender): void {
+            $sender->sendMessage(TextFormat::GREEN . $this->translateString("middle.success"));
+        });
+        return true;
+    }
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
-		return $player !== null ? new MidForm($player) : null;
-	}
+    public function getForm(?Player $player = null): ?MyPlotForm
+    {
+        return $player !== null ? new MidForm($player) : null;
+    }
 }

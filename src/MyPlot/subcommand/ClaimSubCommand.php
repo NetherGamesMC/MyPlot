@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
@@ -10,57 +11,60 @@ use pocketmine\utils\TextFormat;
 
 class ClaimSubCommand extends SubCommand
 {
-	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.claim");
-	}
+    public function canUse(CommandSender $sender): bool
+    {
+        return ($sender instanceof Player) and $sender->hasPermission("myplot.command.claim");
+    }
 
-	/**
-	 * @param Player $sender
-	 * @param string[] $args
-	 *
-	 * @return bool
-	 */
-	public function execute(CommandSender $sender, array $args) : bool {
-		$name = "";
-		if(isset($args[0])) {
-			$name = $args[0];
-		}
-		$plot = $this->plugin->getPlotByPosition($sender->getPosition());
-		if($plot === null) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
-			return true;
-		}
-		if($plot->owner !== "") {
-			if($plot->owner === $sender->getName()) {
-				$sender->sendMessage(TextFormat::RED . $this->translateString("claim.yourplot"));
-			}else{
-				$sender->sendMessage(TextFormat::RED . $this->translateString("claim.alreadyclaimed", [$plot->owner]));
-			}
-			return true;
-		}
-		$maxPlots = $this->plugin->getMaxPlotsOfPlayer($sender);
-		$plotsOfPlayer = 0;
-		foreach($this->plugin->getPlotLevels() as $level => $settings) {
-			$level = $this->plugin->getServer()->getWorldManager()->getWorldByName((string)$level);
-			if($level !== null and $level->isLoaded()) {
-				$plotsOfPlayer += count($this->plugin->getPlotsOfPlayer($sender->getName(), $level->getFolderName()));
-			}
-		}
-		if($plotsOfPlayer >= $maxPlots) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("claim.maxplots", [$maxPlots]));
-			return true;
-		}
-		if($this->plugin->claimPlot($plot, $sender->getName(), $name)) {
-			$sender->sendMessage($this->translateString("claim.success"));
-		}else{
-			$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
-		}
-		return true;
-	}
+    /**
+     * @param Player $sender
+     * @param string[] $args
+     *
+     * @return bool
+     */
+    public function execute(CommandSender $sender, array $args): bool
+    {
+        $name = "";
+        if (isset($args[0])) {
+            $name = $args[0];
+        }
+        $plot = $this->plugin->getPlotByPosition($sender->getPosition());
+        if ($plot === null) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
+            return true;
+        }
+        if ($plot->owner !== "") {
+            if ($plot->owner === $sender->getName()) {
+                $sender->sendMessage(TextFormat::RED . $this->translateString("claim.yourplot"));
+            } else {
+                $sender->sendMessage(TextFormat::RED . $this->translateString("claim.alreadyclaimed", [$plot->owner]));
+            }
+            return true;
+        }
+        $maxPlots = $this->plugin->getMaxPlotsOfPlayer($sender);
+        $plotsOfPlayer = 0;
+        foreach ($this->plugin->getPlotLevels() as $level => $settings) {
+            $level = $this->plugin->getServer()->getWorldManager()->getWorldByName((string)$level);
+            if ($level !== null and $level->isLoaded()) {
+                $plotsOfPlayer += count($this->plugin->getPlotsOfPlayer($sender->getName(), $level->getFolderName()));
+            }
+        }
+        if ($plotsOfPlayer >= $maxPlots) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("claim.maxplots", [$maxPlots]));
+            return true;
+        }
+        if ($this->plugin->claimPlot($plot, $sender->getName(), $name)) {
+            $sender->sendMessage($this->translateString("claim.success"));
+        } else {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("error"));
+        }
+        return true;
+    }
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
-		if($player !== null and ($plot = $this->plugin->getPlotByPosition($player->getPosition())) !== null)
-			return new ClaimForm($player, $plot);
-		return null;
-	}
+    public function getForm(?Player $player = null): ?MyPlotForm
+    {
+        if ($player !== null and ($plot = $this->plugin->getPlotByPosition($player->getPosition())) !== null)
+            return new ClaimForm($player, $plot);
+        return null;
+    }
 }

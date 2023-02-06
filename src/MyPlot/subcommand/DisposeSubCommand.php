@@ -12,44 +12,47 @@ use pocketmine\utils\TextFormat;
 
 class DisposeSubCommand extends SubCommand
 {
-	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.dispose");
-	}
+    public function canUse(CommandSender $sender): bool
+    {
+        return ($sender instanceof Player) and $sender->hasPermission("myplot.command.dispose");
+    }
 
-	/**
-	 * @param Player $sender
-	 * @param string[] $args
-	 *
-	 * @return bool
-	 */
-	public function execute(CommandSender $sender, array $args) : bool {
-		$plot = $this->plugin->getPlotByPosition($sender->getPosition());
-		if($plot === null) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
-			return true;
-		}
-		if($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.dispose")) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
-			return true;
-		}
-		if(isset($args[0]) and $args[0] == $this->translateString("confirm")) {
-			if($this->plugin->disposePlot($plot)) {
-				$sender->sendMessage($this->translateString("dispose.success"));
-			}else{
-				$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
-			}
-		}else{
-			$plotId = TextFormat::GREEN . $plot . TextFormat::WHITE;
-			$sender->sendMessage($this->translateString("dispose.confirm", [$plotId]));
-		}
-		return true;
-	}
+    /**
+     * @param Player $sender
+     * @param string[] $args
+     *
+     * @return bool
+     */
+    public function execute(CommandSender $sender, array $args): bool
+    {
+        $plot = $this->plugin->getPlotByPosition($sender->getPosition());
+        if ($plot === null) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
+            return true;
+        }
+        if ($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.dispose")) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
+            return true;
+        }
+        if (isset($args[0]) and $args[0] == $this->translateString("confirm")) {
+            if ($this->plugin->disposePlot($plot)) {
+                $sender->sendMessage($this->translateString("dispose.success"));
+            } else {
+                $sender->sendMessage(TextFormat::RED . $this->translateString("error"));
+            }
+        } else {
+            $plotId = TextFormat::GREEN . $plot . TextFormat::WHITE;
+            $sender->sendMessage($this->translateString("dispose.confirm", [$plotId]));
+        }
+        return true;
+    }
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
-		if(($this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot) {
-			return new DisposeForm();
-		}
+    public function getForm(?Player $player = null): ?MyPlotForm
+    {
+        if (($this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot) {
+            return new DisposeForm();
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

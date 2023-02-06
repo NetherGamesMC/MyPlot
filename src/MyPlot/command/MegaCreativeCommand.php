@@ -7,24 +7,27 @@ use MyPlot\forms\MainForm;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 
-class MegaCreativeCommand extends BaseCommand{
-	public function __construct() {
-		parent::__construct('megacreative');
+class MegaCreativeCommand extends BaseCommand
+{
+    public function __construct()
+    {
+        parent::__construct('megacreative');
 
-		$this->setAliases(['mc']);
-		$this->setDescription('Command used for teleporting to Mega Creative');
-	}
+        $this->setAliases(['mc']);
+        $this->setDescription('Command used for teleporting to Mega Creative');
+    }
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args) : bool {
-		if($sender instanceof Player) {
-			$sender->teleport($this->getPlugin()->getServer()->getWorldManager()->getWorldByName('MEGA')->getSafeSpawn());
-			$form = new MainForm($sender, $this->getPlugin()->getCommands()->getCommands());
-			$form->sendForm();
-		}else{
-			$sender->sendMessage($this->getPlugin()->getEssentials()->getPrefix() . '§cThat command can only be run in-game.');
-		}
+    public function execute(CommandSender $sender, string $commandLabel, array $args): bool
+    {
+        if ($sender instanceof Player) {
+            $sender->teleport($this->getPlugin()->getServer()->getWorldManager()->getWorldByName('MEGA')->getSafeSpawn());
+            $form = new MainForm($sender, $this->getPlugin()->getCommands()->getCommands());
+            $form->sendForm();
+        } else {
+            $sender->sendMessage($this->getPlugin()->getEssentials()->getPrefix() . '§cThat command can only be run in-game.');
+        }
 
-		return true;
-	}
+        return true;
+    }
 
 }

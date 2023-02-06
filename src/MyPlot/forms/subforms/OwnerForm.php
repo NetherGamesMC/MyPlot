@@ -10,35 +10,38 @@ use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class OwnerForm extends ComplexMyPlotForm implements PlotAdminForm{
-	/** @var string[] $players */
-	private array $players = [];
+class OwnerForm extends ComplexMyPlotForm implements PlotAdminForm
+{
+    /** @var string[] $players */
+    private array $players = [];
 
-	public function __construct() {
-		$plugin = MyPlot::getInstance();
+    public function __construct()
+    {
+        $plugin = MyPlot::getInstance();
 
-		$players = [];
-		foreach($plugin->getServer()->getOnlinePlayers() as $player){
-			$players[] = $player->getDisplayName();
-			$this->players[] = $player->getName();
-		}
-		parent::__construct(
-			null,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("setowner.form")]),
-			[
-				new Dropdown(
-					$plugin->getLanguage()->get("setowner.dropdown"),
-					$players,
-					-1,
-					function(Player $player, int $data) use ($plugin) : void {
-						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("setowner.name") . ' "' . $this->players[$data] . '"', true);
-					}
-				)
-			]
-		);
-	}
+        $players = [];
+        foreach ($plugin->getServer()->getOnlinePlayers() as $player) {
+            $players[] = $player->getDisplayName();
+            $this->players[] = $player->getName();
+        }
+        parent::__construct(
+            null,
+            TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("setowner.form")]),
+            [
+                new Dropdown(
+                    $plugin->getLanguage()->get("setowner.dropdown"),
+                    $players,
+                    -1,
+                    function (Player $player, int $data) use ($plugin): void {
+                        $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("setowner.name") . ' "' . $this->players[$data] . '"', true);
+                    }
+                )
+            ]
+        );
+    }
 
-	public function getName() : string {
-		return "Set plot owner";
-	}
+    public function getName(): string
+    {
+        return "Set plot owner";
+    }
 }

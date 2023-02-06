@@ -11,42 +11,45 @@ use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class AddHelperForm extends ComplexMyPlotForm implements PlotSettingsForm{
-	/** @var string[] $players */
-	private array $players = [];
+class AddHelperForm extends ComplexMyPlotForm implements PlotSettingsForm
+{
+    /** @var string[] $players */
+    private array $players = [];
 
-	public function __construct(Plot $plot) {
-		$plugin = MyPlot::getInstance();
-		$players = [];
-		if(!in_array("*", $plot->helpers, true)) {
-			$players = ["*"];
-			$this->players = ["*"];
-		}
-		foreach($plugin->getServer()->getOnlinePlayers() as $player){
-			$players[] = $player->getDisplayName();
-			$this->players[] = $player->getName();
-		}
-		parent::__construct(
-			null,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("addhelper.form")]),
-			[
-				new Dropdown(
-					$plugin->getLanguage()->get("addhelper.dropdown"),
-					array_map(
-						function(string $text) {
-							return TextFormat::DARK_BLUE . $text;
-						}, $players
-					),
-					-1,
-					function(Player $player, int $data) use ($plugin) {
-						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("addhelper.name") . ' "' . $this->players[$data] . '"', true);
-					}
-				)
-			]
-		);
-	}
+    public function __construct(Plot $plot)
+    {
+        $plugin = MyPlot::getInstance();
+        $players = [];
+        if (!in_array("*", $plot->helpers, true)) {
+            $players = ["*"];
+            $this->players = ["*"];
+        }
+        foreach ($plugin->getServer()->getOnlinePlayers() as $player) {
+            $players[] = $player->getDisplayName();
+            $this->players[] = $player->getName();
+        }
+        parent::__construct(
+            null,
+            TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("addhelper.form")]),
+            [
+                new Dropdown(
+                    $plugin->getLanguage()->get("addhelper.dropdown"),
+                    array_map(
+                        function (string $text) {
+                            return TextFormat::DARK_BLUE . $text;
+                        }, $players
+                    ),
+                    -1,
+                    function (Player $player, int $data) use ($plugin) {
+                        $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("addhelper.name") . ' "' . $this->players[$data] . '"', true);
+                    }
+                )
+            ]
+        );
+    }
 
-	public function getName() : string {
-		return "Add a helper";
-	}
+    public function getName(): string
+    {
+        return "Add a helper";
+    }
 }

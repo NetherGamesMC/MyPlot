@@ -10,72 +10,75 @@ use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\player\Player;
 use function count;
 
-class TphereCommand extends BaseCommand{
-	/** @var array */
-	private $requests = [];
+class TphereCommand extends BaseCommand
+{
+    /** @var array */
+    private $requests = [];
 
-	public function __construct() {
-		parent::__construct('tphere');
+    public function __construct()
+    {
+        parent::__construct('tphere');
 
-		$this->setDescription('Command used for sending and accepting teleport requests');
-		$this->setUsage('§cUsage: /tphere <accept {player} | decline {player} | {player}>');
-	}
+        $this->setDescription('Command used for sending and accepting teleport requests');
+        $this->setUsage('§cUsage: /tphere <accept {player} | decline {player} | {player}>');
+    }
 
-	public function execute(CommandSender $sender, string $commandLabel, array $args) : bool {
-		if($sender instanceof Player) {
-			if(count($args) === 0) {
-				throw new InvalidCommandSyntaxException();
-			}
+    public function execute(CommandSender $sender, string $commandLabel, array $args): bool
+    {
+        if ($sender instanceof Player) {
+            if (count($args) === 0) {
+                throw new InvalidCommandSyntaxException();
+            }
 
-			if($args[0] === 'a' || $args[0] === 'accept') {
-				if(isset($args[1])) {
-					if(($player = $sender->getServer()->getPlayerExact($args[1])) instanceof Player) {
-						if(isset($this->requests[$sender->getName()][$player->getName()])) {
-							$sender->teleport($player->getPosition());
-							Translator::sendMessage($sender, "command.tphere.accepted.receiver", Translator::TYPE_SUCCESS, ...["sender" => $player->getName()]);
-							Translator::sendMessage($player, "command.tphere.accepted.sender", Translator::TYPE_SUCCESS, ...["receiver" => $sender->getName()]);
-							unset($this->requests[$sender->getName()][$player->getName()]);
-						}else{
-							Translator::sendMessage($sender, "command.tphere.norequest", Translator::TYPE_ERROR);
-						}
-					}else{
-						Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
-					}
-				}else{
-					Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
-				}
-			}elseif($args[0] === 'd' || $args[0] === 'decline'){
-				if(isset($args[1])) {
-					if(($player = $sender->getServer()->getPlayerExact($args[1])) instanceof Player) {
-						if(isset($this->requests[$sender->getName()][$player->getName()])) {
-							Translator::sendMessage($sender, "command.tphere.declined.receiver", Translator::TYPE_INFO, ...["sender" => $player->getName()]);
-							Translator::sendMessage($player, "command.tphere.declined.sender", Translator::TYPE_INFO, ...["receiver" => $sender->getName()]);
-							unset($this->requests[$sender->getName()][$player->getName()]);
-						}else{
-							Translator::sendMessage($sender, "command.tphere.norequest", Translator::TYPE_ERROR);
-						}
-					}else{
-						Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
-					}
-				}else{
-					Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
-				}
-			}elseif(($player = $sender->getServer()->getPlayerExact($args[0])) instanceof Player){
-				if($sender->hasPermission(Permissions::RANK_EMERALD)) {
-					$this->requests[$player->getName()][$sender->getName()] = $sender->getName();
-					Translator::sendMessage($sender, "command.tphere.send", Translator::TYPE_SUCCESS, ...["receiver" => $player->getName()]);
-					Translator::sendMessage($player, "command.tphere.receive", Translator::TYPE_INFO, ...["sender" => $sender->getName()]);
-				}else{
-					Translator::sendMessage($sender, "command.tphere.noperm", Translator::TYPE_ERROR);
-				}
-			}else{
-				throw new InvalidCommandSyntaxException();
-			}
-		}else{
-			$sender->sendMessage($this->getPlugin()->getEssentials()->getPrefix() . '§cThat command can only be run in-game.');
-		}
+            if ($args[0] === 'a' || $args[0] === 'accept') {
+                if (isset($args[1])) {
+                    if (($player = $sender->getServer()->getPlayerExact($args[1])) instanceof Player) {
+                        if (isset($this->requests[$sender->getName()][$player->getName()])) {
+                            $sender->teleport($player->getPosition());
+                            Translator::sendMessage($sender, "command.tphere.accepted.receiver", Translator::TYPE_SUCCESS, ...["sender" => $player->getName()]);
+                            Translator::sendMessage($player, "command.tphere.accepted.sender", Translator::TYPE_SUCCESS, ...["receiver" => $sender->getName()]);
+                            unset($this->requests[$sender->getName()][$player->getName()]);
+                        } else {
+                            Translator::sendMessage($sender, "command.tphere.norequest", Translator::TYPE_ERROR);
+                        }
+                    } else {
+                        Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
+                    }
+                } else {
+                    Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
+                }
+            } elseif ($args[0] === 'd' || $args[0] === 'decline') {
+                if (isset($args[1])) {
+                    if (($player = $sender->getServer()->getPlayerExact($args[1])) instanceof Player) {
+                        if (isset($this->requests[$sender->getName()][$player->getName()])) {
+                            Translator::sendMessage($sender, "command.tphere.declined.receiver", Translator::TYPE_INFO, ...["sender" => $player->getName()]);
+                            Translator::sendMessage($player, "command.tphere.declined.sender", Translator::TYPE_INFO, ...["receiver" => $sender->getName()]);
+                            unset($this->requests[$sender->getName()][$player->getName()]);
+                        } else {
+                            Translator::sendMessage($sender, "command.tphere.norequest", Translator::TYPE_ERROR);
+                        }
+                    } else {
+                        Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
+                    }
+                } else {
+                    Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
+                }
+            } elseif (($player = $sender->getServer()->getPlayerExact($args[0])) instanceof Player) {
+                if ($sender->hasPermission(Permissions::RANK_EMERALD)) {
+                    $this->requests[$player->getName()][$sender->getName()] = $sender->getName();
+                    Translator::sendMessage($sender, "command.tphere.send", Translator::TYPE_SUCCESS, ...["receiver" => $player->getName()]);
+                    Translator::sendMessage($player, "command.tphere.receive", Translator::TYPE_INFO, ...["sender" => $sender->getName()]);
+                } else {
+                    Translator::sendMessage($sender, "command.tphere.noperm", Translator::TYPE_ERROR);
+                }
+            } else {
+                throw new InvalidCommandSyntaxException();
+            }
+        } else {
+            $sender->sendMessage($this->getPlugin()->getEssentials()->getPrefix() . '§cThat command can only be run in-game.');
+        }
 
-		return true;
-	}
+        return true;
+    }
 
 }

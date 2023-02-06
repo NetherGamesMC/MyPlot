@@ -11,32 +11,35 @@ use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class UnBanPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm{
-	public function __construct(Plot $plot) {
-		$plugin = MyPlot::getInstance();
+class UnBanPlayerForm extends ComplexMyPlotForm implements PlotSettingsForm
+{
+    public function __construct(Plot $plot)
+    {
+        $plugin = MyPlot::getInstance();
         $this->setPlot($plot);
-		parent::__construct(
-			null,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("unbanplayer.form")]),
-			[
-				new Dropdown(
-					$plugin->getLanguage()->get("unbanplayer.dropdown"),
-					empty($this->plot->banned) ? [TextFormat::DARK_BLUE . $plugin->getLanguage()->get("unbanplayer.formnodenied")] : array_map(function(string $text) {
-						return TextFormat::DARK_BLUE . $text;
-					}, $this->plot->banned),
-					-1,
-					function(Player $player, int $data) use ($plugin) : void {
-						if(empty($this->plot->banned)) {
-							return;
-						}
-						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("unbanplayer.name") . ' "' . $this->plot->banned[$data] . '"', true);
-					}
-				)
-			]
-		);
-	}
+        parent::__construct(
+            null,
+            TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("unbanplayer.form")]),
+            [
+                new Dropdown(
+                    $plugin->getLanguage()->get("unbanplayer.dropdown"),
+                    empty($this->plot->banned) ? [TextFormat::DARK_BLUE . $plugin->getLanguage()->get("unbanplayer.formnodenied")] : array_map(function (string $text) {
+                        return TextFormat::DARK_BLUE . $text;
+                    }, $this->plot->banned),
+                    -1,
+                    function (Player $player, int $data) use ($plugin): void {
+                        if (empty($this->plot->banned)) {
+                            return;
+                        }
+                        $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("unbanplayer.name") . ' "' . $this->plot->banned[$data] . '"', true);
+                    }
+                )
+            ]
+        );
+    }
 
-	public function getName() : string {
-		return "Unban a player";
-	}
+    public function getName(): string
+    {
+        return "Unban a player";
+    }
 }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
@@ -11,46 +12,49 @@ use pocketmine\utils\TextFormat;
 
 class ResetSubCommand extends SubCommand
 {
-	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and $sender->hasPermission("myplot.command.reset");
-	}
+    public function canUse(CommandSender $sender): bool
+    {
+        return ($sender instanceof Player) and $sender->hasPermission("myplot.command.reset");
+    }
 
-	/**
-	 * @param Player $sender
-	 * @param string[] $args
-	 *
-	 * @return bool
-	 */
-	public function execute(CommandSender $sender, array $args) : bool {
-		$plot = $this->plugin->getPlotByPosition($sender->getPosition());
-		if($plot === null) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
-			return true;
-		}
-		if($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.reset")) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
-			return true;
-		}
-		if(isset($args[0]) and $args[0] == $this->translateString("confirm")) {
-			/** @var int $maxBlocksPerTick */
-			$maxBlocksPerTick = $this->plugin->getConfig()->get("ClearBlocksPerTick", 256);
-			if($this->plugin->resetPlot($plot, $maxBlocksPerTick)) {
-				$sender->sendMessage($this->translateString("reset.success"));
-			}else{
-				$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
-			}
-		}else{
-			$plotId = TextFormat::GREEN . $plot . TextFormat::WHITE;
-			$sender->sendMessage($this->translateString("reset.confirm", [$plotId]));
-		}
-		return true;
-	}
+    /**
+     * @param Player $sender
+     * @param string[] $args
+     *
+     * @return bool
+     */
+    public function execute(CommandSender $sender, array $args): bool
+    {
+        $plot = $this->plugin->getPlotByPosition($sender->getPosition());
+        if ($plot === null) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
+            return true;
+        }
+        if ($plot->owner !== $sender->getName() and !$sender->hasPermission("myplot.admin.reset")) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("notowner"));
+            return true;
+        }
+        if (isset($args[0]) and $args[0] == $this->translateString("confirm")) {
+            /** @var int $maxBlocksPerTick */
+            $maxBlocksPerTick = $this->plugin->getConfig()->get("ClearBlocksPerTick", 256);
+            if ($this->plugin->resetPlot($plot, $maxBlocksPerTick)) {
+                $sender->sendMessage($this->translateString("reset.success"));
+            } else {
+                $sender->sendMessage(TextFormat::RED . $this->translateString("error"));
+            }
+        } else {
+            $plotId = TextFormat::GREEN . $plot . TextFormat::WHITE;
+            $sender->sendMessage($this->translateString("reset.confirm", [$plotId]));
+        }
+        return true;
+    }
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
-        if(($this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot){
+    public function getForm(?Player $player = null): ?MyPlotForm
+    {
+        if (($this->getPlugin()->getPlotByPosition($player->getPosition())) instanceof Plot) {
             return new ResetForm();
         }
 
         return null;
-	}
+    }
 }

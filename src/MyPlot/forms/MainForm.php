@@ -14,129 +14,132 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use function strtolower;
 
-class MainForm extends SimpleMyPlotForm {
+class MainForm extends SimpleMyPlotForm
+{
 
-	/**
-	 * MainForm constructor.
-	 *
-	 * @param Player $player
-	 * @param SubCommand[] $subCommands
-	 */
-	public function __construct(Player $player, array $subCommands) {
-		$plugin = MyPlot::getInstance();
-		$this->plot = $plugin->getPlotByPosition($player->getPosition());
+    /**
+     * MainForm constructor.
+     *
+     * @param Player $player
+     * @param SubCommand[] $subCommands
+     */
+    public function __construct(Player $player, array $subCommands)
+    {
+        $plugin = MyPlot::getInstance();
+        $this->plot = $plugin->getPlotByPosition($player->getPosition());
 
-		$elements = [];
-		$settingForms = [];
-		$dangerForms = [];
-		$adminForms = [];
+        $elements = [];
+        $settingForms = [];
+        $dangerForms = [];
+        $adminForms = [];
 
-		foreach($subCommands as $name => $command){
-			$form = $command->getForm($player);
+        foreach ($subCommands as $name => $command) {
+            $form = $command->getForm($player);
 
-			if(!$command->canUse($player) || $form === null) {
-				continue;
-			}
+            if (!$command->canUse($player) || $form === null) {
+                continue;
+            }
 
-			/** @var SimpleMyPlotForm|ComplexMyPlotForm|ModalMyPlotForm $form */
-			$form->setPlayer($player);
-			$form->setPlot($this->plot);
+            /** @var SimpleMyPlotForm|ComplexMyPlotForm|ModalMyPlotForm $form */
+            $form->setPlayer($player);
+            $form->setPlot($this->plot);
 
-			if($form instanceof PlotSettingsForm) {
-				if($form instanceof DangerZone) {
-					$dangerForms[$name] = $form;
-					continue;
-				}
+            if ($form instanceof PlotSettingsForm) {
+                if ($form instanceof DangerZone) {
+                    $dangerForms[$name] = $form;
+                    continue;
+                }
 
-				$settingForms[$name] = $form;
-				continue;
-			}
+                $settingForms[$name] = $form;
+                continue;
+            }
 
-			if($form instanceof PlotAdminForm) {
-				$adminForms[$name] = $form;
-				continue;
-			}
+            if ($form instanceof PlotAdminForm) {
+                $adminForms[$name] = $form;
+                continue;
+            }
 
-			$elements[] = new Button($form->getName(), static function(Player $player) use ($form) {
-				$form->sendForm();
-			});
-		}
+            $elements[] = new Button($form->getName(), static function (Player $player) use ($form) {
+                $form->sendForm();
+            });
+        }
 
-		// only add settings form if the player is inside a plot and is the plot owner or has admin perms
-		if($this->plot !== null && ((strtolower($this->plot->owner) === strtolower($player->getName())) || $player->hasPermission('myplot.admin'))) {
-			$elements[] = new Button("Plot Settings", function(Player $player) use ($settingForms, $dangerForms) {
-				$settings = FormManager::createSimpleForm($player);
-				$settings->setTitle("Plot Settings");
+        // only add settings form if the player is inside a plot and is the plot owner or has admin perms
+        if ($this->plot !== null && ((strtolower($this->plot->owner) === strtolower($player->getName())) || $player->hasPermission('myplot.admin'))) {
+            $elements[] = new Button("Plot Settings", function (Player $player) use ($settingForms, $dangerForms) {
+                $settings = FormManager::createSimpleForm($player);
+                $settings->setTitle("Plot Settings");
 
-				foreach($settingForms as $form){
-					$button = new Button($form->getName(), function(Player $player) use ($form) {
-						$form->sendForm();
-					});
+                foreach ($settingForms as $form) {
+                    $button = new Button($form->getName(), function (Player $player) use ($form) {
+                        $form->sendForm();
+                    });
 
-					$settings->addButton($button);
-				}
+                    $settings->addButton($button);
+                }
 
-				$button = new Button("§cDanger Zone", function(Player $player) use ($dangerForms, $settings) {
-					$dangerZone = FormManager::createSimpleForm($player);
-					$dangerZone->setTitle("Danger Zone");
+                $button = new Button("§cDanger Zone", function (Player $player) use ($dangerForms, $settings) {
+                    $dangerZone = FormManager::createSimpleForm($player);
+                    $dangerZone->setTitle("Danger Zone");
 
-					foreach($dangerForms as $form){
-						$button = new Button($form->getName(), function(Player $player) use ($form) {
-							$form->sendForm();
-						});
+                    foreach ($dangerForms as $form) {
+                        $button = new Button($form->getName(), function (Player $player) use ($form) {
+                            $form->sendForm();
+                        });
 
-						$dangerZone->addButton($button);
-					}
+                        $dangerZone->addButton($button);
+                    }
 
-					$dangerZone->addButton(new Button("Back", function(Player $player) use ($settings) {
-						$settings->sendForm(); // go back to settings form
-					}));
+                    $dangerZone->addButton(new Button("Back", function (Player $player) use ($settings) {
+                        $settings->sendForm(); // go back to settings form
+                    }));
 
-					$dangerZone->sendForm();
-				});
+                    $dangerZone->sendForm();
+                });
 
-				$settings->addButton($button); // danger zone button
-				$settings->addButton(new Button("Back", function(Player $player) {
-					// go back to main form
-					$player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
-				}));
+                $settings->addButton($button); // danger zone button
+                $settings->addButton(new Button("Back", function (Player $player) {
+                    // go back to main form
+                    $player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
+                }));
 
-				$settings->sendForm();
-			});
-		}
+                $settings->sendForm();
+            });
+        }
 
-		// only add admin form if the player has admin perms
-		if($player->hasPermission('myplot.admin')) {
-			$elements[] = new Button("Admin Settings", function(Player $player) use ($adminForms) {
-				$admin = FormManager::createSimpleForm($player);
-				$admin->setTitle("Admin Settings");
+        // only add admin form if the player has admin perms
+        if ($player->hasPermission('myplot.admin')) {
+            $elements[] = new Button("Admin Settings", function (Player $player) use ($adminForms) {
+                $admin = FormManager::createSimpleForm($player);
+                $admin->setTitle("Admin Settings");
 
-				foreach($adminForms as $form){
-					$button = new Button($form->getName(), function(Player $player) use ($form) {
-						$form->sendForm();
-					});
+                foreach ($adminForms as $form) {
+                    $button = new Button($form->getName(), function (Player $player) use ($form) {
+                        $form->sendForm();
+                    });
 
-					$admin->addButton($button);
-				}
+                    $admin->addButton($button);
+                }
 
-				$admin->addButton(new Button("Back", function(Player $player) {
-					// go back to main form
-					$player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
-				}));
+                $admin->addButton(new Button("Back", function (Player $player) {
+                    // go back to main form
+                    $player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
+                }));
 
-				$admin->sendForm();
-			});
-		}
+                $admin->sendForm();
+            });
+        }
 
-		parent::__construct(
-			$player,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$this->getName()]),
-			"",
-			$elements
-		);
-	}
+        parent::__construct(
+            $player,
+            TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$this->getName()]),
+            "",
+            $elements
+        );
+    }
 
-	public function getName() : string {
-		return "Plots";
-	}
+    public function getName(): string
+    {
+        return "Plots";
+    }
 }

@@ -13,50 +13,52 @@ use MyPlot\Plot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm {
+class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm
+{
 
-	public function __construct() {
-		$plugin = MyPlot::getInstance();
+    public function __construct()
+    {
+        $plugin = MyPlot::getInstance();
 
-		$elements = [
-			"world" => new Input($plugin->getLanguage()->get("generate.formworld"), "plots"),
-			"generator" => new Input($plugin->getLanguage()->get("generate.formgenerator"), "", "myplot")
-		];
+        $elements = [
+            "world" => new Input($plugin->getLanguage()->get("generate.formworld"), "plots"),
+            "generator" => new Input($plugin->getLanguage()->get("generate.formgenerator"), "", "myplot")
+        ];
 
-		foreach($plugin->getConfig()->get("DefaultWorld", []) as $key => $value){
-			if(is_numeric($value)) {
-				if($value > 0) {
-					$slider = new Slider($key, 1, 4 * (int)$value);
-					$slider->setStep(1);
-					$slider->setDefault((int)$value);
-					$elements[$key] = $slider;
-				}else{
-					$slider = new Slider($key, 1, 1000);
-					$slider->setStep(1);
-					$slider->setDefault(1);
-					$elements[$key] = $slider;
-				}
-			}elseif(is_bool($value)){
-				$elements[$key] = new Toggle($key, $value);
-			}elseif(is_string($value)){
-				$elements[$key] = new Input($key, "", $value);
-			}
-		}
+        foreach ($plugin->getConfig()->get("DefaultWorld", []) as $key => $value) {
+            if (is_numeric($value)) {
+                if ($value > 0) {
+                    $slider = new Slider($key, 1, 4 * (int)$value);
+                    $slider->setStep(1);
+                    $slider->setDefault((int)$value);
+                    $elements[$key] = $slider;
+                } else {
+                    $slider = new Slider($key, 1, 1000);
+                    $slider->setStep(1);
+                    $slider->setDefault(1);
+                    $elements[$key] = $slider;
+                }
+            } elseif (is_bool($value)) {
+                $elements[$key] = new Toggle($key, $value);
+            } elseif (is_string($value)) {
+                $elements[$key] = new Input($key, "", $value);
+            }
+        }
 
-		$elements["teleport"] = new Toggle($plugin->getLanguage()->get("generate.formteleport"));
+        $elements["teleport"] = new Toggle($plugin->getLanguage()->get("generate.formteleport"));
 
-		parent::__construct(
-			null,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("generate.form")]),
-			$elements,
-			function(Player $player, ?array $data = []) use ($plugin) {
-				$worldName = array_shift($data);
-				if($player->getServer()->getWorldManager()->isWorldGenerated($worldName)) {
-					$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("generate.exists", [$worldName]));
-					return;
-				}
+        parent::__construct(
+            null,
+            TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("generate.form")]),
+            $elements,
+            function (Player $player, ?array $data = []) use ($plugin) {
+                $worldName = array_shift($data);
+                if ($player->getServer()->getWorldManager()->isWorldGenerated($worldName)) {
+                    $player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("generate.exists", [$worldName]));
+                    return;
+                }
 
-				$teleport = array_pop($data);
+                $teleport = array_pop($data);
                 // TODO: fix.. maybe?
 //				$blockIds = array_slice($data, -5, 5, true);
 //				$blockIds = array_map(function($val) {
@@ -76,19 +78,20 @@ class GenerateForm extends ComplexMyPlotForm implements PlotAdminForm {
 //                    $data[$key] = $val;
 //                }
 
-				if($plugin->generateWorld($worldName, array_shift($data), [])) {
-					if($teleport) {
-						$plugin->teleportPlayerToPlot($player, new Plot($worldName, 0, 0));
-					}
-					$player->sendMessage($plugin->getLanguage()->translateString("generate.success", [$worldName]));
-				}else{
-					$player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("generate.error"));
-				}
-			}
-		);
-	}
+                if ($plugin->generateWorld($worldName, array_shift($data), [])) {
+                    if ($teleport) {
+                        $plugin->teleportPlayerToPlot($player, new Plot($worldName, 0, 0));
+                    }
+                    $player->sendMessage($plugin->getLanguage()->translateString("generate.success", [$worldName]));
+                } else {
+                    $player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString("generate.error"));
+                }
+            }
+        );
+    }
 
-	public function getName() : string {
-		return "Generate new plot world";
-	}
+    public function getName(): string
+    {
+        return "Generate new plot world";
+    }
 }

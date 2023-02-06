@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace MyPlot\forms\interfaces;
 
-interface DangerZone{
+interface DangerZone
+{
 
 }

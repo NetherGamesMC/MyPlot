@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
@@ -12,37 +13,40 @@ use pocketmine\utils\TextFormat;
 
 class GenerateSubCommand extends SubCommand
 {
-	public function canUse(CommandSender $sender) : bool {
-		return $sender->hasPermission("myplot.command.generate");
-	}
+    public function canUse(CommandSender $sender): bool
+    {
+        return $sender->hasPermission("myplot.command.generate");
+    }
 
-	/**
-	 * @param CommandSender $sender
-	 * @param string[] $args
-	 *
-	 * @return bool
-	 */
-	public function execute(CommandSender $sender, array $args) : bool {
-		if(count($args) === 0) {
-			return false;
-		}
-		$levelName = $args[0];
-		if($sender->getServer()->getWorldManager()->isWorldGenerated($levelName)) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("generate.exists", [$levelName]));
-			return true;
-		}
-		if($this->plugin->generateWorld($levelName, $args[2] ?? MyPlotGenerator::NAME)) {
-			if(isset($args[1]) and $args[1] == true and $sender instanceof Player) {
-				$this->plugin->teleportPlayerToPlot($sender, new Plot($levelName, 0, 0));
-			}
-			$sender->sendMessage($this->translateString("generate.success", [$levelName]));
-		}else{
-			$sender->sendMessage(TextFormat::RED . $this->translateString("generate.error"));
-		}
-		return true;
-	}
+    /**
+     * @param CommandSender $sender
+     * @param string[] $args
+     *
+     * @return bool
+     */
+    public function execute(CommandSender $sender, array $args): bool
+    {
+        if (count($args) === 0) {
+            return false;
+        }
+        $levelName = $args[0];
+        if ($sender->getServer()->getWorldManager()->isWorldGenerated($levelName)) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("generate.exists", [$levelName]));
+            return true;
+        }
+        if ($this->plugin->generateWorld($levelName, $args[2] ?? MyPlotGenerator::NAME)) {
+            if (isset($args[1]) and $args[1] == true and $sender instanceof Player) {
+                $this->plugin->teleportPlayerToPlot($sender, new Plot($levelName, 0, 0));
+            }
+            $sender->sendMessage($this->translateString("generate.success", [$levelName]));
+        } else {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("generate.error"));
+        }
+        return true;
+    }
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
-		return $player !== null ? new GenerateForm() : null;
-	}
+    public function getForm(?Player $player = null): ?MyPlotForm
+    {
+        return $player !== null ? new GenerateForm() : null;
+    }
 }

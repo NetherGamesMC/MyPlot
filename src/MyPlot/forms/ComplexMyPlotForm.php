@@ -10,22 +10,24 @@ use MyPlot\MyPlot;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
-abstract class ComplexMyPlotForm extends CustomForm implements MyPlotForm {
+abstract class ComplexMyPlotForm extends CustomForm implements MyPlotForm
+{
 
-	use PlotTrait;
+    use PlotTrait;
 
-	protected ?Plot $plot = null;
+    protected ?Plot $plot = null;
 
-	public function __construct(?Player $player, string $title, array $elements, ?\Closure $onSubmit = null) {
-		parent::__construct($player, $onSubmit ?? static function(Player $player) : void {
-				$player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
-			}
-		);
+    public function __construct(?Player $player, string $title, array $elements, ?\Closure $onSubmit = null)
+    {
+        parent::__construct($player, $onSubmit ?? static function (Player $player): void {
+            $player->getServer()->dispatchCommand($player, MyPlot::getInstance()->getLanguage()->get("command.name"), true);
+        }
+        );
 
-		$this->setTitle($title);
+        $this->setTitle($title);
 
-		foreach($elements as $element){
-			$this->addElement($element);
-		}
-	}
+        foreach ($elements as $element) {
+            $this->addElement($element);
+        }
+    }
 }

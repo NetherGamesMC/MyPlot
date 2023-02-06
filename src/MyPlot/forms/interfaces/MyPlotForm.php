@@ -6,13 +6,13 @@ namespace MyPlot\forms\interfaces;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
-interface MyPlotForm{
-
+interface MyPlotForm
+{
     public function getName(): string;
 
-    public function setPlot(?Plot $plot) : void;
+    public function setPlot(?Plot $plot): void;
 
-    public function getPlot() : ?Plot;
+    public function getPlot(): ?Plot;
 
-    public function preHandle(Player $player) : bool;
+    public function preHandle(Player $player): bool;
 }

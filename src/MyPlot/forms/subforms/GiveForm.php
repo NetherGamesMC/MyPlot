@@ -12,35 +12,38 @@ use MyPlot\MyPlot;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class GiveForm extends ComplexMyPlotForm implements PlotSettingsForm, DangerZone{
-	/** @var string[] $players */
-	private array $players = [];
+class GiveForm extends ComplexMyPlotForm implements PlotSettingsForm, DangerZone
+{
+    /** @var string[] $players */
+    private array $players = [];
 
-	public function __construct() {
-		$plugin = MyPlot::getInstance();
-		$players = [];
-		foreach($plugin->getServer()->getOnlinePlayers() as $player){
-			$players[] = $player->getDisplayName();
-			$this->players[] = $player->getName();
-		}
-		parent::__construct(
-			null,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("give.form")]),
-			[
-				new Label("Are you sure you want to give your plot to someone else?\n\n"),
-				new Dropdown(
-					$plugin->getLanguage()->get("give.dropdown"),
-					$players,
-					-1,
-					function(Player $player, int $data) use ($plugin) {
-						$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("give.name") . ' "' . $this->players[$data] . '"', true);
-					}
-				)
-			]
-		);
-	}
+    public function __construct()
+    {
+        $plugin = MyPlot::getInstance();
+        $players = [];
+        foreach ($plugin->getServer()->getOnlinePlayers() as $player) {
+            $players[] = $player->getDisplayName();
+            $this->players[] = $player->getName();
+        }
+        parent::__construct(
+            null,
+            TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header", [$plugin->getLanguage()->get("give.form")]),
+            [
+                new Label("Are you sure you want to give your plot to someone else?\n\n"),
+                new Dropdown(
+                    $plugin->getLanguage()->get("give.dropdown"),
+                    $players,
+                    -1,
+                    function (Player $player, int $data) use ($plugin) {
+                        $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("give.name") . ' "' . $this->players[$data] . '"', true);
+                    }
+                )
+            ]
+        );
+    }
 
-	public function getName() : string {
-		return "Give";
-	}
+    public function getName(): string
+    {
+        return "Give";
+    }
 }

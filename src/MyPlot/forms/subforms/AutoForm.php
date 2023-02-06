@@ -10,30 +10,34 @@ use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class AutoForm extends ComplexMyPlotForm implements PlotButtonForm{
+class AutoForm extends ComplexMyPlotForm implements PlotButtonForm
+{
 
-	public function __construct(Player $player) {
-		$plugin = MyPlot::getInstance();
+    public function __construct(Player $player)
+    {
+        $plugin = MyPlot::getInstance();
 
-		parent::__construct(
-			$player,
-			TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header"),
-			[]
-		);
-	}
+        parent::__construct(
+            $player,
+            TextFormat::BLACK . $plugin->getLanguage()->translateString("form.header"),
+            []
+        );
+    }
 
-	public function getName() : string {
-		return "Find a new plot";
-	}
+    public function getName(): string
+    {
+        return "Find a new plot";
+    }
 
-	public function onButtonClick(Player $player) : void {
-		$plugin = MyPlot::getInstance();
+    public function onButtonClick(Player $player): void
+    {
+        $plugin = MyPlot::getInstance();
 
-		if($player->getWorld()->getFolderName() === 'Platinum' && MyPlot::essentialsExists() && !$player->hasPermission(Permissions::RANK_ULTRA)) {
-			$player->sendMessage('§cThat action is blocked for you in this world.');
-			return;
-		}
+        if ($player->getWorld()->getFolderName() === 'Platinum' && MyPlot::essentialsExists() && !$player->hasPermission(Permissions::RANK_ULTRA)) {
+            $player->sendMessage('§cThat action is blocked for you in this world.');
+            return;
+        }
 
-		$player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("auto.name"), true);
-	}
+        $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("auto.name"), true);
+    }
 }

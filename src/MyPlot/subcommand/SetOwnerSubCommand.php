@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace MyPlot\subcommand;
 
 use MyPlot\forms\interfaces\MyPlotForm;
@@ -9,49 +10,53 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class SetOwnerSubCommand extends SubCommand {
-	public function canUse(CommandSender $sender) : bool {
-		return ($sender instanceof Player) and $sender->hasPermission("myplot.admin.setowner");
-	}
+class SetOwnerSubCommand extends SubCommand
+{
+    public function canUse(CommandSender $sender): bool
+    {
+        return ($sender instanceof Player) and $sender->hasPermission("myplot.admin.setowner");
+    }
 
-	/**
-	 * @param Player $sender
-	 * @param string[] $args
-	 *
-	 * @return bool
-	 */
-	public function execute(CommandSender $sender, array $args) : bool {
-		if(count($args) === 0) {
-			return false;
-		}
-		$plot = $this->plugin->getPlotByPosition($sender->getPosition());
-		if($plot === null) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
-			return true;
-		}
-		$maxPlots = $this->plugin->getMaxPlotsOfPlayer($sender);
-		$plotsOfPlayer = 0;
-		foreach($this->plugin->getPlotLevels() as $level => $settings) {
-			$level = $this->plugin->getServer()->getWorldManager()->getWorldByName($level);
-			if($level !== null and $level->isLoaded()) {
-				$plotsOfPlayer += count($this->plugin->getPlotsOfPlayer($sender->getName(), $level->getFolderName()));
-			}
-		}
-		if($plotsOfPlayer >= $maxPlots) {
-			$sender->sendMessage(TextFormat::RED . $this->translateString("setowner.maxplots", [$maxPlots]));
-			return true;
-		}
-		if($this->plugin->claimPlot($plot, $args[0])) {
-			$sender->sendMessage($this->translateString("setowner.success", [$args[0]]));
-		}else{
-			$sender->sendMessage(TextFormat::RED . $this->translateString("error"));
-		}
-		return true;
-	}
+    /**
+     * @param Player $sender
+     * @param string[] $args
+     *
+     * @return bool
+     */
+    public function execute(CommandSender $sender, array $args): bool
+    {
+        if (count($args) === 0) {
+            return false;
+        }
+        $plot = $this->plugin->getPlotByPosition($sender->getPosition());
+        if ($plot === null) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("notinplot"));
+            return true;
+        }
+        $maxPlots = $this->plugin->getMaxPlotsOfPlayer($sender);
+        $plotsOfPlayer = 0;
+        foreach ($this->plugin->getPlotLevels() as $level => $settings) {
+            $level = $this->plugin->getServer()->getWorldManager()->getWorldByName($level);
+            if ($level !== null and $level->isLoaded()) {
+                $plotsOfPlayer += count($this->plugin->getPlotsOfPlayer($sender->getName(), $level->getFolderName()));
+            }
+        }
+        if ($plotsOfPlayer >= $maxPlots) {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("setowner.maxplots", [$maxPlots]));
+            return true;
+        }
+        if ($this->plugin->claimPlot($plot, $args[0])) {
+            $sender->sendMessage($this->translateString("setowner.success", [$args[0]]));
+        } else {
+            $sender->sendMessage(TextFormat::RED . $this->translateString("error"));
+        }
+        return true;
+    }
 
-	public function getForm(?Player $player = null) : ?MyPlotForm {
-		if($player !== null and $this->plugin->getPlotByPosition($player->getPosition()) instanceof Plot)
-			return new OwnerForm();
-		return null;
-	}
+    public function getForm(?Player $player = null): ?MyPlotForm
+    {
+        if ($player !== null and $this->plugin->getPlotByPosition($player->getPosition()) instanceof Plot)
+            return new OwnerForm();
+        return null;
+    }
 }

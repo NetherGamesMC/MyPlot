@@ -12,7 +12,6 @@ use pocketmine\utils\TextFormat;
 
 class FillForm extends ComplexMyPlotForm implements PlotSettingsForm
 {
-
     public function __construct()
     {
         $plugin = MyPlot::getInstance();

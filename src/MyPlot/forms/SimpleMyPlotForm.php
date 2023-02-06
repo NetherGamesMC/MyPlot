@@ -9,20 +9,22 @@ use MyPlot\forms\traits\PlotTrait;
 use MyPlot\Plot;
 use pocketmine\player\Player;
 
-abstract class SimpleMyPlotForm extends SimpleForm implements MyPlotForm {
+abstract class SimpleMyPlotForm extends SimpleForm implements MyPlotForm
+{
 
-	use PlotTrait;
+    use PlotTrait;
 
-	protected ?Plot $plot = null;
+    protected ?Plot $plot = null;
 
-	public function __construct(?Player $player, string $title, string $text, array $options) {
-		parent::__construct($player);
+    public function __construct(?Player $player, string $title, string $text, array $options)
+    {
+        parent::__construct($player);
 
-		$this->setTitle($title);
-		$this->setContent($text);
+        $this->setTitle($title);
+        $this->setContent($text);
 
-		foreach($options as $option){
-			$this->addButton($option);
-		}
-	}
+        foreach ($options as $option) {
+            $this->addButton($option);
+        }
+    }
 }
