@@ -37,6 +37,27 @@ Custom Messages: false
 # This does not add UIs for all commands. Some actions still require commands to use.
 UI Forms: true
 
+database:
+  # sqlite
+  type: sqlite
+
+  sqlite:
+    file: "plots.db"
+
+#  mysql:
+#    # link to database
+#    host: "127.0.0.1"
+#    username: "root"
+#    password: ""
+#    # the database name
+#    # make sure that the database exists
+#    # change name if necessary
+#    schema: "myplot"
+#
+#    # only change if you know what you are doing
+#    worker-limit: 2
+
+
 # The data provider where plot data is stored.
 # Current providers are: sqlite, mysql, json, and yaml.
 DataProvider: sqlite
