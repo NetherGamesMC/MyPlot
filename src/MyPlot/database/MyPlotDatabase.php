@@ -47,8 +47,8 @@ final class MyPlotDatabase extends AwaitDatabase
         Await::f2c(
             function () {
                 // create tables
-                yield $this->asyncGeneric(QueryIds::INIT_PLOTS_V2);
-                yield $this->asyncGeneric(QueryIds::INIT_MERGED_PLOTS_V2);
+                yield from $this->asyncGeneric(QueryIds::INIT_PLOTS_V2);
+                yield from $this->asyncGeneric(QueryIds::INIT_MERGED_PLOTS_V2);
 
                 if (self::$type === self::TYPE_SQLITE) {
                     // plotsV2
@@ -262,7 +262,7 @@ final class MyPlotDatabase extends AwaitDatabase
     {
         Await::f2c(function () use ($levelName, $limitXZ, $resolve): Generator {
             for ($i = 0; $limitXZ <= 0 or $i < $limitXZ; $i++) {
-                $result = yield $this->asyncSelect(QueryIds::GET_EXISTING_XZ, ["level" => $levelName, "number" => $i]);
+                $result = yield from $this->asyncSelect(QueryIds::GET_EXISTING_XZ, ["level" => $levelName, "number" => $i]);
                 $plots = [];
 
                 foreach ($result as $val) {
@@ -313,7 +313,7 @@ final class MyPlotDatabase extends AwaitDatabase
             function () use ($base, $plots, $resolve): Generator {
                 try {
                     foreach ($plots as $plot) {
-                        yield $this->asyncInsert(QueryIds::MERGE_PLOT, [
+                        yield from $this->asyncInsert(QueryIds::MERGE_PLOT, [
                             "level" => $base->levelName,
                             "originX" => $base->X,
                             "originZ" => $base->Z,
@@ -341,7 +341,7 @@ final class MyPlotDatabase extends AwaitDatabase
             $origin = yield Await::ONCE;
 
             $plots = [$origin];
-            $rows = yield $this->asyncSelect(QueryIds::GET_MERGED_PLOTS, ["level" => $origin->levelName, "originX" => $origin->X, "originZ" => $origin->Z]);
+            $rows = yield from $this->asyncSelect(QueryIds::GET_MERGED_PLOTS, ["level" => $origin->levelName, "originX" => $origin->X, "originZ" => $origin->Z]);
 
             foreach ($rows as $val) {
                 $helpers = explode(",", (string)$val["helpers"]);
