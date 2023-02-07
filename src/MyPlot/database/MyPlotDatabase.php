@@ -52,17 +52,25 @@ final class MyPlotDatabase extends AwaitDatabase
 
                 if (self::$type === self::TYPE_SQLITE) {
                     // plotsV2
-                    $res = yield $this->asyncRawSelect("SELECT count(name) FROM sqlite_Master WHERE type='table' AND name='plots';");
+                    $oldTableExists = false;
+                    $res = yield from $this->asyncRawSelect("SELECT count(name) FROM sqlite_Master WHERE type='table' AND name='plots';");
                     // copy records over to the new table
                     if ((int)$res[0]["count(name)"] > 0) {
                         yield $this->asyncRawInsert("INSERT OR IGNORE INTO plotsV2 (level, X, Z, name, owner, helpers, denied, biome, pvp, price) SELECT level, X, Z, name, owner, helpers, denied, biome, pvp, price FROM plots;");
+                        $oldTableExists = true;
                     }
 
                     // mergedPlotsV2
-                    $res = yield $this->asyncRawSelect("SELECT count(name) FROM sqlite_Master WHERE type='table' AND name='mergedPlots';");
+                    $res = yield from $this->asyncRawSelect("SELECT count(name) FROM sqlite_Master WHERE type='table' AND name='mergedPlots';");
                     // copy records over to the new table
                     if ((int)$res[0]["count(name)"] > 0) {
-                        yield $this->asyncRawInsert("INSERT OR IGNORE INTO mergedPlotsV2 (level, originX, originZ, mergedX, mergedZ) SELECT r1.level, r1.X, r1.Z, r2.X, r2.Z FROM plots r1, mergedPlots JOIN plots r2 ON r1.id = mergedPlots.originId AND r2.id = mergedPlots.mergedId;");
+                        yield from $this->asyncRawInsert("INSERT OR IGNORE INTO mergedPlotsV2 (level, originX, originZ, mergedX, mergedZ) SELECT r1.level, r1.X, r1.Z, r2.X, r2.Z FROM plots r1, mergedPlots JOIN plots r2 ON r1.id = mergedPlots.originId AND r2.id = mergedPlots.mergedId;");
+                        yield from $this->asyncRawChange("DROP TABLE mergedPlots;");
+                    }
+
+                    if ($oldTableExists) {
+                        yield from $this->asyncRawChange("DROP TABLE plots;");
+                        $this->plugin->getLogger()->debug("Old tables removed");
                     }
                 }
             }
