@@ -46,8 +46,8 @@ abstract class AwaitDatabase extends BaseDatabase
     public function asyncInsert(string $queryName, array $args = []): Generator
     {
         $resolve = yield;
-        $this->connector->executeInsert($queryName, $args, static function (SqlInsertResult $result) use ($resolve): void {
-            $resolve($result->getInsertId(), $result->getAffectedRows());
+        $this->connector->executeInsert($queryName, $args, static function (int $insertId, int $affectedRows) use ($resolve): void {
+            $resolve($insertId, $affectedRows);
         },
             yield Await::REJECT
         );
