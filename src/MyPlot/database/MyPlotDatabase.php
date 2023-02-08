@@ -77,6 +77,9 @@ final class MyPlotDatabase extends AwaitDatabase
         $this->plugin->getLogger()->debug("SQLite database initialized");
     }
 
+    /**
+     * @internal
+     */
     public function postInit(): void
     {
         /*
