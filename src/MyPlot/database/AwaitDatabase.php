@@ -47,7 +47,7 @@ abstract class AwaitDatabase extends BaseDatabase
     {
         $resolve = yield;
         $this->connector->executeInsert($queryName, $args, static function (int $insertId, int $affectedRows) use ($resolve): void {
-            $resolve($insertId, $affectedRows);
+            $resolve([$insertId, $affectedRows]);
         },
             yield Await::REJECT
         );
@@ -60,7 +60,7 @@ abstract class AwaitDatabase extends BaseDatabase
         $this->connector->executeImplRaw([$queryName], [$args], [SqlThread::MODE_INSERT], static function (array $results) use ($resolve): void {
             /** @var SqlInsertResult $result */
             $result = $results[0];
-            $resolve($result->getInsertId(), $result->getAffectedRows());
+            $resolve([$result->getInsertId(), $result->getAffectedRows()]);
         },
             yield Await::REJECT
         );
