@@ -86,8 +86,6 @@ class Commands extends Command implements PluginOwned
         $this->loadSubCommand(new KickSubCommand($plugin, "kick"));
         $this->loadSubCommand(new FillSubCommand($plugin, "fill"));
 
-        //$this->loadSubCommand(new MergeSubCommand($plugin, "merge")); // dries didnt want these
-
         $plugin->getLogger()->debug("Commands Registered to MyPlot");
     }
 

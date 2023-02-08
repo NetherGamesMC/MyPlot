@@ -5,7 +5,6 @@ namespace MyPlot\provider;
 
 use MyPlot\MyPlot;
 use MyPlot\Plot;
-use pocketmine\math\Facing;
 
 class SQLiteDataProvider extends DataProvider
 {
@@ -122,15 +121,7 @@ class SQLiteDataProvider extends DataProvider
 
     public function deletePlot(Plot $plot): bool
     {
-        if ($plot->isMerged()) {
-            $plot = $this->getMergeOrigin($plot);
-            $settings = MyPlot::getInstance()->getLevelSettings($plot->levelName);
-            $stmt = $this->sqlDisposeMergedPlot;
-            $stmt->bindValue(":pvp", !$settings->restrictPVP, SQLITE3_INTEGER);
-            $stmt->bindValue(":price", $settings->claimPrice, SQLITE3_FLOAT);
-        } else {
-            $stmt = $this->sqlRemovePlot;
-        }
+        $stmt = $this->sqlRemovePlot;
         $stmt->bindValue(":level", $plot->levelName, SQLITE3_TEXT);
         $stmt->bindValue(":X", $plot->X, SQLITE3_INTEGER);
         $stmt->bindValue(":Z", $plot->Z, SQLITE3_INTEGER);
@@ -141,26 +132,6 @@ class SQLiteDataProvider extends DataProvider
         }
         $this->cachePlot(new Plot($plot->levelName, $plot->X, $plot->Z));
         return true;
-    }
-
-    public function getMergeOrigin(Plot $plot): Plot
-    {
-        $stmt = $this->sqlGetMergeOrigin;
-        $stmt->bindValue(":level", $plot->levelName);
-        $stmt->bindValue(":mergedX", $plot->X);
-        $stmt->bindValue(":mergedZ", $plot->Z);
-        $stmt->reset();
-        $result = $stmt->execute();
-        if (!$result instanceof \SQLite3Result) {
-            return $plot;
-        }
-        if (($val = $result->fetchArray(SQLITE3_ASSOC)) !== false) {
-            $helpers = explode(",", (string)$val["helpers"]);
-            $denied = explode(",", (string)$val["denied"]);
-            $pvp = is_numeric($val["pvp"]) ? (bool)$val["pvp"] : null;
-            return new Plot((string)$val["level"], (int)$val["X"], (int)$val["Z"], (string)$val["name"], (string)$val["owner"], $helpers, $denied, (string)$val["biome"], $pvp);
-        }
-        return $plot;
     }
 
     public function getPlot(string $levelName, int $X, int $Z): Plot
@@ -271,58 +242,5 @@ class SQLiteDataProvider extends DataProvider
     {
         $this->db->close();
         $this->plugin->getLogger()->debug("SQLite database closed!");
-    }
-
-    public function mergePlots(Plot $base, Plot ...$plots): bool
-    {
-        $stmt = $this->sqlMergePlot;
-        $ret = true;
-        foreach ($plots as $plot) {
-            $stmt->bindValue(":level", $base->levelName);
-            $stmt->bindValue(":originX", $base->X);
-            $stmt->bindValue(":originZ", $base->Z);
-            $stmt->bindValue(":mergedX", $plot->X);
-            $stmt->bindValue(":mergedZ", $plot->Z);
-            $stmt->reset();
-            $result = $stmt->execute();
-            if (!$result instanceof \SQLite3Result) {
-                MyPlot::getInstance()->getLogger()->debug("Failed to merge plot $plot into $base");
-                $ret = false;
-            }
-        }
-        return $ret;
-    }
-
-    /**
-     * @param Plot $plot
-     * @param bool $adjacent
-     *
-     * @return Plot[]
-     */
-    public function getMergedPlots(Plot $plot, bool $adjacent = false): array
-    {
-        $origin = $this->getMergeOrigin($plot);
-        $stmt = $this->sqlGetMergedPlots;
-        $stmt->bindValue(":level", $origin->levelName);
-        $stmt->bindValue(":originX", $origin->X);
-        $stmt->bindValue(":originZ", $origin->Z);
-        $stmt->reset();
-        $result = $stmt->execute();
-        $plots = [$origin];
-        while ($result !== false and ($val = $result->fetchArray(SQLITE3_ASSOC)) !== false) {
-            $helpers = explode(",", (string)$val["helpers"]);
-            $denied = explode(",", (string)$val["denied"]);
-            $pvp = is_numeric($val["pvp"]) ? (bool)$val["pvp"] : null;
-            $plots[] = new Plot((string)$val["level"], (int)$val["X"], (int)$val["Z"], (string)$val["name"], (string)$val["owner"], $helpers, $denied, (string)$val["biome"], $pvp);
-        }
-        if ($adjacent)
-            $plots = array_filter($plots, function (Plot $val) use ($plot): bool {
-                for ($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
-                    if ($plot->getSide($i)->isSame($val))
-                        return true;
-                }
-                return false;
-            });
-        return $plots;
     }
 }

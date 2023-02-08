@@ -5,7 +5,6 @@ namespace MyPlot\provider;
 
 use MyPlot\MyPlot;
 use MyPlot\Plot;
-use pocketmine\math\Facing;
 use pocketmine\utils\Config;
 
 class ConfigDataProvider extends DataProvider
@@ -140,73 +139,6 @@ class ConfigDataProvider extends DataProvider
             }
         }
         return null;
-    }
-
-    public function mergePlots(Plot $base, Plot ...$plots): bool
-    {
-        $originId = $base->levelName . ';' . $base->X . ';' . $base->Z;
-        $mergedIds = $this->config->getNested("merges.$originId", []);
-        $mergedIds = array_merge($mergedIds, array_map(function (Plot $val): string {
-            return $val->levelName . ';' . $val->X . ';' . $val->Z;
-        }, $plots));
-        $mergedIds = array_unique($mergedIds, SORT_NUMERIC);
-        $this->config->setNested("merges.$originId", $mergedIds);
-        $this->config->save();
-        return true;
-    }
-
-    public function getMergedPlots(Plot $plot, bool $adjacent = false): array
-    {
-        $originId = $plot->levelName . ';' . $plot->X . ';' . $plot->Z;
-        $mergedIds = $this->config->getNested("merges.$originId", []);
-        $plotDatums = $this->config->get("plots", []);
-        $plots = [$plot];
-        foreach ($mergedIds as $mergedId) {
-            if (!isset($plotDatums[$mergedId]))
-                continue;
-            $levelName = $plotDatums[$mergedId]["level"];
-            $X = $plotDatums[$mergedId]["x"];
-            $Z = $plotDatums[$mergedId]["z"];
-            $plotName = $plotDatums[$mergedId]["name"] == "" ? "" : $plotDatums[$mergedId]["name"];
-            $owner = $plotDatums[$mergedId]["owner"] == "" ? "" : $plotDatums[$mergedId]["owner"];
-            $helpers = $plotDatums[$mergedId]["helpers"] == [] ? [] : $plotDatums[$mergedId]["helpers"];
-            $denied = $plotDatums[$mergedId]["denied"] == [] ? [] : $plotDatums[$mergedId]["denied"];
-            $biome = strtoupper($plotDatums[$mergedId]["biome"]) == "PLAINS" ? "PLAINS" : strtoupper($plotDatums[$mergedId]["biome"]);
-            $pvp = $plotDatums[$mergedId]["pvp"] == null ? false : $plotDatums[$mergedId]["pvp"];
-            $plots[] = new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp);
-        }
-        if ($adjacent)
-            $plots = array_filter($plots, function (Plot $val) use ($plot) {
-                for ($i = Facing::NORTH; $i <= Facing::EAST; ++$i) {
-                    if ($plot->getSide($i)->isSame($val))
-                        return true;
-                }
-                return false;
-            });
-        return $plots;
-    }
-
-    public function getMergeOrigin(Plot $plot): Plot
-    {
-        $mergedIdString = $plot->levelName . ';' . $plot->X . ';' . $plot->Z;
-        $allMerges = $this->config->get("merges", []);
-        if (isset($allMerges[$mergedIdString]))
-            return $plot;
-        $originId = array_search($mergedIdString, $allMerges, true);
-        $plotDatums = $this->config->get("plots", []);
-        if (isset($plotDatums[$originId])) {
-            $levelName = $plotDatums[$originId]["level"];
-            $X = $plotDatums[$originId]["x"];
-            $Z = $plotDatums[$originId]["z"];
-            $plotName = $plotDatums[$originId]["name"] == "" ? "" : $plotDatums[$originId]["name"];
-            $owner = $plotDatums[$originId]["owner"] == "" ? "" : $plotDatums[$originId]["owner"];
-            $helpers = $plotDatums[$originId]["helpers"] == [] ? [] : $plotDatums[$originId]["helpers"];
-            $denied = $plotDatums[$originId]["denied"] == [] ? [] : $plotDatums[$originId]["denied"];
-            $biome = strtoupper($plotDatums[$originId]["biome"]) == "PLAINS" ? "PLAINS" : strtoupper($plotDatums[$originId]["biome"]);
-            $pvp = $plotDatums[$originId]["pvp"] == null ? false : $plotDatums[$originId]["pvp"];
-            return new Plot($levelName, $X, $Z, $plotName, $owner, $helpers, $denied, $biome, $pvp);
-        }
-        return $plot;
     }
 
     public function close(): void

@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace MyPlot;
 
-use pocketmine\math\Facing;
-
 class Plot
 {
     public string $levelName = "";
@@ -135,64 +133,9 @@ class Plot
         return true;
     }
 
-    /**
-     * @param Plot $plot
-     * @param bool $checkMerge
-     *
-     * @return bool
-     * @api
-     *
-     */
-    public function isSame(Plot $plot, bool $checkMerge = true): bool
+    public function isSame(Plot $plot): bool
     {
-        if ($checkMerge)
-            $plot = MyPlot::getInstance()->getProvider()->getMergeOrigin($plot);
         return $this->X === $plot->X and $this->Z === $plot->Z and $this->levelName === $plot->levelName;
-    }
-
-    /**
-     * @return bool
-     * @api
-     *
-     */
-    public function isMerged(): bool
-    {
-        return count(MyPlot::getInstance()->getProvider()->getMergedPlots($this, true)) > 1; // only calculate the adjacent to save resources
-    }
-
-    /**
-     * @param int $side
-     * @param int $step
-     *
-     * @return Plot
-     * @api
-     *
-     */
-    public function getSide(int $side, int $step = 1): Plot
-    {
-        $levelSettings = MyPlot::getInstance()->getLevelSettings($this->levelName);
-        $pos = MyPlot::getInstance()->getPlotPosition($this, false);
-        $sidePos = $pos->getSide($side, $step * ($levelSettings->plotSize + $levelSettings->roadWidth));
-        $sidePlot = MyPlot::getInstance()->getPlotByPosition($sidePos);
-        if ($sidePlot === null) {
-            switch ($side) {
-                case Facing::NORTH:
-                    $sidePlot = new self($this->levelName, $this->X, $this->Z - $step);
-                    break;
-                case Facing::SOUTH:
-                    $sidePlot = new self($this->levelName, $this->X, $this->Z + $step);
-                    break;
-                case Facing::WEST:
-                    $sidePlot = new self($this->levelName, $this->X - $step, $this->Z);
-                    break;
-                case Facing::EAST:
-                    $sidePlot = new self($this->levelName, $this->X + $step, $this->Z);
-                    break;
-                default:
-                    return clone $this;
-            }
-        }
-        return $sidePlot;
     }
 
     public function __toString(): string

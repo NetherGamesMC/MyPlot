@@ -62,8 +62,6 @@ permissions:
     default: true
   myplot.command.middle:
     default: true
-  myplot.command.merge:
-    default: true
   myplot.command.list:
     default: true
   myplot.command.pvp:
@@ -118,8 +116,6 @@ permissions:
     default: op
   myplot.admin.pvp.bypass:
     default: op
-  myplot.admin.merge:
-    default: true
   myplot.admin.fill:
     default: op
   myplot.admin.denyplayer:

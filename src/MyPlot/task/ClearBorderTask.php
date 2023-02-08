@@ -36,23 +36,11 @@ class ClearBorderTask extends Task
     {
         $this->plugin = $plugin;
         $this->plot = $plot;
-
         $plotLevel = $plugin->getLevelSettings($plot->levelName);
         $plotSize = $plotLevel->plotSize;
-        $this->plotBeginPos = $plugin->getPlotPosition($plot, false);
+        $this->plotBeginPos = $plugin->getPlotPosition($plot);
         $this->xMax = (int)($this->plotBeginPos->x + $plotSize);
         $this->zMax = (int)($this->plotBeginPos->z + $plotSize);
-        foreach ($plugin->getProvider()->getMergedPlots($plot) as $mergedPlot) {
-            $xplot = $plugin->getPlotPosition($mergedPlot, false)->x;
-            $zplot = $plugin->getPlotPosition($mergedPlot, false)->z;
-            $xMaxPlot = (int)($xplot + $plotSize);
-            $zMaxPlot = (int)($zplot + $plotSize);
-            if ($this->plotBeginPos->x > $xplot) $this->plotBeginPos->x = $xplot;
-            if ($this->plotBeginPos->z > $zplot) $this->plotBeginPos->z = $zplot;
-            if ($this->xMax < $xMaxPlot) $this->xMax = $xMaxPlot;
-            if ($this->zMax < $zMaxPlot) $this->zMax = $zMaxPlot;
-        }
-
         --$this->plotBeginPos->x;
         --$this->plotBeginPos->z;
         $this->level = $this->plotBeginPos->getWorld();
