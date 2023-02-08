@@ -40,20 +40,6 @@ WHERE (
 );
 -- #    }
 
--- #    { get_merge_origin
--- #        :level string
--- #        :mergedX int
--- #        :mergedZ int
-SELECT plotsV2.level, X, Z, name, owner, helpers, denied, biome, pvp FROM plotsV2 LEFT JOIN mergedPlotsV2 ON mergedPlotsV2.level = plotsV2.level WHERE mergedPlotsV2.level = :level AND mergedX = :mergedX AND mergedZ = :mergedZ;
--- #    }
-
--- #    { get_merged_plots
--- #        :level string
--- #        :originX int
--- #        :originZ int
-SELECT plotsV2.level, X, Z, name, owner, helpers, denied, biome, pvp FROM plotsV2 LEFT JOIN mergedPlotsV2 ON mergedPlotsV2.level = plotsV2.level AND mergedPlotsV2.mergedX = plotsV2.X AND mergedPlotsV2.mergedZ = plotsV2.Z WHERE mergedPlotsV2.level = :level AND originX = :originX AND originZ = :originZ;
--- #    }
-
 -- #    { save_plot
 -- #        :level string
 -- #        :X int
@@ -72,23 +58,5 @@ INSERT OR REPLACE INTO plotsV2 (level, X, Z, name, owner, helpers, denied, biome
 -- #        :X int
 -- #        :Z int
 DELETE FROM plotsV2 WHERE level = :level AND X = :X AND Z = :Z;
--- #    }
-
--- #    { dispose_merged_plot
--- #        :level string
--- #        :X int
--- #        :Z int
--- #        :biome string
--- #        :pvp int
-UPDATE plotsV2 SET name = '', owner = '', helpers = '', denied = '', biome = :biome, pvp = :pvp WHERE level = :level AND X = :X AND Z = :Z;
--- #    }
-
--- #    { merge_plot
--- #        :level string
--- #        :originX int
--- #        :originZ int
--- #        :mergedX int
--- #        :mergedZ int
-INSERT OR REPLACE INTO mergedPlotsV2 (level, originX, originZ, mergedX, mergedZ) VALUES (:level, :originX, :originZ, :mergedX, :mergedZ);
 -- #    }
 -- #  }
