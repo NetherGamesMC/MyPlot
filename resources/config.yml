@@ -71,11 +71,6 @@ MySQLSettings:
   DatabaseName: MyPlot
   ShutdownOnFailure: false
 
-# Use an economy with MyPlot. This will allow for plot pricing such as claiming, clearing, etc.
-# Currently supported economy plugins: Economy$
-# Be sure not to use more than 1 economy plugin!
-UseEconomy: false
-
 # Amount of plots to be cached.
 # Increasing this number will improve performance, but also increase memory usage.
 PlotCacheSize: 256
@@ -90,9 +85,6 @@ ClearBlocksPerTick: 256
 # Plot chat feature
 # The player will only receive and chat with players in their plot
 PlotChat: false
-
-enable:
-  clone: false
 
 # Amount of blocks to fill per tick. This only applies if FastFilling is disabled
 # Increasing this number will speed up '/p fill' but also increases lag
