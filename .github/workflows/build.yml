@@ -39,8 +39,8 @@ jobs:
           chmod +x pharbuilder
           ./pharbuilder -i . -o PharBuilder/NGPlots.phar
           echo Injecting Virions...
-          ./bin/php7/bin/php -dphar.readonly=0 PharBuilder/libasynql.phar PharBuilder/NGEssentials.phar
-          ./bin/php7/bin/php -dphar.readonly=0 PharBuilder/await-generator.phar PharBuilder/NGEssentials.phar
+          ./bin/php7/bin/php -dphar.readonly=0 PharBuilder/libasynql.phar PharBuilder/NGPlots.phar
+          ./bin/php7/bin/php -dphar.readonly=0 PharBuilder/await-generator.phar PharBuilder/NGPlots.phar
           echo Build completed!
       - name: Upload
         uses: actions/upload-artifact@v3.1.0
