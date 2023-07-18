@@ -8,6 +8,8 @@ parameters:
     scanDirectories:
         - vendor/nethergamesmc/ngessentials
         - phar://PharBuilder/PocketMine-MP.phar
+        - phar://PharBuilder/libasynql.phar
+        - phar://PharBuilder/await-generator.phar
     excludePaths:
         analyse:
             - src/MyPlot/provider
