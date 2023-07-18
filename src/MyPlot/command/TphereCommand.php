@@ -19,6 +19,7 @@ class TphereCommand extends BaseCommand
     {
         parent::__construct('tphere');
 
+        $this->setPermission(Permissions::DEFAULT_COMMAND_PERMISSION);
         $this->setDescription('Command used for sending and accepting teleport requests');
         $this->setUsage('§cUsage: /tphere <accept {player} | decline {player} | {player}>');
     }

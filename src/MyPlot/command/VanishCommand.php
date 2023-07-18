@@ -24,10 +24,6 @@ class VanishCommand extends BaseCommand
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
         if ($sender instanceof Player) {
-            if (!$this->testPermission($sender)) {
-                return true;
-            }
-
             if (!$this->getPlugin()->getEssentials()->getPlayerData()->getBool($sender, PlayerData::VANISH)) {
                 $this->getPlugin()->getEssentials()->getPlayerData()->setValue($sender, PlayerData::VANISH, true);
                 foreach ($sender->getServer()->getOnlinePlayers() as $player) {

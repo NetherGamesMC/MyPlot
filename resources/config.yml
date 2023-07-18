@@ -57,20 +57,6 @@ database:
 #    # only change if you know what you are doing
 #    worker-limit: 2
 
-
-# The data provider where plot data is stored.
-# Current providers are: sqlite, mysql, json, and yaml.
-DataProvider: sqlite
-
-# contains settings for mysql provider to use when selected
-MySQLSettings:
-  Host: 127.0.0.1
-  Port: 3306
-  Username: default
-  Password: password
-  DatabaseName: MyPlot
-  ShutdownOnFailure: false
-
 # Amount of plots to be cached.
 # Increasing this number will improve performance, but also increase memory usage.
 PlotCacheSize: 256

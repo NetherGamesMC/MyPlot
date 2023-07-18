@@ -24,10 +24,6 @@ class ClearInventoryCommand extends BaseCommand
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
         if ($sender instanceof Player) {
-            if (!$this->testPermission($sender)) {
-                return true;
-            }
-
             $sender->getInventory()->clearAll();
             Translator::sendMessage($sender, "command.ci.completed", Translator::TYPE_SUCCESS);
         } else {

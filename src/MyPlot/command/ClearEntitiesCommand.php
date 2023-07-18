@@ -23,9 +23,6 @@ class ClearEntitiesCommand extends BaseCommand
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool
     {
         if ($sender instanceof Player) {
-            if (!$this->testPermission($sender)) {
-                return true;
-            }
             $this->getPlugin()->getScheduler()->scheduleDelayedTask(new CleanEntitiesTask($this->getPlugin()), 1);
         } else {
             $sender->sendMessage($this->getPlugin()->getEssentials()->getPrefix() . '§cThat command can only be run in-game.');

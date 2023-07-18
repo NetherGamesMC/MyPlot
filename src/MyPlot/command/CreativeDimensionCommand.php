@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MyPlot\command;
 
 use MyPlot\forms\MainForm;
+use NetherGames\NGEssentials\player\permissions\Permissions;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 
@@ -13,6 +14,7 @@ class CreativeDimensionCommand extends BaseCommand
     {
         parent::__construct('creativedimension');
 
+        $this->setPermission(Permissions::DEFAULT_COMMAND_PERMISSION);
         $this->setAliases(['cd']);
         $this->setDescription('Command used for teleporting to Creative Dimension');
     }

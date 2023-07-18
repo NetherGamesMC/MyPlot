@@ -19,6 +19,7 @@ class TptoCommand extends BaseCommand
     {
         parent::__construct('tpto');
 
+        $this->setPermission(Permissions::DEFAULT_COMMAND_PERMISSION);
         $this->setDescription('Command used for sending and accepting teleport requests');
         $this->setUsage('§cUsage: /tpto <accept {player} | decline {player} | {player}>');
     }
