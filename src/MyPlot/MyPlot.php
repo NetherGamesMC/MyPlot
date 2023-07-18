@@ -1054,7 +1054,6 @@ class MyPlot extends PluginBase
 
     protected function onEnable(): void
     {
-        /*
         $ess = $this->getServer()->getPluginManager()->getPlugin('NGEssentials');
         if(!$ess instanceof NGEssentials) {
             $this->getServer()->getPluginManager()->disablePlugin($this);
@@ -1068,7 +1067,6 @@ class MyPlot extends PluginBase
         }
 
         $this->ess = $ess;
-        */
 
         foreach (["Creative", "MEGA", "Platinum", "p1"] as $world) {
             $this->getServer()->getWorldManager()->loadWorld($world, true);

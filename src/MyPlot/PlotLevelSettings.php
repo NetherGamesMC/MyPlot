@@ -68,14 +68,12 @@ class PlotLevelSettings
                 $id = $array[$key];
                 if (is_numeric($id)) {
                     $blockState = GlobalBlockStateHandlers::getUpgrader()->upgradeIntIdMeta((int)$id, 0);
-                    $blockStateId = GlobalBlockStateHandlers::getDeserializer()->deserialize($blockState);
-                    $block = BlockFactory::getInstance()->fromStateId($blockStateId);
+                    $block = GlobalBlockStateHandlers::getDeserializer()->deserializeBlock($blockState);
                 } else {
                     $split = explode(":", $id);
                     if (count($split) === 2 and is_numeric($split[0]) and is_numeric($split[1])) {
                         $blockState = GlobalBlockStateHandlers::getUpgrader()->upgradeIntIdMeta((int)$split[0], (int)$split[1]);
-                        $blockStateId = GlobalBlockStateHandlers::getDeserializer()->deserialize($blockState);
-                        $block = BlockFactory::getInstance()->fromStateId($blockStateId);
+                        $block = GlobalBlockStateHandlers::getDeserializer()->deserializeBlock($blockState);
                     } else {
                         $block = $default;
                     }

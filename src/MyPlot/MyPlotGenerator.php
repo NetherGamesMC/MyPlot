@@ -71,18 +71,18 @@ class MyPlotGenerator extends Generator
         for ($Z = 0; $Z < 16; ++$Z) {
             for ($X = 0; $X < 16; ++$X) {
                 $chunk->setBiomeId($X, 0, $Z, BiomeIds::PLAINS); // TODO: verify y coord
-                $chunk->setFullBlock($X, 0, $Z, $bottomBlockId);
+                $chunk->setBlockStateId($X, 0, $Z, $bottomBlockId);
                 for ($y = 1; $y < $groundHeight; ++$y) {
-                    $chunk->setFullBlock($X, $y, $Z, $plotFillBlockId);
+                    $chunk->setBlockStateId($X, $y, $Z, $plotFillBlockId);
                 }
                 $type = $shape[($Z << 4) | $X];
                 if ($type === self::PLOT) {
-                    $chunk->setFullBlock($X, $groundHeight, $Z, $plotFloorBlockId);
+                    $chunk->setBlockStateId($X, $groundHeight, $Z, $plotFloorBlockId);
                 } elseif ($type === self::ROAD) {
-                    $chunk->setFullBlock($X, $groundHeight, $Z, $roadBlockId);
+                    $chunk->setBlockStateId($X, $groundHeight, $Z, $roadBlockId);
                 } else {
-                    $chunk->setFullBlock($X, $groundHeight, $Z, $roadBlockId);
-                    $chunk->setFullBlock($X, $groundHeight + 1, $Z, $wallBlockId);
+                    $chunk->setBlockStateId($X, $groundHeight, $Z, $roadBlockId);
+                    $chunk->setBlockStateId($X, $groundHeight + 1, $Z, $wallBlockId);
                 }
             }
         }
