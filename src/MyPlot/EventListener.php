@@ -118,25 +118,36 @@ class EventListener implements Listener
      */
     public function onBlockPlace(BlockPlaceEvent $event): void
     {
-        $this->onEventOnBlock($event);
+        $world = $event->getPlayer()->getWorld();
+        foreach ($event->getTransaction()->getBlocks() as [$x, $y, $z, $block]){
+            /** @var Block $positionedBlock */
+            $positionedBlock = clone $block;
+            $positionedBlock->position($world, $x, $y, $z);
+
+            $this->onEventOnBlock($event, $positionedBlock);
+        }
+
     }
 
     /**
      * @param BlockPlaceEvent|BlockBreakEvent|PlayerInteractEvent|SignChangeEvent $event
      */
-    private function onEventOnBlock(BlockPlaceEvent|SignChangeEvent|PlayerInteractEvent|BlockBreakEvent $event): void
+    private function onEventOnBlock(BlockPlaceEvent|SignChangeEvent|PlayerInteractEvent|BlockBreakEvent $event, ?Block $block = null): void
     {
-        $levelName = $event->getBlock()->getPosition()->getWorld()->getFolderName();
+        $block ??= $event->getBlock();
+        $blockPos = $block->getPosition();
+
+        $levelName = $blockPos->getWorld()->getFolderName();
         if (!$levelName or !$this->plugin->isLevelLoaded($levelName)) {
             return;
         }
-        $plot = $this->plugin->getPlotByPosition($event->getBlock()->getPosition());
+        $plot = $this->plugin->getPlotByPosition($blockPos);
         if ($plot !== null) {
             if (!$event instanceof SignChangeEvent && in_array($event->getItem()->getTypeId(), $this->plugin->bannedItems, true)) {
                 $event->cancel();
                 return;
             }
-            $ev = new MyPlotBlockEvent($plot, $event->getBlock(), $event->getPlayer(), $event);
+            $ev = new MyPlotBlockEvent($plot, $block, $event->getPlayer(), $event);
             if ($event->isCancelled()) {
                 $ev->cancel();
             }
@@ -144,7 +155,7 @@ class EventListener implements Listener
             $ev->isCancelled() ? $event->cancel() : $event->uncancel();
             $username = $event->getPlayer()->getName();
             if ($plot->owner == $username or $plot->isHelper($username) or $plot->isHelper("*") or $event->getPlayer()->hasPermission("myplot.admin.build.plot")) {
-                if (!($event instanceof PlayerInteractEvent and $event->getBlock() instanceof Sapling))
+                if (!($event instanceof PlayerInteractEvent and $block instanceof Sapling))
                     return;
 
                 /*
@@ -153,7 +164,6 @@ class EventListener implements Listener
                  */
 
                 /** @var Sapling $block */
-                $block = $event->getBlock();
                 $maxLengthLeaves = 2; // TODO: this is hardcoded for now, didnt want to do reflection hacks
                 $beginPos = $this->plugin->getPlotPosition($plot);
                 $endPos = clone $beginPos;
@@ -162,16 +172,16 @@ class EventListener implements Listener
                 $plotSize = $this->plugin->getLevelSettings($levelName)->plotSize;
                 $endPos->x += $plotSize - $maxLengthLeaves;
                 $endPos->z += $plotSize - $maxLengthLeaves;
-                if ($block->getPosition()->x >= $beginPos->x and $block->getPosition()->z >= $beginPos->z and $block->getPosition()->x < $endPos->x and $block->getPosition()->z < $endPos->z) {
+                if ($blockPos->x >= $beginPos->x and $blockPos->z >= $beginPos->z and $blockPos->x < $endPos->x and $blockPos->z < $endPos->z) {
                     return;
                 }
             }
         } elseif ($event->getPlayer()->hasPermission("myplot.admin.build.road"))
             return;
-        elseif ($this->plugin->isPositionBorderingPlot($event->getBlock()->getPosition()) and $this->plugin->getLevelSettings($levelName)->editBorderBlocks) {
-            $plot = $this->plugin->getPlotBorderingPosition($event->getBlock()->getPosition());
+        elseif ($this->plugin->isPositionBorderingPlot($blockPos) and $this->plugin->getLevelSettings($levelName)->editBorderBlocks) {
+            $plot = $this->plugin->getPlotBorderingPosition($blockPos);
             if ($plot instanceof Plot) {
-                $ev = new MyPlotBorderChangeEvent($plot, $event->getBlock(), $event->getPlayer(), $event);
+                $ev = new MyPlotBorderChangeEvent($plot, $block, $event->getPlayer(), $event);
                 if ($event->isCancelled()) {
                     $ev->cancel();
                 }
@@ -179,12 +189,12 @@ class EventListener implements Listener
                 $ev->isCancelled() ? $event->cancel() : $event->uncancel();
                 $username = $event->getPlayer()->getName();
                 if ($plot->owner == $username or $plot->isHelper($username) or $plot->isHelper("*") or $event->getPlayer()->hasPermission("myplot.admin.build.plot"))
-                    if (!($event instanceof PlayerInteractEvent and $event->getBlock() instanceof Sapling))
+                    if (!($event instanceof PlayerInteractEvent and $block instanceof Sapling))
                         return;
             }
         }
         $event->cancel();
-        $this->plugin->getLogger()->debug("Block placement/break/interaction of {$event->getBlock()->getName()} was cancelled at " . $event->getBlock()->getPosition()->__toString());
+        $this->plugin->getLogger()->debug("Block placement/break/interaction of {$block->getName()} was cancelled at " . $blockPos->__toString());
     }
 
     /**
