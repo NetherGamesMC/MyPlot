@@ -31,11 +31,11 @@ Language: eng
 
 # Allows editing language file as a config
 # This is not recommended unless you have a good text editor!
-Custom Messages: false
+CustomMessages: false
 
 # Allows use of MyPlot forms on /plot command
 # This does not add UIs for all commands. Some actions still require commands to use.
-UI Forms: true
+UIForms: true
 
 database:
   # sqlite
