@@ -41,7 +41,7 @@ abstract class SubCommand implements PluginOwned
 
     public function getUsage(): string
     {
-        $usage = $this->plugin->getFallBackLang()->get($this->name . ".usage"); // TODO: use normal language when command autofill gains support
+        $usage = $this->plugin->getLanguage()->get($this->name . ".usage");
         return ($usage == $this->name . ".usage") ? "" : $usage;
     }
 
