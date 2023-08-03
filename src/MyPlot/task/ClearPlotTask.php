@@ -91,7 +91,7 @@ class ClearPlotTask extends Task
                     }
                     $this->pos->y++;
                 }
-                $this->pos->y = 0;
+                $this->pos->y = $this->level->getMinY();
                 $this->pos->z++;
             }
             $this->pos->z = $this->plotBeginPos->z;

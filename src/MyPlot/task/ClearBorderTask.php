@@ -70,7 +70,7 @@ class ClearBorderTask extends Task
             }
         }
         for ($z = $this->plotBeginPos->z; $z <= $this->zMax; $z++) {
-            for ($y = 0; $y < $this->level->getMaxY(); ++$y) {
+            for ($y = $this->level->getMinY(); $y < $this->level->getMaxY(); ++$y) {
                 $block = match(true) {
                     $y > $this->height + 1 => VanillaBlocks::AIR(),
                     $y === $this->height + 1 => $this->plotWallBlock,
