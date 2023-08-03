@@ -55,33 +55,31 @@ class ClearBorderTask extends Task
     public function onRun(): void
     {
         for ($x = $this->plotBeginPos->x; $x <= $this->xMax; $x++) {
-            for ($y = 0; $y < $this->level->getMaxY(); ++$y) {
-                if ($y > $this->height + 1)
-                    $block = VanillaBlocks::AIR();
-                elseif ($y === $this->height + 1)
-                    $block = $this->plotWallBlock;
-                elseif ($y === $this->height)
-                    $block = $this->roadBlock;
-                elseif ($y === 0)
-                    $block = $this->bottomBlock;
-                else//if($y < $this->height)
-                    $block = $this->groundBlock;
+            for ($y = $this->level->getMinY(); $y < $this->level->getMaxY(); ++$y) {
+                $block = match(true) {
+                    $y > $this->height + 1 => VanillaBlocks::AIR(),
+                    $y === $this->height + 1 => $this->plotWallBlock,
+                    $y === $this->height => $this->roadBlock,
+                    $y === 0 => $this->bottomBlock,
+                    $y < 0 => VanillaBlocks::AIR(),
+                    default => $this->groundBlock
+                };
+
                 $this->level->setBlock(new Vector3($x, $y, $this->plotBeginPos->z), $block, false);
                 $this->level->setBlock(new Vector3($x, $y, $this->zMax), $block, false);
             }
         }
         for ($z = $this->plotBeginPos->z; $z <= $this->zMax; $z++) {
             for ($y = 0; $y < $this->level->getMaxY(); ++$y) {
-                if ($y > $this->height + 1)
-                    $block = VanillaBlocks::AIR();
-                elseif ($y === $this->height + 1)
-                    $block = $this->plotWallBlock;
-                elseif ($y === $this->height)
-                    $block = $this->roadBlock;
-                elseif ($y === 0)
-                    $block = $this->bottomBlock;
-                else//if($y < $this->height)
-                    $block = $this->groundBlock;
+                $block = match(true) {
+                    $y > $this->height + 1 => VanillaBlocks::AIR(),
+                    $y === $this->height + 1 => $this->plotWallBlock,
+                    $y === $this->height => $this->roadBlock,
+                    $y === 0 => $this->bottomBlock,
+                    $y < 0 => VanillaBlocks::AIR(),
+                    default => $this->groundBlock
+                };
+
                 $this->level->setBlock(new Vector3($this->plotBeginPos->x, $y, $z), $block, false);
                 $this->level->setBlock(new Vector3($this->xMax, $y, $z), $block, false);
             }

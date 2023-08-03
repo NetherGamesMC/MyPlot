@@ -55,7 +55,7 @@ class ClearPlotTask extends Task
         $this->plotBeginPos = $plugin->getPlotPosition($plot);
         $this->xMax = (int)($this->plotBeginPos->x + $plotSize);
         $this->zMax = (int)($this->plotBeginPos->z + $plotSize);
-        $this->pos = new Vector3($this->plotBeginPos->x, 0, $this->plotBeginPos->z);
+        $this->pos = new Vector3($this->plotBeginPos->x, $this->level->getMinY(), $this->plotBeginPos->z);
         $this->plotBB = $this->plugin->getPlotBB($plot);
         $plugin->getLogger()->debug("Plot Clear Task started at plot $plot->X;$plot->Z");
     }
@@ -75,15 +75,13 @@ class ClearPlotTask extends Task
         while ($this->pos->x < $this->xMax) {
             while ($this->pos->z < $this->zMax) {
                 while ($this->pos->y < $this->level->getMaxY()) {
-                    if ($this->pos->y === 0) {
-                        $block = $this->bottomBlock;
-                    } elseif ($this->pos->y < $this->height) {
-                        $block = $this->plotFillBlock;
-                    } elseif ($this->pos->y === $this->height) {
-                        $block = $this->plotFloorBlock;
-                    } else {
-                        $block = VanillaBlocks::AIR();
-                    }
+                    $block = match(true) {
+                        $this->pos->y === 0 => $this->bottomBlock,
+                        $this->pos->y === $this->height => $this->plotFloorBlock,
+                        $this->pos->y < $this->height => $this->plotFillBlock,
+                        default => VanillaBlocks::AIR(),
+                    };
+
                     $this->level->setBlock($this->pos, $block, false);
                     $blocks++;
                     if ($blocks >= $this->maxBlocksPerTick) {
