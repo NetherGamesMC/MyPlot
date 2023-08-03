@@ -78,7 +78,7 @@ class ClearPlotTask extends Task
                     $block = match(true) {
                         $this->pos->y === 0 => $this->bottomBlock,
                         $this->pos->y === $this->height => $this->plotFloorBlock,
-                        $this->pos->y < $this->height => $this->plotFillBlock,
+                        $this->pos->y < $this->height && $this->pos->y > 0 => $this->plotFillBlock,
                         default => VanillaBlocks::AIR(),
                     };
 
