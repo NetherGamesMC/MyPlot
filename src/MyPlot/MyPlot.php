@@ -823,7 +823,7 @@ class MyPlot extends PluginBase
         $zMax = ($pos->z + $plotSize) >> 4;
         for ($x = $pos->x >> 4; $x <= $xMax; $x++) {
             for ($z = $pos->z >> 4; $z <= $zMax; $z++) {
-                $chunks[] = [$x, $z, $level->getChunk($x, $z)];
+                $chunks[] = [$x, $z, $level->isChunkLoaded($x, $z) ? $level->getChunk($x, $z) : $level->loadChunk($x, $z)];
             }
         }
 

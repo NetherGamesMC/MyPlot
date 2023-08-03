@@ -14,6 +14,7 @@ use pocketmine\block\Liquid;
 use pocketmine\block\Sapling;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockFormEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\BlockSpreadEvent;
 use pocketmine\event\block\BlockTeleportEvent;
@@ -345,6 +346,27 @@ class EventListener implements Listener
         if (!$newBlockInPlot || !$sourceBlockInPlot || !$plotA->isSame($plotB)) {
             $event->cancel();
             $this->plugin->getLogger()->debug("Cancelled {$event->getBlock()->getName()} teleport on [$levelName]");
+        }
+    }
+
+    /**
+     * @priority LOWEST
+     *
+     * @param BlockFormEvent $event
+     */
+    public function onBlockForm(BlockFormEvent $event): void
+    {
+        $world = $event->getBlock()->getPosition()->getWorld();
+        $levelName = $world->getFolderName();
+        if (!$this->plugin->isLevelLoaded($levelName))
+            return;
+
+        $newBlockInPlot = ($plotA = $this->plugin->getPlotByPosition($event->getBlock()->getPosition())) instanceof Plot;
+        $sourceBlockInPlot = ($plotB = $this->plugin->getPlotByPosition($event->getCausingBlock()->getPosition())) instanceof Plot;
+
+        if (!$newBlockInPlot || !$sourceBlockInPlot || !$plotA->isSame($plotB)) {
+            $event->cancel();
+            $this->plugin->getLogger()->debug("Cancelled {$event->getNewState()->getName()} form on [$levelName]");
         }
     }
 
