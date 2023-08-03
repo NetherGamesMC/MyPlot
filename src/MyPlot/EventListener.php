@@ -16,6 +16,7 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\BlockSpreadEvent;
+use pocketmine\event\block\BlockTeleportEvent;
 use pocketmine\event\block\SignChangeEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityExplodeEvent;
@@ -37,6 +38,7 @@ use pocketmine\network\mcpe\protocol\SetTimePacket;
 use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
+use pocketmine\world\Position;
 use function explode;
 use function in_array;
 use function strtolower;
@@ -305,37 +307,44 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
-     * @priority        LOWEST
+     * @priority LOWEST
      *
      * @param BlockSpreadEvent $event
      */
     public function onBlockSpread(BlockSpreadEvent $event): void
     {
-        if ($event->isCancelled()) {
-            return;
-        }
         $levelName = $event->getBlock()->getPosition()->getWorld()->getFolderName();
         if (!$this->plugin->isLevelLoaded($levelName))
             return;
 
-        $settings = $this->plugin->getLevelSettings($levelName);
         $newBlockInPlot = ($plotA = $this->plugin->getPlotByPosition($event->getBlock()->getPosition())) instanceof Plot;
         $sourceBlockInPlot = ($plotB = $this->plugin->getPlotByPosition($event->getSource()->getPosition())) instanceof Plot;
 
-        $spreadIsSamePlot = (($newBlockInPlot and $sourceBlockInPlot)) && $plotA->isSame($plotB);
-
-        if ($event->getSource() instanceof Liquid) {
-            if (!$settings->updatePlotLiquids and ($sourceBlockInPlot or $this->plugin->isPositionBorderingPlot($event->getSource()->getPosition()))) {
-                $event->cancel();
-                $this->plugin->getLogger()->debug("Cancelled {$event->getSource()->getName()} spread on [$levelName]");
-            } elseif ($settings->updatePlotLiquids and ($sourceBlockInPlot or $this->plugin->isPositionBorderingPlot($event->getSource()->getPosition())) and (!$newBlockInPlot or !$this->plugin->isPositionBorderingPlot($event->getBlock()->getPosition()) or !$spreadIsSamePlot)) {
-                $event->cancel();
-                $this->plugin->getLogger()->debug("Cancelled {$event->getSource()->getName()} spread on [$levelName]");
-            }
-        } elseif (!$settings->allowOutsidePlotSpread and (!$newBlockInPlot or !$spreadIsSamePlot)) {
+        if (!$newBlockInPlot || !$sourceBlockInPlot || !$plotA->isSame($plotB)) {
             $event->cancel();
-            //$this->plugin->getLogger()->debug("Cancelled block spread of {$event->getSource()->getName()} on ".$levelName);
+            $this->plugin->getLogger()->debug("Cancelled {$event->getSource()->getName()} spread on [$levelName]");
+        }
+    }
+
+
+    /**
+     * @priority LOWEST
+     *
+     * @param BlockTeleportEvent $event
+     */
+    public function onBlockTeleport(BlockTeleportEvent $event): void
+    {
+        $world = $event->getBlock()->getPosition()->getWorld();
+        $levelName = $world->getFolderName();
+        if (!$this->plugin->isLevelLoaded($levelName))
+            return;
+
+        $newBlockInPlot = ($plotA = $this->plugin->getPlotByPosition($event->getBlock()->getPosition())) instanceof Plot;
+        $sourceBlockInPlot = ($plotB = $this->plugin->getPlotByPosition(Position::fromObject($event->getTo(), $world))) instanceof Plot;
+
+        if (!$newBlockInPlot || !$sourceBlockInPlot || !$plotA->isSame($plotB)) {
+            $event->cancel();
+            $this->plugin->getLogger()->debug("Cancelled {$event->getBlock()->getName()} teleport on [$levelName]");
         }
     }
 
