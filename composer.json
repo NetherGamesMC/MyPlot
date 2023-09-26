@@ -23,7 +23,9 @@
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libforms.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libminigames.git"},
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libnetsys.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libproxy.git" }
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libproxy.git" },
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libMatchmake.git" },
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libSocial.git" }
     ],
     "minimum-stability": "dev"
 }
