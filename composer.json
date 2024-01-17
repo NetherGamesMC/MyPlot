@@ -4,28 +4,32 @@
     "license": "proprietary",
     "type": "project",
     "require": {
-        "php": "^8.0"
+        "php": "^8.0",
+        "sof3/await-generator": "^3.6"
     },
     "require-dev": {
         "phpstan/phpstan": "1.2.0",
         "nethergamesmc/ngessentials": "dev-pm5"
     },
     "repositories": [
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/InvMenu.git" },
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/Lobby.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/NGEssentials.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libAnticheat.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libDiscord.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libLogDNA.git"},
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libMMO.git" },
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libMatchmake.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libPhysX.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libReplay.git" },
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libSocial.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libVanilla.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libasynCurl.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libasyncio.git" },
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libasynql.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libforms.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libminigames.git"},
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libminigames.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libnetsys.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libproxy.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libMatchmake.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libSocial.git" }
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libproxy.git" }
     ],
     "minimum-stability": "dev"
 }
