@@ -32,12 +32,6 @@ class AutoForm extends ComplexMyPlotForm implements PlotButtonForm
     public function onButtonClick(Player $player): void
     {
         $plugin = MyPlot::getInstance();
-
-        if ($player->getWorld()->getFolderName() === 'Platinum' && MyPlot::essentialsExists() && !$player->hasPermission(Permissions::RANK_ULTRA)) {
-            $player->sendMessage('§cThat action is blocked for you in this world.');
-            return;
-        }
-
         $player->getServer()->dispatchCommand($player, $plugin->getLanguage()->get("command.name") . " " . $plugin->getLanguage()->get("auto.name"), true);
     }
 }

@@ -41,8 +41,6 @@ class ClaimForm extends ComplexMyPlotForm implements PlotButtonForm
             } else {
                 $player->sendMessage(TextFormat::RED . $plugin->getLanguage()->translateString('claim.alreadyclaimed', [$plot->owner]));
             }
-        } else if ($player->getWorld()->getFolderName() === 'Platinum' && MyPlot::essentialsExists() && !$player->hasPermission(Permissions::RANK_ULTRA)) {
-            $player->sendMessage('§cThat action is blocked for you in this world.');
         } else {
             $maxPlots = $plugin->getMaxPlotsOfPlayer($player);
             $plotsOfPlayer = count($plugin->getProvider()->getPlotsByOwner($player->getName(), $player->getWorld()->getFolderName()));
