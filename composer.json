@@ -5,19 +5,20 @@
     "type": "project",
     "require": {
         "php": "^8.0",
-        "sof3/await-generator": "^3.6"
+        "nethergamesmc/libasynql": "dev-pm5",
+        "sof3/await-generator": "3.6.1"
     },
     "require-dev": {
         "phpstan/phpstan": "1.2.0",
+        "nethergamesmc/pocketmine-mp": "dev-stable",
         "nethergamesmc/ngessentials": "dev-pm5"
     },
     "repositories": [
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/InvMenu.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/Lobby.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/NGEssentials.git" },
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/PocketMine-MP.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libAnticheat.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libDiscord.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libMMO.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libMatchmake.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libPhysX.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libReplay.git" },
