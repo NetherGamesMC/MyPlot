@@ -43,7 +43,7 @@ class TptoCommand extends BaseCommand
                             Translator::sendMessage($sender, "command.tpto.norequest", Translator::TYPE_ERROR);
                         }
                     } else {
-                        Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
+                        Translator::sendMessage($sender, "error.player_offline", Translator::TYPE_ERROR);
                     }
                 } else {
                     Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
@@ -59,7 +59,7 @@ class TptoCommand extends BaseCommand
                             Translator::sendMessage($sender, "command.tpto.norequest", Translator::TYPE_ERROR);
                         }
                     } else {
-                        Translator::sendMessage($sender, "player.offline", Translator::TYPE_ERROR);
+                        Translator::sendMessage($sender, "error.player_offline", Translator::TYPE_ERROR);
                     }
                 } else {
                     Translator::sendMessage($sender, "command.tp.specify", Translator::TYPE_ERROR);
