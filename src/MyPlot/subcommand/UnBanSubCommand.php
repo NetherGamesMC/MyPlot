@@ -46,7 +46,7 @@ class UnBanSubCommand extends SubCommand
             $dplayer = $this->plugin->getServer()->getPlayerByPrefix($dplayerName);
         }
         if ($this->plugin->removePlotDenied($plot, $dplayer->getName())) {
-            $sender->sendMessage($this->translateString("undenyplayer.success1", [$dplayer->getName()]));
+            $sender->sendMessage($this->translateString("unbanplayer.success1", [$dplayer->getName()]));
             if ($dplayer instanceof Player) {
                 $dplayer->sendMessage($this->translateString("unbanplayer.success2", [$plot->X, $plot->Z, $sender->getName()]));
             }
