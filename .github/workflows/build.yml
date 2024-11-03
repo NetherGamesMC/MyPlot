@@ -33,7 +33,7 @@ jobs:
           ./pharbuilder -i . -o ./NGPlots.phar
           echo Build completed!
       - name: Upload
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4.3.1
         with:
           name: NGPlots
           path: NGPlots.phar
