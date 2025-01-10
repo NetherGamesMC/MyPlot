@@ -16,7 +16,7 @@ jobs:
         with:
           file: PHP-Linux-x86_64-PM5.tar.gz
           repo: NetherGamesMC/php-build-scripts
-          version: "tags/php-8.3-latest"
+          version: "tags/php-8.3-ffi-latest"
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Unpack PHP Release
         run: tar -xzvf PHP-Linux-x86_64-PM5.tar.gz
@@ -33,7 +33,7 @@ jobs:
           ./pharbuilder -i . -o ./NGPlots.phar
           echo Build completed!
       - name: Upload
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: NGPlots
           path: NGPlots.phar

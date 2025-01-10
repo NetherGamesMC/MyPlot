@@ -130,6 +130,7 @@ class Plot
             return false;
         }
         unset($this->helpers[$key]);
+        $this->helpers = array_values($this->helpers);
         return true;
     }
 
