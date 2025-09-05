@@ -17,7 +17,6 @@
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/InvMenu.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/NGEssentials.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/PocketMine-MP.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libAnticheat.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libDiscord.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libMatchmake.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libPhysX.git" },
@@ -28,9 +27,7 @@
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libasyncio.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libasynql.git" },
         { "type": "vcs", "url": "git@github.com:NetherGamesMC/libforms.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libminigames.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libnetsys.git" },
-        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libproxy.git" }
+        { "type": "vcs", "url": "git@github.com:NetherGamesMC/libminigames.git" }
     ],
     "minimum-stability": "dev"
 }

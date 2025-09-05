@@ -76,7 +76,7 @@ abstract class SubCommand implements PluginOwned
      * @param string|null $onlyPrefix
      * @return string
      */
-    protected function translateString(string $str, array $params = [], string $onlyPrefix = null): string
+    protected function translateString(string $str, array $params = [], ?string $onlyPrefix = null): string
     {
         return $this->plugin->getLanguage()->translateString($str, $params, $onlyPrefix);
     }

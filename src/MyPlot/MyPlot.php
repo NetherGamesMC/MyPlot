@@ -567,7 +567,7 @@ class MyPlot extends PluginBase
      * @api
      *
      */
-    public function teleportPlayerToPlot(Player $player, Plot $plot, bool $center = false, Closure $onSuccess = null, Closure $onFailure = null): void
+    public function teleportPlayerToPlot(Player $player, Plot $plot, bool $center = false, ?Closure $onSuccess = null, ?Closure $onFailure = null): void
     {
         $ev = new MyPlotTeleportEvent($plot, $player, $center);
         $ev->call();
@@ -601,7 +601,7 @@ class MyPlot extends PluginBase
      * @internal
      *
      */
-    private function teleportMiddle(Player $player, Plot $plot, Closure $onSuccess = null, Closure $onFailure = null): void
+    private function teleportMiddle(Player $player, Plot $plot, ?Closure $onSuccess = null, ?Closure $onFailure = null): void
     {
         $mid = $this->getPlotMid($plot);
         if ($mid === null) {
@@ -642,7 +642,7 @@ class MyPlot extends PluginBase
      * @internal
      *
      */
-    private function teleport(Player $player, Position $pos, Closure $onSuccess = null, Closure $onFailure = null): void
+    private function teleport(Player $player, Position $pos, ?Closure $onSuccess = null, ?Closure $onFailure = null): void
     {
         $world = $pos->getWorld();
         $world->orderChunkPopulation($pos->getFloorX() >> Chunk::COORD_BIT_SIZE, $pos->getFloorZ() >> Chunk::COORD_BIT_SIZE, null)->onCompletion(
