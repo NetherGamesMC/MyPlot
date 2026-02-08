@@ -1,6 +1,7 @@
 parameters:
+    ignoreErrors:
+        - identifier: missingType.iterableValue
     level: 6
-    checkMissingIterableValueType: false
     paths:
         - src
     scanDirectories:

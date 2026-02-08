@@ -343,16 +343,13 @@ class MyPlot extends PluginBase
      */
     public function getPlotByPosition(Position $position): ?Plot
     {
-        $x = $position->x;
-        $z = $position->z;
-
         $levelName = $position->getWorld()->getFolderName();
         if (!$this->isLevelLoaded($levelName)) {
             return null;
         }
         $plotLevel = $this->getLevelSettings($levelName);
 
-        $plot = $this->getPlotFast($x, $z, $plotLevel);
+        $plot = $this->getPlotFast($position->x, $position->z, $plotLevel);
         if ($plot instanceof Plot) {
             return $plot;
         }
@@ -367,7 +364,7 @@ class MyPlot extends PluginBase
      *
      * @return Plot|null
      */
-    private function getPlotFast(float &$x, float &$z, PlotLevelSettings $plotLevel): ?Plot
+    private function getPlotFast(float $x, float $z, PlotLevelSettings $plotLevel): ?Plot
     {
         $plotSize = $plotLevel->plotSize;
         $roadWidth = $plotLevel->roadWidth;
@@ -375,24 +372,24 @@ class MyPlot extends PluginBase
         $totalSize = $plotSize + $roadWidth;
         if ($x >= 0) {
             $difX = floor($x) % $totalSize;
-            $x = (int)floor($x / $totalSize);
+            $intX = (int)floor($x / $totalSize);
         } else {
             $difX = abs((floor($x) - $plotSize + 1) % $totalSize);
-            $x = (int)ceil(($x - $plotSize + 1) / $totalSize);
+            $intX = (int)ceil(($x - $plotSize + 1) / $totalSize);
         }
         if ($z >= 0) {
             $difZ = floor($z) % $totalSize;
-            $z = (int)floor($z / $totalSize);
+            $intZ = (int)floor($z / $totalSize);
         } else {
             $difZ = abs((floor($z) - $plotSize + 1) % $totalSize);
-            $z = (int)ceil(($z - $plotSize + 1) / $totalSize);
+            $intZ = (int)ceil(($z - $plotSize + 1) / $totalSize);
         }
 
         if (($difX > $plotSize - 1) or ($difZ > $plotSize - 1)) {
             return null;
         }
 
-        return $this->dataProvider->getPlot($plotLevel->name, $x, $z);
+        return $this->dataProvider->getPlot($plotLevel->name, $intX, $intZ);
     }
 
     /**

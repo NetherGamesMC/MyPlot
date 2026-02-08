@@ -9,7 +9,7 @@
         "sof3/await-generator": "3.6.1"
     },
     "require-dev": {
-        "phpstan/phpstan": "1.2.0",
+        "phpstan/phpstan": "2.1.29",
         "nethergamesmc/pocketmine-mp": "dev-stable",
         "nethergamesmc/ngessentials": "dev-pm5"
     },

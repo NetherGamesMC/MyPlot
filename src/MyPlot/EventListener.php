@@ -14,6 +14,7 @@ use pocketmine\block\Liquid;
 use pocketmine\block\Sapling;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockExplodeEvent;
 use pocketmine\event\block\BlockFormEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\BlockSpreadEvent;
@@ -59,7 +60,6 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        LOWEST
      *
      * @param WorldLoadEvent $event
@@ -88,7 +88,6 @@ class EventListener implements Listener
             if ($this->plugin->getConfig()->get('AllowFireTicking', false) === false) {
                 $ref = new \ReflectionClass($event->getWorld());
                 $prop = $ref->getProperty('randomTickBlocks');
-                $prop->setAccessible(true);
                 $randomTickBlocks = $prop->getValue($event->getWorld());
                 unset($randomTickBlocks[VanillaBlocks::FIRE()->getStateId()]);
                 $prop->setValue($event->getWorld(), $randomTickBlocks);
@@ -97,16 +96,12 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        MONITOR
      *
      * @param WorldUnloadEvent $event
      */
     public function onLevelUnload(WorldUnloadEvent $event): void
     {
-        if ($event->isCancelled()) {
-            return;
-        }
         $levelName = $event->getWorld()->getFolderName();
         if ($this->plugin->unloadLevelSettings($levelName)) {
             $this->plugin->getLogger()->debug("Level " . $event->getWorld()->getFolderName() . " unloaded!");
@@ -114,7 +109,6 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        LOWEST
      *
      * @param BlockPlaceEvent $event
@@ -201,7 +195,6 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        LOWEST
      *
      * @param EntitySpawnEvent $event
@@ -215,7 +208,6 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        LOWEST
      *
      * @param BlockBreakEvent $event
@@ -226,20 +218,16 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        LOWEST
      *
      * @param PlayerInteractEvent $event
      */
     public function onPlayerInteract(PlayerInteractEvent $event): void
     {
-        if ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK and $event->getItem() instanceof Food)
-            return;
         $this->onEventOnBlock($event);
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        LOWEST
      *
      * @param SignChangeEvent $event
@@ -250,23 +238,38 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
+     * @priority        LOWEST
+     *
+     * @param BlockExplodeEvent $event
+     */
+    public function onBlockExplode(BlockExplodeEvent $event): void
+    {
+        $event->setAffectedBlocks($this->onExplosion($event->getPosition(), $event->getAffectedBlocks()));
+    }
+
+    /**
      * @priority        LOWEST
      *
      * @param EntityExplodeEvent $event
      */
-    public function onExplosion(EntityExplodeEvent $event): void
+    public function onEntityExplode(EntityExplodeEvent $event): void
     {
-        if ($event->isCancelled()) {
-            return;
-        }
-        $levelName = $event->getEntity()->getWorld()->getFolderName();
+        $event->setBlockList($this->onExplosion($event->getPosition(), $event->getBlockList()));
+    }
+
+    /**
+     * @param Position $position
+     * @param Block[] $blocks
+     * @return Block[]
+     */
+    public function onExplosion(Position $position, array $blocks): array
+    {
+        $levelName = $position->getWorld()->getFolderName();
         if (!$this->plugin->isLevelLoaded($levelName))
-            return;
-        $plot = $this->plugin->getPlotByPosition($event->getPosition());
+            return $blocks;
+        $plot = $this->plugin->getPlotByPosition($position);
         if ($plot === null) {
-            $event->cancel();
-            return;
+            return [];
         }
         $beginPos = $this->plugin->getPlotPosition($plot);
         $endPos = clone $beginPos;
@@ -275,27 +278,21 @@ class EventListener implements Listener
         $endPos->x += $plotSize;
         $endPos->z += $plotSize;
 
-        $blocks = array_filter($event->getBlockList(), function (Block $block) use ($beginPos, $endPos): bool {
+        return array_filter($blocks, function (Block $block) use ($beginPos, $endPos): bool {
             if ($block->getPosition()->x >= $beginPos->x and $block->getPosition()->z >= $beginPos->z and $block->getPosition()->x < $endPos->x and $block->getPosition()->z < $endPos->z) {
                 return true;
             }
             return false;
         });
-
-        $event->setBlockList($blocks);
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        LOWEST
      *
      * @param EntityMotionEvent $event
      */
     public function onEntityMotion(EntityMotionEvent $event): void
     {
-        if ($event->isCancelled()) {
-            return;
-        }
         $level = $event->getEntity()->getWorld();
         $levelName = $level->getFolderName();
         if (!$this->plugin->isLevelLoaded($levelName))
@@ -371,7 +368,6 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        LOWEST
      *
      * @param PlayerMoveEvent $event
@@ -438,7 +434,6 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        LOWEST
      *
      * @param EntityTeleportEvent $event
@@ -457,7 +452,6 @@ class EventListener implements Listener
     }
 
     /**
-     * @ignoreCancelled false
      * @priority        LOWEST
      *
      * @param EntityDamageByEntityEvent $event
